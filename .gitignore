@@ -1,12 +1,10 @@
-audiofiles/*.mp3
-audiofiles/*.wav
-audiofiles/out/*.wav
-audiofiles/out/splits/*.wav
-!.gitkeep
+# audio files
+*.mp3
+*.wav
+# copies of models
 older-models
+# trained models
 output/*
-test-dataset/wavs/*
-48k.wav
-rnn.raw
-rnn.wav
-temp.raw
+
+# do not include built rnnoise
+repos/rnnoise
