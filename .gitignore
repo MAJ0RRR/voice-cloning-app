@@ -1,0 +1,12 @@
+audiofiles/*.mp3
+audiofiles/*.wav
+audiofiles/out/*.wav
+audiofiles/out/splits/*.wav
+!.gitkeep
+older-models
+output/*
+test-dataset/wavs/*
+48k.wav
+rnn.raw
+rnn.wav
+temp.raw
