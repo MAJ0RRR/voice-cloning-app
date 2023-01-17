@@ -5,6 +5,7 @@
 older-models
 # trained models
 output/*
-
 # do not include built rnnoise
 repos/rnnoise
+# generated text
+test-dataset/metadata.csv
