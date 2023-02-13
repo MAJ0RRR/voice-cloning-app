@@ -2,11 +2,15 @@
 /audiofiles
 # copies of models
 /older-models
-# trained models
-/output
 # compiled tools
 /tools
 # venv
 /venv
 # pycharm dir
 .idea
+/voice_models
+#pycharm folders
+.idea/
+__pycache__/
+
+
