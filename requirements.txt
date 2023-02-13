@@ -36,6 +36,7 @@ Jinja2==3.1.2
 joblib==1.2.0
 jsonlines==1.2.0
 kiwisolver==1.4.4
+lazy_import==0.2.2
 librosa==0.8.0
 llvmlite==0.38.1
 MarkupSafe==2.1.2

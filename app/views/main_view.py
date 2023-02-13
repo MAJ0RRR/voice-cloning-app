@@ -13,7 +13,7 @@ class MainView:
 
     def __init__(self, root):
         self.root = root
-        self.root.configure(bg='green')
+
         b1 = tk.Button(self.root, text="Stwórz nowy model głosu", command=self.switch_to_choose_gender_language_view, width=BUTTON_WIDTH, height=BUTTON_HEIGHT)
         b2 = tk.Button(self.root, text="Dotrenuj model głosu",width=BUTTON_WIDTH, height=BUTTON_HEIGHT)
         b3 = tk.Button(self.root, text="Syntezuj mowę na podstawie modelu",width=BUTTON_WIDTH, height=BUTTON_HEIGHT)
@@ -27,6 +27,6 @@ class MainView:
 
     def switch_to_choose_gender_language_view(self):
         for widget in self.root.winfo_children():
-            widget.pack_forget()
+            widget.destroy()
         ChooseGenderLanguageView(self.root)
 

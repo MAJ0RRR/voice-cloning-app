@@ -1,5 +1,8 @@
 # directory with audio
 /audiofiles
+#directories for testing app
+/audio
+/voice_models
 # copies of models
 /older-models
 # compiled tools
