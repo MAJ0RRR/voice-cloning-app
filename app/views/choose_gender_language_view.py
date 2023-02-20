@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from lazy_import import lazy_module
+from choose_voice_model_view import ChooseVoiceModelView
 
 main_menu_module = lazy_module("app.views.main_view")
 
@@ -13,8 +14,9 @@ RADIO_BUTTON_WIDTH = 150
 
 class ChooseGenderLanguageView:
 
-    def __init__(self, root):
+    def __init__(self, root, voice_service):
         self.root = root
+        self.voice_service = voice_service
         self.language = tk.StringVar()
         self.language.set("pl")
         language_label = tk.Label(root,bg='green', text="Wybierz język", font=("Helvetica", 14))
@@ -41,13 +43,15 @@ class ChooseGenderLanguageView:
     def switch_to_main_view(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-        main_menu_module.MainView(self.root)
+        main_menu_module.MainView(self.root, self.voice_service)
 
-    def switch_to_choose_audio(self):
+    def switch_to_choose_model(self):
         gender = self.gender.get()
         language = self.language.get()
         for widget in self.root.winfo_children():
             widget.destroy()
+        ChooseVoiceModelView(self.root, gender, language, self.voice_service)
+
 
 
 
