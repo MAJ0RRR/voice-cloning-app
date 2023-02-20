@@ -15,20 +15,20 @@ class ChooseGenderLanguageView:
 
     def __init__(self, root):
         self.root = root
-        language = tk.StringVar()
-        language.set("pl")
+        self.language = tk.StringVar()
+        self.language.set("pl")
         language_label = tk.Label(root,bg='green', text="Wybierz język", font=("Helvetica", 14))
         language_label.place(x=WIDTH/2-60, y=60)
-        rb1 = tk.Radiobutton(root, text="polski",variable=language, value='pl', font=("Helvetica", 14))
-        rb2 = tk.Radiobutton(root, text="angielski", variable=language, value='en', font=("Helvetica", 14))
+        rb1 = tk.Radiobutton(root, text="polski",variable=self.language, value='pl', font=("Helvetica", 14))
+        rb2 = tk.Radiobutton(root, text="angielski", variable=self.language, value='en', font=("Helvetica", 14))
         rb1.place(x=WIDTH/2-RADIO_BUTTON_WIDTH-10, y=100, width=RADIO_BUTTON_WIDTH)
         rb2.place(x=WIDTH/2+10, y=100, width=RADIO_BUTTON_WIDTH)
-        gender = tk.StringVar()
-        gender.set("man")
+        self.gender = tk.StringVar()
+        self.gender.set("man")
         gender_label = tk.Label(root, text="Wybierz płeć",bg='green', font=("Helvetica", 14))
         gender_label.place(x=WIDTH/2-60, y=200)
-        rb3 = tk.Radiobutton(root, text="kobieta", variable=gender, value='woman', font=("Helvetica", 14))
-        rb4 = tk.Radiobutton(root, text="mężczyzna", variable=gender,value='man', font=("Helvetica", 14))
+        rb3 = tk.Radiobutton(root, text="kobieta", variable=self.gender, value='woman', font=("Helvetica", 14))
+        rb4 = tk.Radiobutton(root, text="mężczyzna", variable=self.gender,value='man', font=("Helvetica", 14))
         rb3.place(x=WIDTH / 2 -RADIO_BUTTON_WIDTH-10, y=230, width=RADIO_BUTTON_WIDTH)
         rb4.place(x=WIDTH / 2 +10, y=230, width=RADIO_BUTTON_WIDTH)
 
@@ -44,6 +44,10 @@ class ChooseGenderLanguageView:
         main_menu_module.MainView(self.root)
 
     def switch_to_choose_audio(self):
-        pass
+        gender = self.gender.get()
+        language = self.language.get()
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
 
 
