@@ -15,5 +15,8 @@
 #pycharm folders
 .idea/
 __pycache__/
+#db_file
+db_file.db
+
 
 

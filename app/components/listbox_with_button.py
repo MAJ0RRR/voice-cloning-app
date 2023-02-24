@@ -22,8 +22,13 @@ class ListBoxWithButton(tk.Frame):
 
         button = tk.Button(self.listbox, text="Odsłuchaj", command=lambda idx=index: self.listen(audio_path))
         self.buttons[index] = button
+        canvas = self.listbox
+        while not isinstance(canvas, tk.Canvas):
+            canvas = canvas.master
 
-        self.listbox.window_create(index, window=button)
+        # Add the button widget to the canvas at the specified index
+        canvas.create_window((0, index), window=button, anchor='nw')
+
 
     def listen(self, audio_path):
         playsound(audio_path)
