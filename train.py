@@ -14,12 +14,12 @@ from TTS.utils.audio import AudioProcessor
 ##########################################
 #Change this to your dataset directory
 ##########################################
-output_path = "/home/pawel/clonning/output/"
+output_path = "output/"
 dataset_config = BaseDatasetConfig(
 ##########################################
 #Change this to your dataset directory
 ##########################################
-    formatter="ljspeech", meta_file_train="/home/pawel/clonning/test-dataset/metadata.csv", path="/home/pawel/clonning/test-dataset")
+    formatter="ljspeech", meta_file_train="test-dataset/metadata.csv", path="test-dataset")
 
 audio_config = VitsAudioConfig(
     sample_rate=22050, win_length=1024, hop_length=256, num_mels=80, mel_fmin=0, mel_fmax=None
