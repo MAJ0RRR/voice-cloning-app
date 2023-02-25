@@ -8,7 +8,7 @@ import pyloudnorm as pyln
 import sys
 import glob
 import tempfile
-rnn = "repos/rnnoise/examples/rnnoise_demo"
+rnn = "tools/rnnoise/examples/rnnoise_demo"
  
 paths = glob.glob(os.path.join(audiopath, '*.wav'))
  
