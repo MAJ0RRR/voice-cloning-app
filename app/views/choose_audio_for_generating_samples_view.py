@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from lazy_import import lazy_module
-from app.components.listbox_with_button import ListBoxWithButton
+
 
 
 choose_gender_language_module = lazy_module("app.views.choose_gender_language_view")
