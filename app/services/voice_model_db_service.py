@@ -4,6 +4,7 @@ import os
 from app.entities.voice_model import VoiceModel
 from app.settings import AUDIO_DIR, MODEL_DIR
 
+
 class VoiceModelDbService:
     def __init__(self, db_file):
         self.conn = sqlite3.connect(db_file)

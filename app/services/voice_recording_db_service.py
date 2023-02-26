@@ -4,6 +4,7 @@ import os
 from app.settings import AUDIO_DIR
 from app.entities.voice_recording import VoiceRecording
 
+
 class VoiceRecordingDbService:
     def __init__(self, db_file):
         self.conn = sqlite3.connect(db_file)
@@ -31,7 +32,6 @@ class VoiceRecordingDbService:
 
         return self.cursor.lastrowid
 
-
     def select_voice_recordings(self, model_id=None, name=None):
         if model_id:
             if name:
@@ -51,13 +51,13 @@ class VoiceRecordingDbService:
             self.cursor.execute(query, (name,))
         else:
             query = "SELECT v.id, v.name, v.path, v.model_id " \
-                        "FROM voice_recordings AS v "
+                    "FROM voice_recordings AS v "
             self.cursor.execute(query)
         rows = self.cursor.fetchall()
         voice_records = []
         for row in rows:
-             voice_record = {"id": row[0], "name": row[1], "path": row[2], "model_id": row[3]}
-             voice_records.append(voice_record)
+            voice_record = {"id": row[0], "name": row[1], "path": row[2], "model_id": row[3]}
+            voice_records.append(voice_record)
         return voice_records
 
     def initialize(self):
@@ -73,8 +73,8 @@ class VoiceRecordingDbService:
         path10 = os.path.join(AUDIO_DIR, 'test10.mp3')
         path11 = os.path.join(AUDIO_DIR, 'test11.mp3')
         path12 = os.path.join(AUDIO_DIR, 'test12.mp3')
-        self.insert(VoiceRecording('basic', path1,1))
-        self.insert(VoiceRecording('basic', path2,2))
+        self.insert(VoiceRecording('basic', path1, 1))
+        self.insert(VoiceRecording('basic', path2, 2))
         self.insert(VoiceRecording('basic', path3, 3))
         self.insert(VoiceRecording('basic', path4, 4))
         self.insert(VoiceRecording('basic', path5, 5))
@@ -83,7 +83,7 @@ class VoiceRecordingDbService:
         self.insert(VoiceRecording('basic', path8, 8))
         self.insert(VoiceRecording('basic', path9, 9))
         self.insert(VoiceRecording('basic', path10, 10))
-        self.insert(VoiceRecording('basic', path11,11))
+        self.insert(VoiceRecording('basic', path11, 11))
         self.insert(VoiceRecording('basic', path12, 12))
 
     def close(self):

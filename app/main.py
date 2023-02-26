@@ -12,5 +12,3 @@ root.configure(bg='green')
 root.geometry("1920x1080")
 MainView(root, voice_model_db_service, voice_records_db_service)
 root.mainloop()
-
-

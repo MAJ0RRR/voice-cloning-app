@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class VoiceModel(Base):
     __tablename__ = 'voice_models'
 
@@ -18,9 +19,5 @@ class VoiceModel(Base):
         self.gender = gender
         self.language = language
 
-
     def __repr__(self):
         return "<VoiceModel(name='%s')>" % (self.name)
-
-
-
