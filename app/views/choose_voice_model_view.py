@@ -3,6 +3,7 @@ from playsound import playsound
 
 from app.views.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
     MODELS_ON_PAGE, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
+from app.views.choose_audio_for_training import ChooseAudioForTrainingView
 
 PAD_Y = 40
 
@@ -12,6 +13,8 @@ class ChooseVoiceModelView(BasicView):
     def __init__(self, root, gender, language, voice_model_service, voice_recordings_service):
         super(ChooseVoiceModelView, self).__init__(root, voice_model_service, voice_recordings_service)
         self.page = 0
+        self.gender = gender
+        self.language = language
         self.choosen_model = tk.IntVar()
         self.choosen_model.set("1")  # default value
         self.model_entities = self.voice_model_service.select_gender_language(gender, language)
@@ -37,7 +40,11 @@ class ChooseVoiceModelView(BasicView):
         continue_button.place(x=1400, y=700)
 
     def switch_to_choose_audio_view(self):
-        pass
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        model_id = self.choosen_model.get()
+        ChooseAudioForTrainingView(self.root, self.voice_model_service, self.voice_recordings_service, self.gender,
+                                   self.language, model_id)
 
     def display_models(self):
         models = self.model_entities[self.page * 10:self.page * 10 + 10]
@@ -84,7 +91,7 @@ class ChooseVoiceModelView(BasicView):
             self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=BUTTON_WIDTH_2,
                                               height=BUTTON_HEIGHT_2,
                                               command=self.next_page, font=BUTTON_FONT)
-            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL+ MODELS_ON_PAGE * PAD_Y)
+            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + MODELS_ON_PAGE * PAD_Y)
         self.page -= 1
         if self.page == 0:
             self.previous_page_button.destroy()
