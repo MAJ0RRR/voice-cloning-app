@@ -1,0 +1,3 @@
+Better trim algorythm.
+Corrupted samples filter.
+Train.py refactorization.

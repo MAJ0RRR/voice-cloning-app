@@ -4,8 +4,6 @@
 /older-models
 # trained models
 /output
-# dataset
-/test-dataset
 # compiled tools
 /tools
 # venv

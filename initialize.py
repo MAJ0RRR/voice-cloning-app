@@ -23,10 +23,9 @@ def install_requirements(project_root):
 def initialize_directories(project_root):
 	# Create all necessary directories
 	
-	necessary_directories = ['audiofiles', 'audiofiles/raw', 'audiofiles/splits', 'audiofiles/temp',
+	necessary_directories = ['audiofiles', 'audiofiles/raw', 'audiofiles/splits', 'audiofiles/temp', 'audiofiles/datasets',
 	 'output',
 	 'tools',
-	 'test-dataset', 'test-dataset/wavs'
 	 ]
 
 	for nd in necessary_directories:
