@@ -19,7 +19,7 @@ dataset_config = BaseDatasetConfig(
 ##########################################
 #Change this to your dataset directory
 ##########################################
-    formatter="ljspeech", meta_file_train="test-dataset/metadata.csv", path="test-dataset")
+    formatter="ljspeech", meta_file_train="metadata.csv", path="audiofiles/datasets/dataset")
 
 audio_config = VitsAudioConfig(
     sample_rate=22050, win_length=1024, hop_length=256, num_mels=80, mel_fmin=0, mel_fmax=None
@@ -44,7 +44,7 @@ config = VitsConfig(
     #text_cleaner="english_cleaners",
     text_cleaner="multilingual_cleaners",
     use_phonemes=True,
-    phoneme_language="en-us",
+    phoneme_language="pl",
     phoneme_cache_path=os.path.join(output_path, "phoneme_cache"),
     compute_input_seq_cache=True,
     print_step=10,
