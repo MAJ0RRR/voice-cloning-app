@@ -1,7 +1,10 @@
 import tkinter as tk
+import os
+import shutil
 from tkinter import filedialog
 from app.views.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, WIDTH, ENABLED_EXTENSIONS, BUTTON_FONT, \
     Y_MENU
+from app.settings import MEDIA_DIR
 
 
 class BasicChooseAudioFile(BasicView):
@@ -49,9 +52,27 @@ class BasicChooseAudioFile(BasicView):
             self.dir_labels[-1].destroy()
             self.dir_labels = self.dir_labels[:-1]
 
+    def copy_all_files_to_dir(self):
+        for file_label in self.file_labels:
+            source_path = file_label.text
+            self.copy_file_to_dir(source_path)
+        for dir_label in self.dir_labels:
+            dir = dir_label.text
+            files = dir.all_allowed_files()
+            for file in files:
+                self.copy_file_to_dir(file)
+
+
+
+
     @staticmethod
     def enabled_extensions():
         ret = ""
         for extension in ENABLED_EXTENSIONS:
             ret += f"{extension} "
         return ret[:-1]
+
+    def copy_file_to_dir(self, source_path):
+        filename = os.path.basename(source_path)
+        dest_path = os.path.join(MEDIA_DIR, filename)
+        shutil.copy(source_path, dest_path)

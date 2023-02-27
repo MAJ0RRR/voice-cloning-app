@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 from app.entities.voice_model import VoiceModel
-from app.settings import AUDIO_DIR, MODEL_DIR
+from app.settings import VOICE_DIR, MODEL_DIR
 
 
 class VoiceModelDbService:

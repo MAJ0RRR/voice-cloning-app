@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-from app.settings import AUDIO_DIR
+from app.settings import VOICE_DIR
 from app.entities.voice_recording import VoiceRecording
 
 

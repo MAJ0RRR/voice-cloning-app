@@ -41,5 +41,7 @@ class ChooseAudioForTrainingView(BasicChooseAudioFile):
         generate_samples = self.generate_samples.get()
         for widget in self.root.winfo_children():
             widget.destroy()
+        if generate_samples:
+            pass
         TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.gender, self.language,
                   self.model_id)
