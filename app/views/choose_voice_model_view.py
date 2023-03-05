@@ -1,5 +1,5 @@
-import tkinter as tk
 from playsound import playsound
+import tkinter as tk
 
 from app.views.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
     MODELS_ON_PAGE, WIDTH, BUTTON_FONT, Y_FIRST_MODEL

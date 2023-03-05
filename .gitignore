@@ -1,22 +1,18 @@
+#cache
+__pycache__/
+#db_file
+db_file.db
 # directory with audio
 /audiofiles
-#directories for testing app
-/audio
-/voice_models
-# copies of models
+# copies of older-models
 /older-models
+# trained older-models
+/output
 # compiled tools
 /tools
 # venv
 /venv
 # pycharm dir
 .idea
-/voice_models
-#pycharm folders
-.idea/
-__pycache__/
-#db_file
-db_file.db
-
 
 

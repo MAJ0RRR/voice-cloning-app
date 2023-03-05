@@ -25,11 +25,11 @@ def discard_transcriptions(alph: str = 'en', path: str = 'audiofiles/datasets/da
         "pl" : polish_alphabet,
         "en" : english_alphabet
     }
- 
+
     alphabet = alphabets[alph]
     root = path
     min_words = word_count
-    
+
     with open(os.path.join(root,'metadata.csv')) as orginal, \
         open(os.path.join(root,'filtered.csv'), 'w') as filtered:
         transcript = csv.reader(orginal, delimiter='|')
@@ -69,11 +69,11 @@ if __name__ == "__main__":
         prog = 'discard_transcriptions',
         description = 'Deletes files and entries in csv with wrong transcription.'
         )
-    parser.add_argument('-l', '--language', action='store', dest='language', 
+    parser.add_argument('-l', '--language', action='store', dest='language',
         default='en', help='Language of speech in your data (en/pl). Default: en.')
-    parser.add_argument('-s', '--source-directory', action='store', dest='source_dir', 
+    parser.add_argument('-s', '--source-directory', action='store', dest='source_dir',
         default='audiofiles/datasets/dataset', help='Directory with dataset. Default: audiofiles/datasets/dataset.')
-    parser.add_argument('-m', '--min-words', action='store', dest='min_words', 
+    parser.add_argument('-m', '--min-words', action='store', dest='min_words',
         default=3, type=int, help='Minimal number of words in transriptions. Default: 3')
 
     parsed = parser.parse_args()

@@ -1,10 +1,10 @@
-import tkinter as tk
 import os
 import shutil
+import tkinter as tk
 from tkinter import filedialog
-from app.views.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, WIDTH, ENABLED_EXTENSIONS, BUTTON_FONT, \
-    Y_MENU
-from app.settings import MEDIA_DIR
+
+from app.views.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, ALLOWED_EXTENSIONS, BUTTON_FONT
+from app.settings import RAW_AUDIO_DIR
 
 
 class BasicChooseAudioFile(BasicView):
@@ -35,8 +35,8 @@ class BasicChooseAudioFile(BasicView):
             label_dir.place(x=950, y=160 + len(self.dir_labels) + 20)
 
     def open_file(self):
-        enabled_extensions = BasicChooseAudioFile.enabled_extensions()
-        file_path = filedialog.askopenfilename(filetypes=(("Audio files", enabled_extensions),))
+        allowed_extensions = BasicChooseAudioFile.allowed_extensions()
+        file_path = filedialog.askopenfilename(filetypes=(("Audio files", allowed_extensions),))
         if file_path:
             label_file = tk.Label(self.root, text=file_path, bg='green', font=BUTTON_FONT)
             self.file_labels.append(label_file)
@@ -53,26 +53,33 @@ class BasicChooseAudioFile(BasicView):
             self.dir_labels = self.dir_labels[:-1]
 
     def copy_all_files_to_dir(self):
-        for file_label in self.file_labels:
-            source_path = file_label.text
+        for file in self.file_labels:
+            source_path = file.cget("text")
             self.copy_file_to_dir(source_path)
         for dir_label in self.dir_labels:
-            dir = dir_label.text
-            files = dir.all_allowed_files()
+            dir = dir_label.cget("text")
+            files = BasicChooseAudioFile.allowed_files_from_dir(dir)
             for file in files:
                 self.copy_file_to_dir(file)
 
-
-
+    @staticmethod
+    def allowed_files_from_dir(dir):
+        ret = []
+        for file in os.listdir(dir):
+            filename, extension = os.path.splitext(file)
+            if extension in ALLOWED_EXTENSIONS:
+                ret.append(os.path.join(dir,file))
+        return ret
+            
 
     @staticmethod
-    def enabled_extensions():
+    def allowed_extensions():
         ret = ""
-        for extension in ENABLED_EXTENSIONS:
+        for extension in ALLOWED_EXTENSIONS:
             ret += f"{extension} "
         return ret[:-1]
 
     def copy_file_to_dir(self, source_path):
         filename = os.path.basename(source_path)
-        dest_path = os.path.join(MEDIA_DIR, filename)
+        dest_path = os.path.join(RAW_AUDIO_DIR, filename)
         shutil.copy(source_path, dest_path)

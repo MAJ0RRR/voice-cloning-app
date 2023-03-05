@@ -2,12 +2,12 @@ pip install pyloudnorm
 mkdir repos
 git clone https://github.com/xiph/rnnoise.git repos/rnnoise
 sudo apt-get install curl autoconf automake libtool python-dev pkg-config sox ffmpeg
- 
+
 sh autogen.sh
 sh configure
 make clean
 make
- 
+
 cd ~/repos
 git clone https://github.com/openai/whisper.git
 pip install git+https://github.com/openai/whisper.git 
@@ -15,32 +15,32 @@ sudo apt-get install espeak-ng
 git clone https://github.com/coqui-ai/TTS.git
 pip install TTS
 tts --list_models
- 
+
 mkdir audioclips
 cd audioclips
 explorer.exe .
 mkdir out
 find . -name '*.mp3' -exec bash -c 'for f; do ffmpeg -i "$f" -acodec pcm_s16le -ar 22050 -ac 1 out/"${f%.mp3}".wav ; done' _ {} +
- 
- 
+
+
 for f in *.wav; do ffmpeg -y -i "$f" -acodec pcm_s16le -ar 22050 -ac 1 out/"$f.wav"; done
- 
+
 cd out
 mkdir splits
 
- 
+
 for FILE in *.wav; do sox "$FILE" splits/"$FILE" --show-progress silence 1 0.5 0.1% 1 0.5 0.1% : newfile : restart ; done
 or
 for FILE in *.wav; do sox "$FILE" splits/"$FILE" --show-progress trim 0 8 : restart ; done
 
 cd splits
 find . -name "*.wav" -type f -size -15k -delete
- 
- 
- 
- 
+
+
+
+
 tts --text "I am the very model of a modern Major General" --model_name "tts_models/en/ljspeech/vits" --out_path ljspeech-vits.wav
- 
- 
- 
+
+
+
 !CUDA_VISIBLE_DEVICES="0" python train_vits.py --restore_path ~/.local/share/tts/tts_models--en--ljspeech--vits/model_file.pth --config_file ~/.local/share/tts/tts_models--en--ljspeech--vits/config.json

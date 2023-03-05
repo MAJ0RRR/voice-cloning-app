@@ -6,6 +6,7 @@ Repozytorium projektu grupowego poświęconego tematowi "Opracowanie aplikacji d
 Python 3.9 z modułem venv <br>
 `sudo apt-get install make autoconf automake libtool sox ffmpeg espeak-ng`
 
+<<<<<<< HEAD
 # Konfiguracja i użycie
 Uruchomienie skryptu konfiguracyjnego:
 `$ python3 initialize.py`

@@ -15,7 +15,8 @@ MODELS_ON_PAGE = 10
 Y_FIRST_MODEL = 150
 Y_MENU = 800
 BUTTON_FONT = ("Helvetica", 14)
-ENABLED_EXTENSIONS = ('.mp3', '.mp4', '.wav')
+MAX_FONT = ("Helvetica", 25)
+ALLOWED_EXTENSIONS = ('.mp3', '.mp4', '.wav')
 
 
 class BasicView:

@@ -1,7 +1,7 @@
 import tkinter as tk
 
-from app.views.choose_voice_model_view import ChooseVoiceModelView
 from app.views.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, WIDTH, BUTTON_FONT
+from app.views.choose_voice_model_view import ChooseVoiceModelView
 
 RADIO_BUTTON_WIDTH = 150
 
