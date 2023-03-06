@@ -1,4 +1,4 @@
-from app.views.basic_view import BasicView
+from app.views.basic.basic_view import BasicView
 
 
 class TrainView(BasicView):

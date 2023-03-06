@@ -1,7 +1,7 @@
 import threading
 
 from app.views.finish_generating_samples_view import FinishGeneratingSamples
-from app.views.generate_samples_basic_view import GenerateSamplesBasicView
+from app.views.basic.generate_samples_basic_view import GenerateSamplesBasicView
 
 
 class GenerateSamplesView(GenerateSamplesBasicView):

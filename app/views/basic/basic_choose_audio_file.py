@@ -3,7 +3,7 @@ import shutil
 import tkinter as tk
 from tkinter import filedialog
 
-from app.views.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, ALLOWED_EXTENSIONS, BUTTON_FONT
+from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, ALLOWED_EXTENSIONS, BUTTON_FONT
 from app.settings import RAW_AUDIO_DIR
 
 

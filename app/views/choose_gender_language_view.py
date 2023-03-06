@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from app.views.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, WIDTH, BUTTON_FONT
+from app.views.basic.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, WIDTH, BUTTON_FONT
 from app.views.choose_voice_model_view import ChooseVoiceModelView
 
 RADIO_BUTTON_WIDTH = 150
@@ -8,9 +8,9 @@ RADIO_BUTTON_WIDTH = 150
 
 class ChooseGenderLanguageView(BasicView):
 
-    def __init__(self, root, voice_model_service, voice_recordings_service, version_service):
+    def __init__(self, root, voice_model_service, voice_recordings_service, version_service, option):
         super(ChooseGenderLanguageView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
-
+        self.option = option
         self.language = tk.StringVar()
         self.language.set("polish")
         language_label = tk.Label(root, bg='green', text="Wybierz język", font=BUTTON_FONT)
@@ -41,4 +41,4 @@ class ChooseGenderLanguageView(BasicView):
         language = self.language.get()
         for widget in self.root.winfo_children():
             widget.destroy()
-        ChooseVoiceModelView(self.root, gender, language, self.voice_model_service, self.voice_recordings_service, self.version_service)
+        ChooseVoiceModelView(self.root, gender, language, self.voice_model_service, self.voice_recordings_service, self.version_service, self.option)

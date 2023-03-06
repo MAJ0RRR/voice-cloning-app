@@ -1,7 +1,7 @@
 import tkinter as tk
 
-from app.views.basic_choose_audio_file import BasicChooseAudioFile
-from app.views.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, WIDTH, BUTTON_FONT, Y_MENU
+from app.views.basic.basic_choose_audio_file import BasicChooseAudioFile
+from app.views.basic.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, WIDTH, BUTTON_FONT, Y_MENU
 from app.views.generate_samples_view import GenerateSamplesView
 
 

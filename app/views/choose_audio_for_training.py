@@ -1,8 +1,8 @@
 import tkinter as tk
 from lazy_import import lazy_module
 
-from app.views.basic_choose_audio_file import BasicChooseAudioFile
-from app.views.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_FONT, Y_MENU
+from app.views.basic.basic_choose_audio_file import BasicChooseAudioFile
+from app.views.basic.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_FONT, Y_MENU
 from app.views.train_view import TrainView
 
 choose_voice_model_view = lazy_module("app.views.choose_voice_model_view")

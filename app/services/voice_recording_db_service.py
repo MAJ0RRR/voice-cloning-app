@@ -10,8 +10,8 @@ class VoiceRecordingDbService:
         self.conn = sqlite3.connect(db_file)
         self.cursor = self.conn.cursor()
         self.create_table()
-        if self.select_voice_recordings() == []:
-            self.initialize()
+        #if self.select_voice_recordings() == []:
+        #    self.initialize()
 
     def create_table(self):
         query = f"CREATE TABLE IF NOT EXISTS voice_recordings (id INTEGER PRIMARY KEY," \

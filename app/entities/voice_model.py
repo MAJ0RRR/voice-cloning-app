@@ -9,13 +9,15 @@ class VoiceModel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50))
-    path = Column(String(200))
+    path_model = Column(String(200))
+    path_config = Column(String(200))
     gender = Column(String(10))
     language = Column(String(2))
 
-    def __init__(self, name, path, gender, language):
+    def __init__(self, name, path_model, path_config, gender, language):
         self.name = name
-        self.path = path
+        self.path_model = path_model
+        self.path_config = path_config
         self.gender = gender
         self.language = language
 

@@ -6,9 +6,8 @@ import threading
 import tkinter as tk
 from tkinter import messagebox as mb
 
-from app.services.version_service import VersionService
 from app.settings import WORKING_DIR, RAW_AUDIO_DIR
-from app.views.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, PAD_Y, BUTTON_FONT, MAX_FONT
+from app.views.basic.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, PAD_Y, BUTTON_FONT, MAX_FONT
 from whispertrans import create_transcription
 
 

@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from app.views.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, PAD_Y, BUTTON_FONT, MAX_FONT, HEIGHT
+from app.views.basic.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, PAD_Y, BUTTON_FONT, MAX_FONT, HEIGHT
 
 
 class FinishGeneratingSamples(BasicView):

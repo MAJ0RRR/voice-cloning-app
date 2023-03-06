@@ -1,5 +1,7 @@
 from lazy_import import lazy_module
 
+from app.enums import Options
+
 choose_gender_view = lazy_module("app.views.choose_gender_language_view")
 choose_audio_for_samples_view = lazy_module("app.views.choose_audio_for_generating_samples_view")
 main_menu_module = lazy_module("app.views.main_view")
@@ -30,7 +32,7 @@ class BasicView:
     def switch_to_choose_gender_language_view(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service)
+        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service, Options.train)
 
     def switch_to_generate_samples(self):
         for widget in self.root.winfo_children():
