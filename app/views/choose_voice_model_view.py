@@ -10,8 +10,8 @@ PAD_Y = 40
 
 class ChooseVoiceModelView(BasicView):
 
-    def __init__(self, root, gender, language, voice_model_service, voice_recordings_service):
-        super(ChooseVoiceModelView, self).__init__(root, voice_model_service, voice_recordings_service)
+    def __init__(self, root, gender, language, voice_model_service, voice_recordings_service, version_service):
+        super(ChooseVoiceModelView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
         self.page = 0
         self.gender = gender
         self.language = language
@@ -43,7 +43,7 @@ class ChooseVoiceModelView(BasicView):
         for widget in self.root.winfo_children():
             widget.destroy()
         model_id = self.choosen_model.get()
-        ChooseAudioForTrainingView(self.root, self.voice_model_service, self.voice_recordings_service, self.gender,
+        ChooseAudioForTrainingView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service, self.gender,
                                    self.language, model_id)
 
     def display_models(self):

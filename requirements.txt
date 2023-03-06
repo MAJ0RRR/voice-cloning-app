@@ -48,10 +48,6 @@ nltk==3.8.1
 num2words==0.5.12
 numba==0.55.1
 numpy==1.21.6
-nvidia-cublas-cu11==11.10.3.66
-nvidia-cuda-nvrtc-cu11==11.7.99
-nvidia-cuda-runtime-cu11==11.7.99
-nvidia-cudnn-cu11==8.5.0.96
 openai-whisper==20230124
 packaging==23.0
 pandas==1.5.3
@@ -97,3 +93,4 @@ urllib3==1.26.14
 Werkzeug==2.2.3
 zipp==3.15.0
 gdown==4.6.4
+

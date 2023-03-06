@@ -5,8 +5,8 @@ from app.views.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, PAD
 
 class MainView(BasicView):
 
-    def __init__(self, root, voice_model_service, voice_records_service):
-        super(MainView, self).__init__(root, voice_model_service, voice_records_service)
+    def __init__(self, root, voice_model_service, voice_records_service, version_service):
+        super(MainView, self).__init__(root, voice_model_service, voice_records_service, version_service)
         b1 = tk.Button(self.root, text="Stwórz nowy model głosu", command=self.switch_to_choose_gender_language_view,
                        width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
         b2 = tk.Button(self.root, text="Dotrenuj model głosu", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,

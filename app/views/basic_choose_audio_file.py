@@ -9,8 +9,8 @@ from app.settings import RAW_AUDIO_DIR
 
 class BasicChooseAudioFile(BasicView):
 
-    def __init__(self, root, voice_model_service, voice_records_service):
-        super(BasicChooseAudioFile, self).__init__(root, voice_model_service, voice_records_service)
+    def __init__(self, root, voice_model_service, voice_records_service, version_service):
+        super(BasicChooseAudioFile, self).__init__(root, voice_model_service, voice_records_service, version_service)
         self.file_labels = []
         self.dir_labels = []
         directory_button = tk.Button(self.root, text="Select directory", command=self.open_directory,

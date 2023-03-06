@@ -3,9 +3,9 @@ from app.views.basic_view import BasicView
 
 class TrainView(BasicView):
 
-    def __init__(self, root, voice_model_service, voice_recordings_service, gender, language, model_id,
+    def __init__(self, root, voice_model_service, voice_recordings_service, version_service, gender, language, model_id,
                  generate_samples):
-        super(TrainView, self).__init__(root, voice_model_service, voice_recordings_service)
+        super(TrainView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
         self.gender = gender
         self.language = language
         self.model_id = model_id

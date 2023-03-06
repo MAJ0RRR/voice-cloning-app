@@ -6,13 +6,13 @@ from app.views.generate_samples_basic_view import GenerateSamplesBasicView
 
 class GenerateSamplesView(GenerateSamplesBasicView):
 
-    def __init__(self, root, voice_model_service, voice_records_service):
-        super(GenerateSamplesView, self).__init__(root, voice_model_service, voice_records_service)
+    def __init__(self, root, voice_model_service, voice_records_service, version_service):
+        super(GenerateSamplesView, self).__init__(root, voice_model_service, voice_records_service, version_service)
 
     def switch_to_next_view(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-        FinishGeneratingSamples(self.root, self.voice_model_service, self.voice_recordings_service)
+        FinishGeneratingSamples(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service)
 
     def switch_to_previous_view(self):
         self.switch_to_generate_samples()
