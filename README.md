@@ -5,6 +5,7 @@ Repozytorium projektu grupowego poświęconego tematowi "Opracowanie aplikacji d
 # Narzędzia
 
 - python3.9 z modułem venv
+- make
 - autoconf
 - automake
 - libtool 
@@ -13,4 +14,4 @@ Repozytorium projektu grupowego poświęconego tematowi "Opracowanie aplikacji d
 - espeak-ng
 
 # Instalacja 
-- `sudo apt-get install autoconf automake libtool sox ffmpeg espeak-ng`
+- `sudo apt-get install make autoconf automake libtool sox ffmpeg espeak-ng`
