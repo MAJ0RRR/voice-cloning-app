@@ -11,7 +11,8 @@ choose_voice_model_view = lazy_module("app.views.choose_voice_model_view")
 class ChooseAudioForTrainingView(BasicChooseAudioFile):
 
     def __init__(self, root, voice_model_service, voice_records_service, version_service, gender, language, model_id):
-        super(ChooseAudioForTrainingView, self).__init__(root, voice_model_service, voice_records_service, version_service)
+        super(ChooseAudioForTrainingView, self).__init__(root, voice_model_service, voice_records_service,
+                                                         version_service)
         self.gender = gender
         self.language = language
         self.model_id = model_id
@@ -44,5 +45,6 @@ class ChooseAudioForTrainingView(BasicChooseAudioFile):
             widget.destroy()
         if generate_samples:
             pass
-        TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service, self.gender, self.language,
+        TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service, self.gender,
+                  self.language,
                   self.model_id)

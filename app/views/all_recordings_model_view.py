@@ -4,15 +4,17 @@ import tkinter as tk
 
 from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
     MODELS_ON_PAGE, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
-from app.views.choose_audio_for_training import ChooseAudioForTrainingView
-from app.enums import Options
+from app.views.generate_recordings_view import GenerateRecordingsView
+
 PAD_Y = 40
 
 
 class AllRecordingsModelView(BasicView):
 
-    def __init__(self, root, gender, language, voice_model_service, voice_recordings_service, version_service, model_id, option):
-        super(AllRecordingsModelView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
+    def __init__(self, root, gender, language, voice_model_service, voice_recordings_service, version_service, model_id,
+                 option):
+        super(AllRecordingsModelView, self).__init__(root, voice_model_service, voice_recordings_service,
+                                                     version_service)
         self.page = 0
         self.option = option
         self.gender = gender
@@ -20,6 +22,7 @@ class AllRecordingsModelView(BasicView):
         self.model_id = model_id
         self.recordings_entities = self.voice_recordings_service.select_voice_recordings(model_id=model_id)
         self.recording_labels = []
+        self.recording_buttons = []
         self.display_recordings()
         self.next_page_button = tk.Button(width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
         if self.has_next_page():
@@ -32,7 +35,8 @@ class AllRecordingsModelView(BasicView):
                                      width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
         back_button = tk.Button(self.root, text="Cofnij", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
                                 command=self.switch_to_choose_gender_language_view)
-        generate_new_sample_button = tk.Button(self.root, text="Generuj nową próbkę", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
+        generate_new_sample_button = tk.Button(self.root, text="Generuj nową próbkę", width=BUTTON_WIDTH_1,
+                                               height=BUTTON_HEIGHT_1)
 
         main_menu_button.place(x=200, y=700)
         back_button.place(x=800, y=700)
@@ -41,18 +45,19 @@ class AllRecordingsModelView(BasicView):
     def switch_to_generate_recording(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-        pass #generate recording
+        GenerateRecordingsView(self.root, self.gender, self.language, self.voice_model_service,
+                               self.voice_recordings_service, self.version_service, self.model_id, self.option)
 
     def display_recordings(self):
         recordings = self.recordings_entities[self.page * 10:self.page * 10 + 10]
         for recording in recordings:
             label = tk.Label(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                                   text=recording["name"], bg='green', font=BUTTON_FONT)
+                             text=recording["name"], bg='green', font=BUTTON_FONT)
             label.place(x=WIDTH / 2 - 200, y=Y_FIRST_MODEL + len(self.recording_labels) * PAD_Y)
-            self.recordings_labels.append(label)
+            self.recording_labels.append(label)
             button = tk.Button(self.root, text="Odsłuchaj", width=BUTTON_WIDTH_2, height=BUTTON_HEIGHT_2,
                                font=BUTTON_FONT, command=lambda: self.play_audio(recording['path']))
-            button.place(x=WIDTH / 2 +50, y=Y_FIRST_MODEL + len(self.recording_buttons) * PAD_Y)
+            button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + len(self.recording_buttons) * PAD_Y)
             self.recording_buttons.append(button)
 
     def has_next_page(self):

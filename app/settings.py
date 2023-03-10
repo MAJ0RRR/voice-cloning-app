@@ -1,11 +1,10 @@
 import os
 from pathlib import Path
 
-WORKING_DIR = os.getcwd()
+WORKING_DIR = Path(os.getcwd()).parent
 
 MODEL_DIR = os.path.join(WORKING_DIR, 'voice_models')
-VOICE_DIR = os.path.join(WORKING_DIR, 'audio/voice_recordings')
-MEDIA_DIR = os.path.join(WORKING_DIR, 'audio/media')
+GENERATED_DIR = os.path.join(WORKING_DIR, 'audiofiles/generated')
 
-RAW_AUDIO_DIR = os.path.join(Path(WORKING_DIR).parent, 'audiofiles/raw')
-db_file = os.path.join(WORKING_DIR, 'db_file.db')
+RAW_AUDIO_DIR = os.path.join(WORKING_DIR, 'audiofiles/raw')
+db_file = os.path.join(WORKING_DIR, 'app/db_file.db')

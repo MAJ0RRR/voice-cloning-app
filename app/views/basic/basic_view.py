@@ -32,15 +32,18 @@ class BasicView:
     def switch_to_choose_gender_language_view(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service, Options.train)
+        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                                    self.version_service, Options.train)
 
     def switch_to_generate_samples(self):
         for widget in self.root.winfo_children():
             widget.destroy()
         choose_audio_for_samples_view.ChooseAudioForGeneratingSamplesView(self.root, self.voice_model_service,
-                                                                          self.voice_recordings_service, self.version_service)
+                                                                          self.voice_recordings_service,
+                                                                          self.version_service)
 
     def switch_to_main_view(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-        main_menu_module.MainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service)
+        main_menu_module.MainView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                  self.version_service)

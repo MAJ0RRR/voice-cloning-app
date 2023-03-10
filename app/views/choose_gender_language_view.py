@@ -9,7 +9,8 @@ RADIO_BUTTON_WIDTH = 150
 class ChooseGenderLanguageView(BasicView):
 
     def __init__(self, root, voice_model_service, voice_recordings_service, version_service, option):
-        super(ChooseGenderLanguageView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
+        super(ChooseGenderLanguageView, self).__init__(root, voice_model_service, voice_recordings_service,
+                                                       version_service)
         self.option = option
         self.language = tk.StringVar()
         self.language.set("polish")
@@ -41,4 +42,5 @@ class ChooseGenderLanguageView(BasicView):
         language = self.language.get()
         for widget in self.root.winfo_children():
             widget.destroy()
-        ChooseVoiceModelView(self.root, gender, language, self.voice_model_service, self.voice_recordings_service, self.version_service, self.option)
+        ChooseVoiceModelView(self.root, gender, language, self.voice_model_service, self.voice_recordings_service,
+                             self.version_service, self.option)

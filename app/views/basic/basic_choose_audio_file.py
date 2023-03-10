@@ -68,9 +68,8 @@ class BasicChooseAudioFile(BasicView):
         for file in os.listdir(dir):
             filename, extension = os.path.splitext(file)
             if extension in ALLOWED_EXTENSIONS:
-                ret.append(os.path.join(dir,file))
+                ret.append(os.path.join(dir, file))
         return ret
-            
 
     @staticmethod
     def allowed_extensions():

@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 from app.entities.voice_model import VoiceModel
-from app.settings import VOICE_DIR, MODEL_DIR
+from app.settings import MODEL_DIR
 
 
 class VoiceModelDbService:
@@ -28,7 +28,8 @@ class VoiceModelDbService:
                    INSERT INTO voice_models (id, name, path_model, path_config, gender, language) 
                    VALUES (?, ?, ?,?, ?, ?)
                """
-        values = (voice_model.id, voice_model.name, voice_model.path_model, voice_model.path_config, voice_model.gender, voice_model.language)
+        values = (voice_model.id, voice_model.name, voice_model.path_model, voice_model.path_config, voice_model.gender,
+                  voice_model.language)
         self.cursor.execute(query, values)
         self.conn.commit()
 
@@ -42,7 +43,8 @@ class VoiceModelDbService:
         rows = self.cursor.fetchall()
         voice_models = []
         for row in rows:
-            voice_model = {"id": row[0], "name": row[1], "path_model": row[2],'path_config':row[3], "gender": row[4], "language": row[5]}
+            voice_model = {"id": row[0], "name": row[1], "path_model": row[2], 'path_config': row[3], "gender": row[4],
+                           "language": row[5]}
             voice_models.append(voice_model)
         return voice_models
 
@@ -59,7 +61,7 @@ class VoiceModelDbService:
         path_model2 = os.path.join(MODEL_DIR, 'woman_2/checkpoint_50000.pth')
         path_config2 = os.path.join(MODEL_DIR, 'woman_2/config.json')
         self.insert(VoiceModel('test1', path_model1, path_config1, 'woman', 'english'))
-        self.insert(VoiceModel('test2', path_model2, path_config2,'woman', 'polish'))
+        self.insert(VoiceModel('test2', path_model2, path_config2, 'woman', 'polish'))
 
     def close(self):
         self.conn.close()

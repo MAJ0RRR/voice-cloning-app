@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-from app.settings import VOICE_DIR
+from app.settings import GENERATED_DIR
 from app.entities.voice_recording import VoiceRecording
 
 
@@ -10,8 +10,8 @@ class VoiceRecordingDbService:
         self.conn = sqlite3.connect(db_file)
         self.cursor = self.conn.cursor()
         self.create_table()
-        #if self.select_voice_recordings() == []:
-        #    self.initialize()
+        if self.select_voice_recordings() == []:
+            self.initialize()
 
     def create_table(self):
         query = f"CREATE TABLE IF NOT EXISTS voice_recordings (id INTEGER PRIMARY KEY," \
@@ -61,30 +61,8 @@ class VoiceRecordingDbService:
         return voice_records
 
     def initialize(self):
-        path1 = os.path.join(AUDIO_DIR, 'test1.mp3')
-        path2 = os.path.join(AUDIO_DIR, 'test2.mp3')
-        path3 = os.path.join(AUDIO_DIR, 'test3.mp3')
-        path4 = os.path.join(AUDIO_DIR, 'test4.mp3')
-        path5 = os.path.join(AUDIO_DIR, 'test5.mp3')
-        path6 = os.path.join(AUDIO_DIR, 'test6.mp3')
-        path7 = os.path.join(AUDIO_DIR, 'test7.mp3')
-        path8 = os.path.join(AUDIO_DIR, 'test8.mp3')
-        path9 = os.path.join(AUDIO_DIR, 'test9.mp3')
-        path10 = os.path.join(AUDIO_DIR, 'test10.mp3')
-        path11 = os.path.join(AUDIO_DIR, 'test11.mp3')
-        path12 = os.path.join(AUDIO_DIR, 'test12.mp3')
+        path1 = os.path.join(GENERATED_DIR, 'test1.mp3')
         self.insert(VoiceRecording('basic', path1, 1))
-        self.insert(VoiceRecording('basic', path2, 2))
-        self.insert(VoiceRecording('basic', path3, 3))
-        self.insert(VoiceRecording('basic', path4, 4))
-        self.insert(VoiceRecording('basic', path5, 5))
-        self.insert(VoiceRecording('basic', path6, 6))
-        self.insert(VoiceRecording('basic', path7, 7))
-        self.insert(VoiceRecording('basic', path8, 8))
-        self.insert(VoiceRecording('basic', path9, 9))
-        self.insert(VoiceRecording('basic', path10, 10))
-        self.insert(VoiceRecording('basic', path11, 11))
-        self.insert(VoiceRecording('basic', path12, 12))
 
     def close(self):
         self.conn.close()

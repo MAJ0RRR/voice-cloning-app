@@ -12,7 +12,8 @@ class GenerateSamplesView(GenerateSamplesBasicView):
     def switch_to_next_view(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-        FinishGeneratingSamples(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service)
+        FinishGeneratingSamples(self.root, self.voice_model_service, self.voice_recordings_service,
+                                self.version_service)
 
     def switch_to_previous_view(self):
         self.switch_to_generate_samples()
@@ -29,4 +30,3 @@ class GenerateSamplesView(GenerateSamplesBasicView):
             self.switch_to_previous_view()
         else:
             self.switch_to_next_view()
-
