@@ -20,53 +20,51 @@ class FileSpliter:
 		# get tempdir
 		tempdir = tempfile.TemporaryDirectory()
 		
+		chunk_nums_temp = {}
+		chunk_nums_out = {}
+
 		# move all files to tempdir
 		audiofiles_src = glob.glob(self.source)
 		for audiofile in audiofiles_src:
-			basename = os.path.basename(audiofile)
-			shutil.move(audiofile, os.path.join(tempdir.name, basename))
+			stem = pathlib.Path(audiofile).stem
+			dir_per_audio = os.path.join(tempdir.name, stem)
+			os.mkdir(dir_per_audio)
+			chunk_nums_temp[stem] = 1
+			chunk_nums_out[stem] = 0
+			shutil.move(audiofile, os.path.join(dir_per_audio, '0.wav'))
 		
 		for silence_thresh, min_silence_len in zip(self.silence_threshs, self.min_silence_lens):
-			audiofiles = glob.glob(tempdir.name + '/*.wav')
-			
-			for audiofile in audiofiles:
-				print(audiofile)
-			
-				# self.__split_file(audiofile, self.destination)
-				signal = pydub.AudioSegment.from_file(audiofile, format='wav')
-				chunks = pydub.silence.split_on_silence(signal, min_silence_len=min_silence_len, silence_thresh=silence_thresh, keep_silence=50)
+			stems = chunk_nums_temp.keys()
+
+			for stem in stems:
+				print(stem)
+
+				dir = os.path.join(tempdir.name, stem)
+				audiofiles = glob.glob(dir + '/*.wav')
 				
-				stem = pathlib.Path(audiofile).stem
-				
-				for i, chunk in enumerate(chunks):
-					file_name = f'CHUNK-{i}-{stem}.wav'
-					if len(chunk) < self.min_audio_len:
-						pass
-					elif len(chunk) > self.max_audio_len:
-						chunk.export(os.path.join(tempdir.name, file_name), format='wav')
-					else:
-						chunk.export(os.path.join(self.destination, file_name), format='wav')
-				# delete file from tempdir
-				os.remove(audiofile)
-		
+				for audiofile in audiofiles:
+					signal = pydub.AudioSegment.from_file(audiofile, format='wav')
+					chunks = pydub.silence.split_on_silence(signal, min_silence_len=min_silence_len, silence_thresh=silence_thresh, keep_silence=50)
+					
+					for chunk in chunks:
+						if len(chunk) < self.min_audio_len:
+							pass
+						elif len(chunk) > self.max_audio_len:
+							chunk_num_temp = chunk_nums_temp[stem]
+							chunk.export(os.path.join(dir, f'{chunk_num_temp}.wav'), format='wav')
+							chunk_nums_temp[stem] = chunk_num_temp + 1
+						else:
+							chunk_num_out = chunk_nums_out[stem]
+							chunk.export(os.path.join(self.destination, f'{stem}-CHUNK-{chunk_num_out}.wav'), format='wav')
+							chunk_nums_out[stem] = chunk_num_out + 1
+					# delete file from tempdir
+					os.remove(audiofile)
+
+					# os.system(f"sox {file_path} {out_dir}/{stem}.wav --show-progress trim 0 8 : newfile : restart")
+
 		# close tempdir
 		tempdir.cleanup()
 		
-	'''	
-	def __split_file(self, file_path: str, out_dir: str) -> (int, int):
-		signal = pydub.AudioSegment.from_file(file_path, format='wav')
-		chunks = pydub.silence.split_on_silence(signal, min_silence_len=self.min_silence_len, silence_thresh=self.silence_thresh, keep_silence=50)
-		
-		stem = pathlib.Path(file_path).stem
-		
-		for i, chunk in enumerate(chunks):
-			file_name = f'CHUNK-{i}-{stem}.wav'
-			chunk.export(os.path.join(out_dir, file_name), format='wav')
-		
-		return 0, 0	
-		
-		#os.system(f"sox {file_path} {out_dir}/{stem}.wav --show-progress trim 0 8 : newfile : restart")
-	'''
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(
