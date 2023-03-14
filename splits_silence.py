@@ -4,7 +4,6 @@ import pydub
 import pathlib
 import argparse
 import tempfile
-import shutil
 from typing import List
 
 class FileSpliter:
@@ -42,7 +41,7 @@ class FileSpliter:
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(
-		prog = 'Splits',
+		prog = 'splits_silence',
 		description = 'Splits wav files into chunks on silence.'
 		)
 	parser.add_argument('-t', '--thresholds', action='store', dest='silence_threshs', nargs="*", type=int,
