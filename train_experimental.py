@@ -141,7 +141,11 @@ if __name__=='__main__':
         default='en', help='Language of model (en/pl). Default: en.')
     parser.add_argument('-d', '--dataset', action='store', dest='dataset_name', 
         default='dataset', help='Dataset name (from audiofiles/datasets). Default: dataset.')
+    parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', 
+        required=True, help='GPU number.')
 
     result = parser.parse_args()
+
+    os.environ["CUDA_VISIBLE_DEVICES"]=result.gpu_num
 
     train(result.model_path, result.dataset_name, result.language)

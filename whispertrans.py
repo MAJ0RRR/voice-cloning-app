@@ -61,8 +61,12 @@ if __name__ == '__main__':
         default='dataset', help='Dataset name. Default: dataset.')
     parser.add_argument('-v', '--vram', action='store', dest='vram', 
         default='10', type=int, help='Vram of your graphics card. Default: 10')    
+    parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', 
+        required=True, help='GPU number.')
     
     result = parser.parse_args()
+
+    os.environ["CUDA_VISIBLE_DEVICES"]=result.gpu_num    
 	
     create_transcription(os.getcwd(), result.dataset_name, result.language, result.vram)
 	
