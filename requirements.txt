@@ -59,6 +59,7 @@ pooch==1.6.0
 protobuf==3.19.6
 psutil==5.9.4
 pycparser==2.21
+pydub==0.25.1
 pyloudnorm==0.1.1
 pynndescent==0.5.8
 pyparsing==3.0.9
