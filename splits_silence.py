@@ -20,6 +20,8 @@ class FileSpliter:
 		audiofiles_src = glob.glob(self.source)
 		for audiofile in audiofiles_src:
 			stem = pathlib.Path(audiofile).stem
+			len_saved = 0
+			print(f'Spliting: {stem}')
 			chunk_num_out = 0
 			signal = pydub.AudioSegment.from_file(audiofile, format='wav')
 			chunks = [signal]
@@ -33,11 +35,12 @@ class FileSpliter:
 						elif len(new_chunk) > self.max_audio_len:
 							chunks_new_iter.append(new_chunk)
 						else:
+							len_saved += len(new_chunk)
 							new_chunk.export(os.path.join(self.destination, f'{stem}-CHUNK-{chunk_num_out}.wav'), format='wav')
 							chunk_num_out = chunk_num_out + 1
-				chunks = chunks_new_iter	
+				chunks = chunks_new_iter
+			print(f'{(len_saved/len(signal) * 100):.2f}% is used')
 
-		# os.system(f"sox {file_path} {out_dir}/{stem}.wav --show-progress trim 0 8 : newfile : restart")
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(
