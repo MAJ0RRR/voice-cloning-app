@@ -1,36 +1,36 @@
 import os
 
-from trainer import Trainer, TrainerArgs
-
-from TTS.config import load_config
-from TTS.tts.configs.shared_configs import BaseDatasetConfig
-from TTS.tts.configs.vits_config import VitsConfig
-from TTS.tts.datasets import load_tts_samples
-from TTS.tts.models.vits import Vits, VitsAudioConfig
-from TTS.tts.utils.text.tokenizer import TTSTokenizer
-from TTS.utils.audio import AudioProcessor
 import argparse
 
 OUTPUT_PATH = "output/"
 CONFIG_FILE_NAME = "config.json"
-DEFAULT_MODEL_NAME = "new_model"
+DEFAULT_RUN_NAME = "new_model"
 DATASETS_DIR = "audiofiles/datasets"
 
 
 def validate_input(args):
-    assert isinstance(args.gpu_num, int)
-    assert args.gpu_num > 0
-    assert args.language in ('en', 'pl')
+    assert int(args.gpu_num) >= 0, f'gpu_num is smaller than 0, gpu_num={args.gpu_num}'
+
+    assert args.language in ('en', 'pl'), f'incorrect language ID, language={args.language}'
+
+    assert args.run_name, f'run_name cannot be empty'
+
+    assert args.dataset_name, f'dataset_name cannot be empty'
+    assert os.path.exists(os.path.join(DATASETS_DIR, args.dataset_name)), \
+        f'directory dataset_name does not exist, dataset_name={args.dataset_name}'
+
     if args.model_path:
-        assert args.model_path.endswith('.pth')
-        assert os.path.exists(os.path.join(OUTPUT_PATH, args.model_path))
-        assert CONFIG_FILE_NAME in os.listdir(os.path.join(OUTPUT_PATH, args.model_path))
-    assert os.path.exists(os.path.join(DATASETS_DIR, args.dataset_name))
+        assert args.model_path.endswith('.pth'), f'model_path file type incorrect, model_path={args.model_path}'
+
+        assert os.path.exists(os.path.join(OUTPUT_PATH, args.model_path)),\
+            f'model_path file type incorrect, model_path={args.model_path}'
+
+        model_dir_path = os.path.join(*args.model_path.split('/')[0:-1])
+        assert CONFIG_FILE_NAME in os.listdir(os.path.join(OUTPUT_PATH, model_dir_path)),\
+            f'model_path directory does not contain {CONFIG_FILE_NAME} file file'
 
 
-def train(model_path, dataset_name, language):
-
-    run_name = model_path.split('/')[-2] if model_path else DEFAULT_MODEL_NAME
+def train(model_path, dataset_name, language, run_name):
     mode = 'continue' if model_path else 'new'
 
     dataset_config = BaseDatasetConfig(
@@ -122,6 +122,8 @@ if __name__=='__main__':
     parser.add_argument('-m', '--model_path', action='store', dest='model_path', default=None,
                         help='Model path (from output/), starts from scratch if not given.'
                              ' There must be config.json next to model!')
+    parser.add_argument('-n', '--run_name', action='store', dest='run_name', default=DEFAULT_RUN_NAME,
+                        help=f'Run name. Default {DEFAULT_RUN_NAME}')
     parser.add_argument('-l', '--language', action='store', dest='language', default='en',
                         help='Language of model (en/pl). Default: en.')
     parser.add_argument('-d', '--dataset', action='store', dest='dataset_name', default='dataset',
@@ -133,4 +135,4 @@ if __name__=='__main__':
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
 
-    train(args.model_path, args.dataset_name, args.language)
+    train(args.model_path, args.dataset_name, args.language, args.run_name)
