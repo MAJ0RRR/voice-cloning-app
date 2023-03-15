@@ -1,12 +1,16 @@
+from lazy_import import lazy_module
 from playsound import playsound
 import tkinter as tk
 
-from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
-    MODELS_ON_PAGE, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
-from app.views.choose_audio_for_training import ChooseAudioForTrainingView
-from app.views.all_recordings_model_view import AllRecordingsModelView
 from app.enums import Options
+from app.views.all_recordings_model_view import AllRecordingsModelView
+from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
+    PAGING, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
+from app.views.choose_audio_for_training import ChooseAudioForTrainingView
+from app.views.generate_recordings_view import GenerateRecordingsView
 
+
+choose_gender_language_module = lazy_module("choose_gender_language.view")
 PAD_Y = 40
 
 
@@ -24,23 +28,31 @@ class ChooseVoiceModelView(BasicView):
         self.model_labels = []
         self.model_buttons = []
         self.display_models()
-        self.next_page_button = tk.Button(width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
+        self.next_page_button = None
         if self.has_next_page():
             self.next_page_button = tk.Button(self.root, text="Następna strona", width=BUTTON_WIDTH_2,
                                               height=BUTTON_HEIGHT_2,
                                               command=self.next_page, font=BUTTON_FONT)
-            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + MODELS_ON_PAGE * PAD_Y)
+            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + PAGING * PAD_Y)
 
+    def display_widgets(self):
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
                                      width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
         back_button = tk.Button(self.root, text="Cofnij", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
-                                command=self.switch_to_choose_gender_language_view)
+                                command=self.switch_to_choose_gender_language_train)
         continue_button = tk.Button(self.root, text="Dalej", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
                                     command=self.switch_to_next_view)
 
         main_menu_button.place(x=200, y=700)
         back_button.place(x=800, y=700)
         continue_button.place(x=1400, y=700)
+
+    def switch_to_choose_gender_language_view(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        choose_gender_language_module.ChooseGenderLanguageView(self.root, self.voice_model_service,
+                                                               self.voice_recordings_service, self.version_service,
+                                                               self.option)
 
     def switch_to_next_view(self):
         for widget in self.root.winfo_children():
@@ -51,7 +63,8 @@ class ChooseVoiceModelView(BasicView):
                                        self.version_service, self.gender,
                                        self.language, model_id)
         else:
-            pass
+            GenerateRecordingsView(self.root, self.gender, self.language, self.voice_model_service,
+                                   self.voice_recordings_service, self.version_service, model_id, self.option)
 
     def display_models(self):
         models = self.model_entities[self.page * 10:self.page * 10 + 10]
@@ -85,7 +98,7 @@ class ChooseVoiceModelView(BasicView):
             self.previous_page_button = tk.Button(self.root, text="Poprzednia strona", width=BUTTON_WIDTH_2,
                                                   height=BUTTON_HEIGHT_2,
                                                   command=self.previous_page, font=BUTTON_FONT)
-            self.previous_page_button.place(x=WIDTH / 2 - 200, y=Y_FIRST_MODEL + MODELS_ON_PAGE * PAD_Y)
+            self.previous_page_button.place(x=WIDTH / 2 - 200, y=Y_FIRST_MODEL + PAGING * PAD_Y)
 
         if not self.has_next_page():
             self.next_page_button.destroy()
@@ -102,7 +115,7 @@ class ChooseVoiceModelView(BasicView):
             self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=BUTTON_WIDTH_2,
                                               height=BUTTON_HEIGHT_2,
                                               command=self.next_page, font=BUTTON_FONT)
-            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + MODELS_ON_PAGE * PAD_Y)
+            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + PAGING * PAD_Y)
         self.page -= 1
         if self.page == 0:
             self.previous_page_button.destroy()

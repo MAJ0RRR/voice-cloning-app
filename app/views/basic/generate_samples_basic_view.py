@@ -16,15 +16,18 @@ class GenerateSamplesBasicView(BasicView):
     def __init__(self, root, voice_model_service, voice_records_service, version_service):
         super(GenerateSamplesBasicView, self).__init__(root, voice_model_service, voice_records_service,
                                                        version_service)
+        self.stop_event = threading.Event()
+        self.stop = False
+        self.display_widgets()
+        self.root.update()
+        self.start_generate_samples()
+
+    def display_widgets(self):
         label = tk.Label(self.root, font=MAX_FONT, text='Próbki są przygotowywane', bg='green')
         label.pack(pady=PAD_Y)
         cancel_button = tk.Button(self.root, text='Anuluj', font=BUTTON_FONT, command=self.cancel, width=BUTTON_WIDTH_1,
                                   height=BUTTON_HEIGHT_1)
         cancel_button.pack(pady=PAD_Y)
-        self.stop_event = threading.Event()
-        self.stop = False
-        self.root.update()
-        self.start_generate_samples()
 
     def cancel(self):
         res = mb.askquestion('Przerwanie tworzenia próbek', 'Czy na pewno chcesz zakończyć tworzenie próbek')

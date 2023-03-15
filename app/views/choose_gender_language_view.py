@@ -14,19 +14,21 @@ class ChooseGenderLanguageView(BasicView):
         self.option = option
         self.language = tk.StringVar()
         self.language.set("polish")
-        language_label = tk.Label(root, bg='green', text="Wybierz język", font=BUTTON_FONT)
-        language_label.place(x=WIDTH / 2 - 60, y=60)
-        rb1 = tk.Radiobutton(root, text="polski", variable=self.language, value='polish', font=BUTTON_FONT)
-        rb2 = tk.Radiobutton(root, text="angielski", variable=self.language, value='english', font=BUTTON_FONT)
-        rb1.place(x=WIDTH / 2 - RADIO_BUTTON_WIDTH - 10, y=100, width=RADIO_BUTTON_WIDTH)
-
-        rb2.place(x=WIDTH / 2 + 10, y=100, width=RADIO_BUTTON_WIDTH)
         self.gender = tk.StringVar()
         self.gender.set("man")
-        gender_label = tk.Label(root, text="Wybierz płeć", bg='green', font=BUTTON_FONT)
+
+
+    def display_widgets(self):
+        language_label = tk.Label(self.root, bg='green', text="Wybierz język", font=BUTTON_FONT)
+        language_label.place(x=WIDTH / 2 - 60, y=60)
+        rb1 = tk.Radiobutton(self.root, text="polski", variable=self.language, value='polish', font=BUTTON_FONT)
+        rb2 = tk.Radiobutton(self.root, text="angielski", variable=self.language, value='english', font=BUTTON_FONT)
+        rb1.place(x=WIDTH / 2 - RADIO_BUTTON_WIDTH - 10, y=100, width=RADIO_BUTTON_WIDTH)
+        rb2.place(x=WIDTH / 2 + 10, y=100, width=RADIO_BUTTON_WIDTH)
+        gender_label = tk.Label(self.root, text="Wybierz płeć", bg='green', font=BUTTON_FONT)
         gender_label.place(x=WIDTH / 2 - 60, y=200)
-        rb3 = tk.Radiobutton(root, text="kobieta", variable=self.gender, value='woman', font=BUTTON_FONT)
-        rb4 = tk.Radiobutton(root, text="mężczyzna", variable=self.gender, value='man', font=BUTTON_FONT)
+        rb3 = tk.Radiobutton(self.root, text="kobieta", variable=self.gender, value='woman', font=BUTTON_FONT)
+        rb4 = tk.Radiobutton(self.root, text="mężczyzna", variable=self.gender, value='man', font=BUTTON_FONT)
         rb3.place(x=WIDTH / 2 - RADIO_BUTTON_WIDTH - 10, y=230, width=RADIO_BUTTON_WIDTH)
         rb4.place(x=WIDTH / 2 + 10, y=230, width=RADIO_BUTTON_WIDTH)
 

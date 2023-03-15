@@ -1,5 +1,5 @@
-import tkinter as tk
 from lazy_import import lazy_module
+import tkinter as tk
 
 from app.views.basic.basic_choose_audio_file import BasicChooseAudioFile
 from app.views.basic.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_FONT, Y_MENU
@@ -16,18 +16,20 @@ class ChooseAudioForTrainingView(BasicChooseAudioFile):
         self.gender = gender
         self.language = language
         self.model_id = model_id
+        self.generate_samples = tk.BooleanVar()
+
+    def display_widgets(self):
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
                                      width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
         back_button = tk.Button(self.root, text="Wybierz ponownie model głosu", width=BUTTON_WIDTH_1,
                                 height=BUTTON_HEIGHT_1,
-                                command=self.switch_to_choose_gender_language_view, font=BUTTON_FONT)
+                                command=self.switch_to_choose_gender_language_train, font=BUTTON_FONT)
         continue_button = tk.Button(self.root, text="Trenuj model", width=BUTTON_WIDTH_1,
                                     height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
         main_menu_button.place(x=250, y=Y_MENU)
         back_button.place(x=750, y=Y_MENU)
         continue_button.place(x=1250, y=Y_MENU)
-        self.generate_samples = tk.BooleanVar()
-        checkbox = tk.Checkbutton(root, text="Wygeneruj próbki", activebackground='green', highlightthickness=0,
+        checkbox = tk.Checkbutton(self.root, text="Wygeneruj próbki", activebackground='green', highlightthickness=0,
                                   highlightcolor='green',
                                   bg='green', font=BUTTON_FONT, variable=self.generate_samples, width=BUTTON_WIDTH_1,
                                   height=BUTTON_HEIGHT_1)

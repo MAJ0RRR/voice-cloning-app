@@ -1,5 +1,5 @@
-import sqlite3
 import os
+import sqlite3
 
 from app.entities.voice_model import VoiceModel
 from app.settings import MODEL_DIR
@@ -47,6 +47,19 @@ class VoiceModelDbService:
                            "language": row[5]}
             voice_models.append(voice_model)
         return voice_models
+
+    def select_by_id(self, id):
+        query = "SELECT v.id, v.name, v.path_model, v.path_config, v.gender, v.language " \
+                "FROM voice_models AS v " \
+                "WHERE v.id = ?"
+        self.cursor.execute(query, (id,))
+        rows = self.cursor.fetchall()
+        voice_models = []
+        for row in rows:
+            voice_model = {"id": row[0], "name": row[1], "path_model": row[2], 'path_config': row[3], "gender": row[4],
+                           "language": row[5]}
+            voice_models.append(voice_model)
+        return voice_models[0]
 
     def select_all_voice_models(self):
         query = "SELECT v.id, v.name, v.path_model, v.path_config, v.gender, v.language " \

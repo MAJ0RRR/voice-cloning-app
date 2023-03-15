@@ -2,7 +2,7 @@ from lazy_import import lazy_module
 import threading
 
 from app.views.train_view import TrainView
-
+from app.views.basic.generate_samples_basic_view import GenerateSamplesBasicView
 choose_audio_for_training_module = lazy_module('app.views.choose_audio_for_training')
 
 

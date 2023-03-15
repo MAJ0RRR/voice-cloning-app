@@ -1,8 +1,8 @@
-import sqlite3
 import os
+import sqlite3
 
-from app.settings import GENERATED_DIR
 from app.entities.voice_recording import VoiceRecording
+from app.settings import GENERATED_DIR
 
 
 class VoiceRecordingDbService:
@@ -60,9 +60,26 @@ class VoiceRecordingDbService:
             voice_records.append(voice_record)
         return voice_records
 
+    def select_by_id(self, id):
+        query = "SELECT v.id, v.name, v.path, v.model_id " \
+                "FROM voice_recordings AS v " \
+                "WHERE v.id = ?"
+        self.cursor.execute(query, (id,))
+        rows = self.cursor.fetchall()
+        voice_recordings = []
+        for row in rows:
+            voice_recording = {"id": row[0], "name": row[1], "path": row[2], "model_id": row[3]}
+            voice_recordings.append(voice_recording)
+        return voice_recordings[0]
+
     def initialize(self):
         path1 = os.path.join(GENERATED_DIR, 'test1.mp3')
         self.insert(VoiceRecording('basic', path1, 1))
+
+    def delete_by_id(self, voice_recording_id):
+        query = "DELETE FROM voice_recordings WHERE id = ?"
+        self.cursor.execute(query, (voice_recording_id,))
+        self.conn.commit()
 
     def close(self):
         self.conn.close()

@@ -7,6 +7,8 @@ class FinishGeneratingSamples(BasicView):
 
     def __init__(self, root, voice_model_service, voice_records_service, version_service):
         super(FinishGeneratingSamples, self).__init__(root, voice_model_service, voice_records_service, version_service)
+
+    def display_widgets(self):
         label1 = tk.Label(self.root, text="Generowanie próbek zakończone.", font=MAX_FONT, bg='green')
         label1.pack(pady=PAD_Y)
         label2 = tk.Label(self.root, text="Próbki znajdują się w folderze...", font=MAX_FONT, bg='green')
@@ -19,3 +21,4 @@ class FinishGeneratingSamples(BasicView):
 
         b1.place(x=500, y=HEIGHT / 2 - 20)
         b2.place(x=1000, y=HEIGHT / 2 - 20)
+

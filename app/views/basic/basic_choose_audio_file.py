@@ -13,6 +13,9 @@ class BasicChooseAudioFile(BasicView):
         super(BasicChooseAudioFile, self).__init__(root, voice_model_service, voice_records_service, version_service)
         self.file_labels = []
         self.dir_labels = []
+        self.display_widgets()
+
+    def display_widgets(self):
         directory_button = tk.Button(self.root, text="Select directory", command=self.open_directory,
                                      width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
         file_button = tk.Button(self.root, text="Select file", command=self.open_file, width=BUTTON_WIDTH_1,
