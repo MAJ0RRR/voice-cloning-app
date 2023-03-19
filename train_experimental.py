@@ -1,7 +1,4 @@
-import os
-
 from trainer import Trainer, TrainerArgs
-
 from TTS.config import load_config
 from TTS.tts.configs.shared_configs import BaseDatasetConfig
 from TTS.tts.configs.vits_config import VitsConfig
@@ -9,44 +6,42 @@ from TTS.tts.datasets import load_tts_samples
 from TTS.tts.models.vits import Vits, VitsAudioConfig
 from TTS.tts.utils.text.tokenizer import TTSTokenizer
 from TTS.utils.audio import AudioProcessor
+import os
 import argparse
 
-output_path = "output/"
-
-def check_files(model_dir_path, model_path):
-
-    if not os.path.exists(os.path.join(output_path, model_dir_path)) or not model_path.endswith('.pth'):
-        return 'new'
-    
-    if not os.path.exists(os.path.join(output_path, model_path)):
-        return 'Directory exists and doesnt contain model with given path'
-    
-    for fname in os.listdir(os.path.join(output_path, model_dir_path)):
-        if fname == 'config.json':
-            break
-    else:
-        return 'No config error'
-    
-    return 'continue'
+OUTPUT_PATH = "output/"
+CONFIG_FILE_NAME = "config.json"
+DEFAULT_RUN_NAME = "new_model"
+DATASETS_DIR = "audiofiles/datasets"
 
 
-def train(model_path, dataset_name, language):
+def validate_input(args):
+    assert int(args.gpu_num) >= 0, f'gpu_num is smaller than 0, gpu_num={args.gpu_num}'
 
-    if model_path.endswith('.pth'):
-        model_dir_path = os.path.join(*model_path.split('/')[0:-1]) 
-        run_name = model_path.split('/')[-2]
-    else:
-        model_dir_path = model_path
-        run_name = model_path.split('/')[-1]
+    assert args.language in ('en', 'pl'), f'incorrect language ID, language={args.language}'
 
-    mode = check_files(model_dir_path, model_path)
+    assert args.run_name, f'run_name cannot be empty'
 
-    if mode != 'new' and mode != 'continue':
-        print(mode)
-        return
+    assert args.dataset_name, f'dataset_name cannot be empty'
+    assert os.path.exists(os.path.join(DATASETS_DIR, args.dataset_name)), \
+        f'directory dataset_name does not exist, dataset_name={args.dataset_name}'
+
+    if args.model_path:
+        assert args.model_path.endswith('.pth'), f'model_path file type incorrect, model_path={args.model_path}'
+
+        assert os.path.exists(os.path.join(OUTPUT_PATH, args.model_path)),\
+            f'model_path file type incorrect, model_path={args.model_path}'
+
+        model_dir_path = os.path.join(*args.model_path.split('/')[0:-1])
+        assert CONFIG_FILE_NAME in os.listdir(os.path.join(OUTPUT_PATH, model_dir_path)),\
+            f'model_path directory does not contain {CONFIG_FILE_NAME} file file'
+
+
+def train(model_path, dataset_name, language, run_name):
+    mode = 'continue' if model_path else 'new'
 
     dataset_config = BaseDatasetConfig(
-        formatter="ljspeech", meta_file_train="metadata.csv", path=os.path.join('audiofiles','datasets', dataset_name))
+        formatter="ljspeech", meta_file_train="metadata.csv", path=os.path.join(DATASETS_DIR, dataset_name))
 
     audio_config = VitsAudioConfig(
         sample_rate=22050, win_length=1024, hop_length=256, num_mels=80, mel_fmin=0, mel_fmax=None
@@ -61,7 +56,7 @@ def train(model_path, dataset_name, language):
             batch_size=20,
             eval_batch_size=20,
             batch_group_size=4,
-        #    num_loader_workers=8,
+            # num_loader_workers=8,
             num_loader_workers=4,
             num_eval_loader_workers=4,
             run_eval=True,
@@ -71,21 +66,22 @@ def train(model_path, dataset_name, language):
             save_checkpoints=True,
             save_n_checkpoints=10,
             save_best_after=1000,
-            #text_cleaner="english_cleaners",
+            # text_cleaner="english_cleaners",
             text_cleaner="multilingual_cleaners",
+            eval_split_size=0.1,
             use_phonemes=True,
             phoneme_language=language,
-            phoneme_cache_path=os.path.join(output_path, "phoneme_cache"),
+            phoneme_cache_path=os.path.join(OUTPUT_PATH, "phoneme_cache"),
             compute_input_seq_cache=True,
             print_step=10,
             print_eval=True,
             mixed_precision=True,
-            output_path=output_path,
+            output_path=OUTPUT_PATH,
             datasets=[dataset_config],
             cudnn_benchmark=False,
         )
     else:
-        config = load_config(os.path.join(output_path, model_dir_path, "config.json"))
+        config = load_config(os.path.join(OUTPUT_PATH, os.path.join(OUTPUT_PATH, model_path), CONFIG_FILE_NAME))
 
     #print(config)
     # INITIALIZE THE AUDIO PROCESSOR
@@ -110,42 +106,40 @@ def train(model_path, dataset_name, language):
         eval_split_size=config.eval_split_size,
     )
 
-    # init model
-    if mode=='new':
-        model = Vits(config, ap, tokenizer, speaker_manager=None)
-    else: #model = continue
-        model = Vits(config, ap, tokenizer, speaker_manager=None)
-        model.load_checkpoint(config, os.path.join(output_path, model_path))
+    model = Vits(config, ap, tokenizer, speaker_manager=None)
+    if mode == 'continue':
+        model.load_checkpoint(config, os.path.join(OUTPUT_PATH, model_path))
 
     # init the trainer and begin
     trainer = Trainer(
         TrainerArgs(),
         config,
-        output_path,
+        OUTPUT_PATH,
         model=model,
         train_samples=train_samples,
         eval_samples=eval_samples,
     )
     trainer.fit()
 
+
 if __name__=='__main__':
 
-    parser = argparse.ArgumentParser(
-        prog = 'Train',
-        description = 'Trains model from scratch or continues training of given model'
-        )
-    parser.add_argument('-m', '--model_path', action='store', dest='model_path', 
-        default='new_model', help='Model path (from output/), starts from scratch if directory containing model doesnt exist.\
-          There must be config.json next to model! Default: new_model/ .')
-    parser.add_argument('-l', '--language', action='store', dest='language', 
-        default='en', help='Language of model (en/pl). Default: en.')
-    parser.add_argument('-d', '--dataset', action='store', dest='dataset_name', 
-        default='dataset', help='Dataset name (from audiofiles/datasets). Default: dataset.')
-    parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', 
-        required=True, help='GPU number.')
+    parser = argparse.ArgumentParser(prog='Train',
+                                     description='Trains model from scratch or continues training of given model')
+    parser.add_argument('-m', '--model_path', action='store', dest='model_path', default=None,
+                        help='Model path (from output/), starts from scratch if not given.'
+                             ' There must be config.json next to model!')
+    parser.add_argument('-n', '--run_name', action='store', dest='run_name', default=DEFAULT_RUN_NAME,
+                        help=f'Run name. Default {DEFAULT_RUN_NAME}')
+    parser.add_argument('-l', '--language', action='store', dest='language', default='en',
+                        help='Language of model (en/pl). Default: en.')
+    parser.add_argument('-d', '--dataset', action='store', dest='dataset_name', default='dataset',
+                        help=f'Dataset name (from {DATASETS_DIR}). Default: dataset.')
+    parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', required=True, help='GPU number.')
 
-    result = parser.parse_args()
+    args = parser.parse_args()
+    validate_input(args)
 
-    os.environ["CUDA_VISIBLE_DEVICES"]=result.gpu_num
+    os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
 
-    train(result.model_path, result.dataset_name, result.language)
+    train(args.model_path, args.dataset_name, args.language, args.run_name)
