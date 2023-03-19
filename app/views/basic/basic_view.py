@@ -55,3 +55,9 @@ class BasicView:
             widget.destroy()
         main_menu_module.MainView(self.root, self.voice_model_service, self.voice_recordings_service,
                                   self.version_service)
+
+    def switch_to_choose_language(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                                    self.version_service, Options.generate_samples)

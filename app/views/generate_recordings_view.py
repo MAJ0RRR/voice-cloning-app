@@ -43,6 +43,7 @@ class GenerateRecordingsView(BasicView):
         self.q = queue.Queue()
         self.thread = threading.Thread(target=self.worker, args=(self.q,))
         self.thread.start()
+        self.display_widgets()
 
     def display_widgets(self):
         label = tk.Label(self.root, text=f"Model {self.model['name']}", font=MAX_FONT, bg='green')

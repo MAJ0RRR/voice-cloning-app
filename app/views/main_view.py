@@ -18,10 +18,9 @@ class MainView(BasicView):
                        height=BUTTON_HEIGHT_1, font=BUTTON_FONT,
                        command=self.switch_to_choose_gender_language_synthesize)
         b4 = tk.Button(self.root, text="Wygeneruj próbki do uczenia", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
-                       command=self.switch_to_choose_gender_language_synthesize, font=BUTTON_FONT)
+                       command=self.switch_to_choose_language, font=BUTTON_FONT)
 
         b1.pack(pady=PAD_Y)
         b2.pack(pady=PAD_Y)
         b3.pack(pady=PAD_Y)
         b4.pack(pady=PAD_Y)
-

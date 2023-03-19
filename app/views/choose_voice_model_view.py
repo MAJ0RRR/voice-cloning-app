@@ -1,14 +1,14 @@
 from lazy_import import lazy_module
 from playsound import playsound
+import shutil
 import tkinter as tk
 
 from app.enums import Options
 from app.views.all_recordings_model_view import AllRecordingsModelView
 from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
     PAGING, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
-from app.views.choose_audio_for_training import ChooseAudioForTrainingView
+from app.views.choose_audio_view import ChooseAudioForTrainingView
 from app.views.generate_recordings_view import GenerateRecordingsView
-
 
 choose_gender_language_module = lazy_module("choose_gender_language.view")
 PAD_Y = 40
@@ -34,6 +34,7 @@ class ChooseVoiceModelView(BasicView):
                                               height=BUTTON_HEIGHT_2,
                                               command=self.next_page, font=BUTTON_FONT)
             self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + PAGING * PAD_Y)
+        self.display_widgets()
 
     def display_widgets(self):
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,

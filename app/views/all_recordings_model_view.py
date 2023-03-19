@@ -1,4 +1,5 @@
 from lazy_import import lazy_module
+from tkinter import messagebox
 import os
 from playsound import playsound
 import tkinter as tk
@@ -26,6 +27,7 @@ class AllRecordingsModelView(BasicView):
         self.recording_labels = []
         self.recording_buttons = []
         self.display_recordings()
+        self.display_widgets()
         self.next_page_button = None
         if self.has_next_page():
             self.next_page_button = tk.Button(self.root, text="Następna strona", width=BUTTON_WIDTH_2,
@@ -69,6 +71,14 @@ class AllRecordingsModelView(BasicView):
                                font=BUTTON_FONT, command=lambda: self.play_audio(recording['path']))
             button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + len(self.recording_buttons) * PAD_Y)
             self.recording_buttons.append(button)
+
+    def cancel_process(self):
+        confirm = messagebox.askyesno("Przerwanie syntezowania", "Czy na pewno chcesz przerwać syntezę głosu?")
+
+        if confirm:
+            self.popup.destroy()
+            self.stop = True
+            self.speech_synthesizer.stop_event.set()
 
     def has_next_page(self):
         return len(self.recordings_entities) > (self.page * 10 + 10)
