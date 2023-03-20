@@ -33,12 +33,12 @@ if __name__ == "__main__":
     os.system(f"find {parsed.source} -name '*.wav' -exec bash -c 'for f; do ffmpeg -y -i \"$f\" -acodec pcm_s16le -ar 22050 -ac 1 \"{tempdir.name}/$(basename -s .wav $f)\".wav -loglevel error; done' _ {{}} +")
 
 	# do split files
-    audiofiles = glob.glob("audiofiles/temp/*.wav")
+    audiofiles = glob.glob(f"{tempdir.name}/*.wav")
     for audiofile in audiofiles:
-        split_file(audiofile, "audiofiles/splits", parsed.length)
+        split_file(audiofile, f"{parsed.destination}", parsed.length)
 	
 	# close tempdir
     tempdir.cleanup()
 
 	# remove files that are to small
-    os.system("find audiofiles/splits -name \"*.wav\" -type f -size -30k -delete")
+    os.system(f"find {parsed.destination} -name \"*.wav\" -type f -size -30k -delete")
