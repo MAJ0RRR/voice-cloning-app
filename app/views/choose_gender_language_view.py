@@ -42,9 +42,10 @@ class ChooseGenderLanguageView(BasicView):
         submit_button.place(x=WIDTH / 2, y=450)
 
     def switch_to_next_view(self):
-        if self.option == Options.generate_samples.value:
+        if self.option == Options.generate_samples:
             self.switch_to_choose_audio()
-        self.switch_to_choose_audio()
+        else:
+            self.switch_to_choose_model()
 
     def switch_to_choose_model(self):
         gender = self.gender.get()

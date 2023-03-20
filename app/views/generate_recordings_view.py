@@ -39,6 +39,7 @@ class GenerateRecordingsView(BasicView):
         self.speech_synthesizer = SpeachSynthesizer(self.model)
         self.popup = None
         self.page = 0
+        self.event = threading.Event()
         self.thread = None
         self.q = queue.Queue()
         self.thread = threading.Thread(target=self.worker, args=(self.q,))
@@ -65,7 +66,14 @@ class GenerateRecordingsView(BasicView):
         all_recordings_button.place(x=800, y=700)
         model_list_button.place(x=1400, y=700)
 
+    def switch_to_main_view(self):
+        self.event.set()
+        self.thread.join()
+        super().switch_to_main_view()
+
     def switch_to_choose_model(self):
+        self.event.set()
+        self.thread.join()
         for widget in self.root.winfo_children():
             widget.destroy()
         choose_voice_model_module.ChooseVoiceModelView(self.root, self.gender, self.language, self.voice_model_service,
@@ -73,6 +81,8 @@ class GenerateRecordingsView(BasicView):
                                                        self.version_service, self.option)
 
     def switch_to_recordings_of_model(self):
+        self.event.set()
+        self.thread.join()
         for widget in self.root.winfo_children():
             widget.destroy()
         all_recordings_model_module.AllRecordingsModelView(self.root, self.gender, self.language,
@@ -210,8 +220,12 @@ class GenerateRecordingsView(BasicView):
             print('error')
 
     def worker(self, q):
-        while True:
-            func = q.get()
+        if self.event.is_set():
+            return
+        try:
+            func = q.get(block=False, timeout=5)
             if func is not None:
                 func()
                 q.task_done()
+        except:
+            pass

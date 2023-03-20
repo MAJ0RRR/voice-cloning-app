@@ -61,8 +61,8 @@ class ChooseVoiceModelView(BasicView):
         model_id = self.choosen_model.get()
         if self.option == Options.train:
             ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
-                                       self.version_service, self.gender,
-                                       self.language, model_id)
+                            self.version_service, self.gender,
+                            self.language, model_id)
         else:
             GenerateRecordingsView(self.root, self.gender, self.language, self.voice_model_service,
                                    self.voice_recordings_service, self.version_service, model_id, self.option)

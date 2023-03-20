@@ -23,7 +23,7 @@ class VersionService:
         return rows[0][0]
 
     def update_version(self, old_version, new_version):
-        self.cursor.execute('''UPDATE versions SET version = ? WHERE vesion = ?''', (new_version, old_version))
+        self.cursor.execute('''UPDATE versions SET version = ? WHERE version = ?''', (new_version, old_version))
         self.conn.commit()
         return True
 

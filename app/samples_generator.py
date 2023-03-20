@@ -21,9 +21,9 @@ class SamplesGenerator:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
-        print("after 1 ")
-        process = subprocess.Popen(["python", "../noise.py", "--destination", f"dataset{version}"])
-        while process.poll() is None:
+        source_2 = os.path.join(WORKING_DIR, "audiofiles/splits")
+        process2 = subprocess.Popen(["python", "../noise.py", "-s", source_2, "--destination", f"dataset{version}"])
+        while process2.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
@@ -31,8 +31,8 @@ class SamplesGenerator:
         create_transcription(WORKING_DIR, f"dataset{version}", self.language, 1)
         print("after 3")
         root = os.path.join(WORKING_DIR, f'audiofiles/datasets/dataset{version}')
-        process = subprocess.Popen(["python", "../discard_transcriptions.py", self.language, root])
-        while process.poll() is None:
+        process3 = subprocess.Popen(["python", "../discard_transcriptions.py", self.language, root])
+        while process3.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)

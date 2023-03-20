@@ -31,6 +31,7 @@ class ChooseAudioView(BasicView):
         self.dir_labels = []
         self.samples_generator = SamplesGenerator(self.language, self.version_service)
         self.q = queue.Queue()
+        self.event = threading.Event()
         self.thread = threading.Thread(target=self.worker, args=(self.q,))
         self.thread.start()
         self.stop = None
@@ -67,30 +68,45 @@ class ChooseAudioView(BasicView):
         delete_file_button.place(x=550, y=100)
 
     def switch_to_choose_model(self):
+        self.event.set()
         self.thread.join()
         for widget in self.root.winfo_children():
             widget.destroy()
         choose_voice_model_view.ChooseVoiceModelView(self.root, self.gender, self.language, self.voice_model_service,
                                                      self.voice_recordings_service, self.version_service, self.option)
 
+    def switch_to_main_view(self):
+        self.event.set()
+        self.thread.join()
+        super().switch_to_main_view()
+
     def switch_to_choose_language(self):
+        self.event.set()
         self.thread.join()
         super().switch_to_choose_language()
 
+    def warning_no_files(self):
+        messagebox.showerror('Brak plików', 'Nie wybrano żadnych plików!')
+
     def start_generate_samples(self):
+        n_files = self.copy_all_files_to_dir()
+        if n_files == 0:
+            self.warning_no_files()
+            return
         version = self.version_service.get_version()
-        self.copy_all_files_to_dir()
         self.samples_generator.stop_event = threading.Event()
         screen_pos = self.root.winfo_x()  # we need this to popup on the same screen which is app
-        self.q.put(lambda: self.samples_generator.generate_samples(version, self.after_generating), ())
+        self.q.put(lambda: self.samples_generator.generate_samples(version, self.finish_generating), ())
         x = (WIDTH - POPUP_WIDTH) // 2 + screen_pos
         y = (HEIGHT - POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
         self.popup.geometry(f"{POPUP_WIDTH}x{POPUP_HEIGHT}+{x}+{y}")
-        self.popup.title("Trwa proces")
+        self.popup.title("Próbki są generowane")
 
-        label = tk.Label(self.popup, text="Aby przerwać generowanie próbek kliknij anuluj.")
+        label = tk.Label(self.popup, text="Aby przerwać generowanie")
         label.pack(padx=10, pady=10)
+        label = tk.Label(self.popup, text="próbek kliknij anuluj.")
+        label.pack()
 
         cancel_button = tk.Button(self.popup, text="Anuluj", command=self.cancel)
         cancel_button.pack(padx=10, pady=10)
@@ -99,11 +115,14 @@ class ChooseAudioView(BasicView):
         self.popup.destroy()
         if self.stop:
             return
-        self.version_service(version, version+1)
+        self.version_service.update_version(version, version + 1)
         if self.option == Options.train:
             self.switch_to_train()
         self.delete_all_file_and_dir_labels()
         self.inform_about_generated_samples(path)
+
+    def finish_generating(self, version, path):
+        self.root.after(0, lambda: self.after_generating(version, path))
 
     def inform_about_generated_samples(self, path):
         messagebox.showinfo("Zakończono generowanie próbek",
@@ -144,14 +163,18 @@ class ChooseAudioView(BasicView):
             self.dir_labels = self.dir_labels[:-1]
 
     def copy_all_files_to_dir(self):
+        counter = 0
         for file in self.file_labels:
             source_path = file.cget("text")
             self.copy_file_to_dir(source_path)
+            counter += 1
         for dir_label in self.dir_labels:
             dir = dir_label.cget("text")
             files = self.allowed_files_from_dir(dir)
             for file in files:
                 self.copy_file_to_dir(file)
+                counter += 1
+        return counter
 
     def allowed_files_from_dir(self, dir):
         ret = []
@@ -181,8 +204,12 @@ class ChooseAudioView(BasicView):
 
     def worker(self, q):
         while True:
-            print('work work')
-            func = q.get()
-            if func is not None:
-                func()
-                q.task_done()
+            if self.event.is_set():
+                return
+            try:
+                func = q.get(block=False, timeout=5)
+                if func is not None:
+                    func()
+                    q.task_done()
+            except:
+                pass
