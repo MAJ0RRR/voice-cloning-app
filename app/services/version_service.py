@@ -20,7 +20,7 @@ class VersionService:
     def get_version(self):
         self.cursor.execute('''SELECT version FROM versions''')
         rows = self.cursor.fetchall()
-        return rows[0]
+        return rows[0][0]
 
     def update_version(self, old_version, new_version):
         self.cursor.execute('''UPDATE versions SET version = ? WHERE vesion = ?''', (new_version, old_version))

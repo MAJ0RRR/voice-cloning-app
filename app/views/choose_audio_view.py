@@ -8,31 +8,32 @@ import queue
 
 from app.enums import Options
 from app.samples_generator import SamplesGenerator
-from app.views.basic.basic_choose_audio_file import BasicChooseAudioFile
 from app.views.basic.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_FONT, Y_MENU, ALLOWED_EXTENSIONS, WIDTH, \
-    POPUP_WIDTH, HEIGHT, POPUP_HEIGHT
+    POPUP_WIDTH, HEIGHT, POPUP_HEIGHT, BasicView
 from app.views.train_view import TrainView
-from app.views.generate_samples_view import GenerateSamplesView
 from app.settings import RAW_AUDIO_DIR
 from app.enums import Options
 
 choose_voice_model_view = lazy_module("app.views.choose_voice_model_view")
 
 
-class ChooseAudioView(BasicChooseAudioFile):
+class ChooseAudioView(BasicView):
 
     def __init__(self, root, voice_model_service, voice_records_service, version_service, option, language, gender=None,
                  model_id=None):
         super(ChooseAudioView, self).__init__(root, voice_model_service, voice_records_service, version_service)
+        self.option = option
+        self.display_widgets()
         self.gender = gender
         self.language = language
         self.model_id = model_id
-        self.option = option
         self.file_labels = []
         self.dir_labels = []
-        self.samples_generator = SamplesGenerator()
+        self.samples_generator = SamplesGenerator(self.language, self.version_service)
         self.q = queue.Queue()
         self.thread = threading.Thread(target=self.worker, args=(self.q,))
+        self.thread.start()
+        self.stop = None
 
     def display_widgets(self):
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
@@ -77,8 +78,11 @@ class ChooseAudioView(BasicChooseAudioFile):
         super().switch_to_choose_language()
 
     def start_generate_samples(self):
+        version = self.version_service.get_version()
+        self.copy_all_files_to_dir()
+        self.samples_generator.stop_event = threading.Event()
         screen_pos = self.root.winfo_x()  # we need this to popup on the same screen which is app
-        self.q.put(lambda: self.speech_synthesizer.generate_samples(self.finish_sythesize), ())
+        self.q.put(lambda: self.samples_generator.generate_samples(version, self.after_generating), ())
         x = (WIDTH - POPUP_WIDTH) // 2 + screen_pos
         y = (HEIGHT - POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
@@ -88,13 +92,14 @@ class ChooseAudioView(BasicChooseAudioFile):
         label = tk.Label(self.popup, text="Aby przerwać generowanie próbek kliknij anuluj.")
         label.pack(padx=10, pady=10)
 
-        cancel_button = tk.Button(self.popup, text="Anuluj", command=self.cancel_process)
+        cancel_button = tk.Button(self.popup, text="Anuluj", command=self.cancel)
         cancel_button.pack(padx=10, pady=10)
 
-    def after_generating(self, path):
+    def after_generating(self, version, path):
         self.popup.destroy()
         if self.stop:
             return
+        self.version_service(version, version+1)
         if self.option == Options.train:
             self.switch_to_train()
         self.delete_all_file_and_dir_labels()
@@ -115,7 +120,7 @@ class ChooseAudioView(BasicChooseAudioFile):
             label_dir.place(x=950, y=160 + len(self.dir_labels) + 20)
 
     def open_file(self):
-        allowed_extensions = BasicChooseAudioFile.allowed_extensions()
+        allowed_extensions = self.allowed_extensions()
         file_path = filedialog.askopenfilename(filetypes=(("Audio files", allowed_extensions),))
         if file_path:
             label_file = tk.Label(self.root, text=file_path, bg='green', font=BUTTON_FONT)
@@ -144,12 +149,11 @@ class ChooseAudioView(BasicChooseAudioFile):
             self.copy_file_to_dir(source_path)
         for dir_label in self.dir_labels:
             dir = dir_label.cget("text")
-            files = BasicChooseAudioFile.allowed_files_from_dir(dir)
+            files = self.allowed_files_from_dir(dir)
             for file in files:
                 self.copy_file_to_dir(file)
 
-    @staticmethod
-    def allowed_files_from_dir(dir):
+    def allowed_files_from_dir(self, dir):
         ret = []
         for file in os.listdir(dir):
             filename, extension = os.path.splitext(file)
@@ -164,8 +168,7 @@ class ChooseAudioView(BasicChooseAudioFile):
             self.stop = True
             self.samples_generator.stop_event.set()
 
-    @staticmethod
-    def allowed_extensions():
+    def allowed_extensions(self):
         ret = ""
         for extension in ALLOWED_EXTENSIONS:
             ret += f"{extension} "
@@ -178,6 +181,7 @@ class ChooseAudioView(BasicChooseAudioFile):
 
     def worker(self, q):
         while True:
+            print('work work')
             func = q.get()
             if func is not None:
                 func()

@@ -27,13 +27,13 @@ class ChooseGenderLanguageView(BasicView):
         rb2 = tk.Radiobutton(self.root, text="angielski", variable=self.language, value='english', font=BUTTON_FONT)
         rb1.place(x=WIDTH / 2 - RADIO_BUTTON_WIDTH - 10, y=100, width=RADIO_BUTTON_WIDTH)
         rb2.place(x=WIDTH / 2 + 10, y=100, width=RADIO_BUTTON_WIDTH)
-        gender_label = tk.Label(self.root, text="Wybierz płeć", bg='green', font=BUTTON_FONT)
-        gender_label.place(x=WIDTH / 2 - 60, y=200)
-        rb3 = tk.Radiobutton(self.root, text="kobieta", variable=self.gender, value='woman', font=BUTTON_FONT)
-        rb4 = tk.Radiobutton(self.root, text="mężczyzna", variable=self.gender, value='man', font=BUTTON_FONT)
-        rb3.place(x=WIDTH / 2 - RADIO_BUTTON_WIDTH - 10, y=230, width=RADIO_BUTTON_WIDTH)
-        rb4.place(x=WIDTH / 2 + 10, y=230, width=RADIO_BUTTON_WIDTH)
-
+        if self.option != Options.generate_samples:
+            gender_label = tk.Label(self.root, text="Wybierz płeć", bg='green', font=BUTTON_FONT)
+            gender_label.place(x=WIDTH / 2 - 60, y=200)
+            rb3 = tk.Radiobutton(self.root, text="kobieta", variable=self.gender, value='woman', font=BUTTON_FONT)
+            rb4 = tk.Radiobutton(self.root, text="mężczyzna", variable=self.gender, value='man', font=BUTTON_FONT)
+            rb3.place(x=WIDTH / 2 - RADIO_BUTTON_WIDTH - 10, y=230, width=RADIO_BUTTON_WIDTH)
+            rb4.place(x=WIDTH / 2 + 10, y=230, width=RADIO_BUTTON_WIDTH)
         submit_button = tk.Button(self.root, text="Dalej", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
                                   command=self.switch_to_next_view)
         main_menu = tk.Button(self.root, text="Menu główne", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
@@ -58,5 +58,5 @@ class ChooseGenderLanguageView(BasicView):
         language = self.language.get()
         for widget in self.root.winfo_children():
             widget.destroy()
-        ChooseAudioView(self.root, language, self.voice_model_service, self.voice_recordings_service,
+        ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
                         self.version_service, self.option, language)
