@@ -1,5 +1,6 @@
 """
-This script discards transcriptions that contain illegal symbols from `metadata.csv` file and deltes according `*.wav` file.
+This script discards transcriptions that contain illegal symbols or doesn't meet criterias
+from `metadata.csv` file and deltes according `*.wav` file.
 
 Usage: # Order of arguments matter!
 ------
@@ -13,9 +14,10 @@ Usage: # Order of arguments matter!
 3) Custom language and custom location
 `python3 ./discard.transcriptions.py pl /PATH/TO/DATASET`
 `python3 ./discard.transcriptions.py en /PATH/TO/DATASET`
-
-#TODO:
-- Discard very short transcriptions
+------
+4) Custom language and custom location with custom min_words limit for ex. 5
+`python3 ./discard.transcriptions.py pl /PATH/TO/DATASET 5`
+`python3 ./discard.transcriptions.py en /PATH/TO/DATASET 5`
 ------
 """
 
@@ -34,6 +36,7 @@ if __name__ == "__main__":
     polish_alphabet = list("AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ")
     english_alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     symbols = list(" ,.?!")
+    min_words = 3
 
     alphabets = {
         "pl" : polish_alphabet,
@@ -43,24 +46,34 @@ if __name__ == "__main__":
     alphabet = []
     root = 'audiofiles/datasets/dataset'
 
-    if len(sys.argv) == 1: # Default language in default lcoation
+    if len(sys.argv) == 1: # Default language in default location
         alphabet = polish_alphabet
     elif len(sys.argv) == 2: # Custom language in default location
         alphabet = alphabets[str(sys.argv[1])]
-    else: # Custom language in custom location
+    elif len(sys.argv) == 3:  # Custom language in custom location
         alphabet = alphabets[str(sys.argv[1])]
         root = str(sys.argv[2])
+    else: # Custom language in custom location with custom min_words limit
+        alphabet = alphabets[str(sys.argv[1])]
+        root = str(sys.argv[2])
+        min_words = int(sys.argv[3])
     
     with open(os.path.join(root,'metadata.csv')) as orginal, \
         open(os.path.join(root,'filtered.csv'), 'w') as filtered:
         transcript = csv.reader(orginal, delimiter='|')
 
         for row in transcript:
-            valid = True
-            for substring in str.split(row[1]," "):
-                if not is_valid_string(substring,alphabet,symbols):
-                    valid = False
-                    break
+            words = len(row[1].split(" "))
+            if words <= min_words:
+                valid = False
+            else:
+                valid = True
+
+            if valid:
+                for substring in str.split(row[1]," "):
+                    if not is_valid_string(substring,alphabet,symbols):
+                        valid = False
+                        break
 
             if valid:
                 for element in row[:-1]:
@@ -68,7 +81,6 @@ if __name__ == "__main__":
                     filtered.write('|')
                 filtered.write(row[-1])
                 filtered.write("\n")
-
             else:
                 if os.path.exists(os.path.join(root,f"wavs/{row[0]}.wav")):
                     print(f"Removing: {row[0]}.wav\n")
