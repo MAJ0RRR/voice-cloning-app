@@ -1,46 +1,7 @@
 import os
-import glob
-import pydub
-import pathlib
 import argparse
 import tempfile
-from typing import List
-
-class FileSpliter:
-	def __init__(self, source: str, destination: str, silence_threshs: List[int], min_silence_lens: List[int]):
-		self.source = source
-		self.destination = destination
-		self.silence_threshs = silence_threshs
-		self.min_silence_lens = min_silence_lens
-		self.min_audio_len = 2500
-		self.max_audio_len = 15000
-		
-	def split(self):
-		# iterate over all files
-		audiofiles_src = glob.glob(self.source)
-		for audiofile in audiofiles_src:
-			stem = pathlib.Path(audiofile).stem
-			len_saved = 0
-			print(f'Spliting: {stem}')
-			chunk_num_out = 0
-			signal = pydub.AudioSegment.from_file(audiofile, format='wav')
-			chunks = [signal]
-			for silence_thresh, min_silence_len in zip(self.silence_threshs, self.min_silence_lens):
-				chunks_new_iter = []
-				for chunk in chunks:
-					new_chunks = pydub.silence.split_on_silence(chunk, min_silence_len=min_silence_len, silence_thresh=silence_thresh, keep_silence=50)
-					for new_chunk in new_chunks:
-						if len(new_chunk) < self.min_audio_len:
-							pass
-						elif len(new_chunk) > self.max_audio_len:
-							chunks_new_iter.append(new_chunk)
-						else:
-							len_saved += len(new_chunk)
-							new_chunk.export(os.path.join(self.destination, f'{stem}-CHUNK-{chunk_num_out}.wav'), format='wav')
-							chunk_num_out = chunk_num_out + 1
-				chunks = chunks_new_iter
-			print(f'{(len_saved/len(signal) * 100):.2f}% is used')
-
+from FileSpliter import FileSpliter
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(
@@ -77,8 +38,8 @@ if __name__ == "__main__":
 	os.system(f"find {parsed.source} -name '*.wav' -exec bash -c 'for f; do ffmpeg -y -i \"$f\" -acodec pcm_s16le -ar 22050 -ac 1 \"{tempdir.name}/$(basename -s .wav $f)\".wav -loglevel error; done' _ {{}} +")
 	
 	# do split files
-	fileSpliter = FileSpliter(source=f"{tempdir.name}/*.wav", destination=f"{parsed.destination}", silence_threshs=parsed.silence_threshs, min_silence_lens=parsed.min_silence_lens)
-	fileSpliter.split()
+	fileSpliter = FileSpliter(f"{tempdir.name}/*.wav", f"{parsed.destination}")
+	fileSpliter.split_silence(parsed.silence_threshs, parsed.min_silence_lens)
 	
 	# close tempdir
 	tempdir.cleanup()

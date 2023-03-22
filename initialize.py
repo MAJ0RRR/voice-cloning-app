@@ -1,6 +1,15 @@
 import os
 import sys
 import shutil
+import json
+
+
+def create_subdir(directory, subdir):
+	path = os.path.join(directory, subdir)
+	if not os.path.exists(path):
+		os.mkdir(path)
+	return path
+
 
 def create_venv(project_root):	
 	# path to new venv
@@ -29,9 +38,26 @@ def initialize_directories(project_root):
 	 ]
 
 	for nd in necessary_directories:
-		path = os.path.join(project_root, nd)
-		if not os.path.exists(path):
-			os.mkdir(path)
+		create_subdir(project_root, nd)
+
+def download_models(project_root):
+	import gdown
+
+	default_models_dir = "models/default"
+	default_models_file = "default_models.json"
+	models_path = create_subdir(project_root, default_models_dir)
+
+	with open(default_models_file, 'r') as file:
+		config = json.load(file)
+
+	for language in config.keys():
+		language_path = create_subdir(models_path, language)
+
+		for speaker, model_url in config[language]:
+			speaker_path = create_subdir(language_path, speaker)
+			gdown.download_folder(model_url, output=speaker_path)
+
+
 
 
 def install_rnnoise(project_root):
@@ -57,31 +83,35 @@ def install_rnnoise(project_root):
 
 	return 0, None
 
-
-if __name__ == '__main__':
-
+def initialize():
 	# set this to project root
 	project_root = os.getcwd()
-	
+
 	# create venv with requirements
 	if create_venv(project_root) != 0:
 		print('\nPython 3.9 with venv is not installed!')
 		sys.exit()
-	
+
 	# install requirements to venv
 	if install_requirements(project_root) != 0:
 		print('\nErorr while installing requirements')
 		sys.exit()
-	
+
 	# create all directories
 	initialize_directories(project_root)
-	
+
 	ret_val, failed_command = install_rnnoise(project_root)
 	# install rnnoise
 	if ret_val != 0:
 		print(f'\nErorr while executing "{failed_command}"')
 		sys.exit()
-	
+
+	download_models(project_root)
+
 	# print on success
 	print('\nInitialized successfully')
-	
+
+
+if __name__ == '__main__':
+	initialize()
+

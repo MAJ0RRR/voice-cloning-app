@@ -94,3 +94,4 @@ unidic-lite==1.0.8
 urllib3==1.26.14
 Werkzeug==2.2.3
 zipp==3.15.0
+gdown==4.6.4
