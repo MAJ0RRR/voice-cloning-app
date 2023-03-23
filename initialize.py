@@ -1,14 +1,7 @@
 import os
 import sys
 import shutil
-import json
-
-
-def create_subdir(directory, subdir):
-	path = os.path.join(directory, subdir)
-	if not os.path.exists(path):
-		os.mkdir(path)
-	return path
+import subprocess
 
 
 def create_venv(project_root):	
@@ -38,26 +31,9 @@ def initialize_directories(project_root):
 	 ]
 
 	for nd in necessary_directories:
-		create_subdir(project_root, nd)
-
-def download_models(project_root):
-	import gdown
-
-	default_models_dir = "models/default"
-	default_models_file = "default_models.json"
-	models_path = create_subdir(project_root, default_models_dir)
-
-	with open(default_models_file, 'r') as file:
-		config = json.load(file)
-
-	for language in config.keys():
-		language_path = create_subdir(models_path, language)
-
-		for speaker, model_url in config[language]:
-			speaker_path = create_subdir(language_path, speaker)
-			gdown.download_folder(model_url, output=speaker_path)
-
-
+		path = os.path.join(project_root, nd)
+		if not os.path.exists(path):
+			os.mkdir(path)
 
 
 def install_rnnoise(project_root):
@@ -103,15 +79,16 @@ def initialize():
 	ret_val, failed_command = install_rnnoise(project_root)
 	# install rnnoise
 	if ret_val != 0:
-		print(f'\nErorr while executing "{failed_command}"')
+		print('\nErorr while installing rnnoise')
 		sys.exit()
-
-	download_models(project_root)
 
 	# print on success
 	print('\nInitialized successfully')
 
+def download_models():
+	os.system('venv/bin/python download_models.py')
 
 if __name__ == '__main__':
 	initialize()
+	download_models()
 
