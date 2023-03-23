@@ -32,7 +32,6 @@ if __name__ == "__main__":
     os.system(f"find {parsed.source} -name '*.wav' -exec bash -c 'for f; do ffmpeg -y -i \"$f\" -acodec pcm_s16le -ar 22050 -ac 1 \"{tempdir.name}/$(basename -s .wav $f)\".wav -loglevel error; done' _ {{}} +")
 
 	# do split files
-    
     fs = FileSpliter('audiofiles/temp/*.wav', 'audiofiles/splits')
     fs.split_length(parsed.length)
 	
@@ -40,4 +39,4 @@ if __name__ == "__main__":
     tempdir.cleanup()
 
 	# remove files that are to small
-    os.system("find audiofiles/splits -name \"*.wav\" -type f -size -30k -delete")
+    os.system(f"find {parsed.destination} -name \"*.wav\" -type f -size -30k -delete")
