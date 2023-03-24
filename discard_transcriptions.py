@@ -32,7 +32,7 @@ def is_valid_string(string,alphabet,symbols):
                 return False
     return True
 
-if __name__ == "__main__":
+def discard_transciprions():
     polish_alphabet = list("AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ")
     english_alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     symbols = list(" ,.?!")
@@ -90,3 +90,7 @@ if __name__ == "__main__":
 
     os.remove(os.path.join(root,'metadata.csv'))
     os.rename(os.path.join(root,'filtered.csv'),os.path.join(root,'metadata.csv'))
+
+
+if __name__ == "__main__":
+    discard_transciprions()
