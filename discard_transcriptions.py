@@ -32,7 +32,7 @@ def is_valid_string(string,alphabet,symbols):
                 return False
     return True
 
-def discard_transciprions():
+def discard_transciprions(alph="pl",path="audiofiles/datasets/dataset",word_count=3):
     polish_alphabet = list("AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ")
     english_alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     symbols = list(" ,.?!")
@@ -46,17 +46,22 @@ def discard_transciprions():
     alphabet = []
     root = 'audiofiles/datasets/dataset'
 
-    if len(sys.argv) == 1: # Default language in default location
-        alphabet = polish_alphabet
-    elif len(sys.argv) == 2: # Custom language in default location
-        alphabet = alphabets[str(sys.argv[1])]
-    elif len(sys.argv) == 3:  # Custom language in custom location
-        alphabet = alphabets[str(sys.argv[1])]
-        root = str(sys.argv[2])
-    else: # Custom language in custom location with custom min_words limit
-        alphabet = alphabets[str(sys.argv[1])]
-        root = str(sys.argv[2])
-        min_words = int(sys.argv[3])
+    if __name__ != "__main__": # Invoked through function
+        alphabet = alph
+        root = path
+        min_words = word_count
+    else:
+        if len(sys.argv) == 1: # Default language in default location
+            alphabet = polish_alphabet
+        elif len(sys.argv) == 2: # Custom language in default location
+            alphabet = alphabets[str(sys.argv[1])]
+        elif len(sys.argv) == 3:  # Custom language in custom location
+            alphabet = alphabets[str(sys.argv[1])]
+            root = str(sys.argv[2])
+        else: # Custom language in custom location with custom min_words limit
+            alphabet = alphabets[str(sys.argv[1])]
+            root = str(sys.argv[2])
+            min_words = int(sys.argv[3])
     
     with open(os.path.join(root,'metadata.csv')) as orginal, \
         open(os.path.join(root,'filtered.csv'), 'w') as filtered:
