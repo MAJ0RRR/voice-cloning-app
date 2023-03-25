@@ -1,6 +1,8 @@
 import os
 import sys
 import shutil
+import subprocess
+
 
 def create_venv(project_root):	
 	# path to new venv
@@ -57,31 +59,36 @@ def install_rnnoise(project_root):
 
 	return 0, None
 
-
-if __name__ == '__main__':
-
+def initialize():
 	# set this to project root
 	project_root = os.getcwd()
-	
+
 	# create venv with requirements
 	if create_venv(project_root) != 0:
 		print('\nPython 3.9 with venv is not installed!')
 		sys.exit()
-	
+
 	# install requirements to venv
 	if install_requirements(project_root) != 0:
 		print('\nErorr while installing requirements')
 		sys.exit()
-	
+
 	# create all directories
 	initialize_directories(project_root)
-	
+
 	ret_val, failed_command = install_rnnoise(project_root)
 	# install rnnoise
 	if ret_val != 0:
-		print(f'\nErorr while executing "{failed_command}"')
+		print('\nErorr while installing rnnoise')
 		sys.exit()
-	
+
 	# print on success
 	print('\nInitialized successfully')
-	
+
+def download_models():
+	os.system('venv/bin/python download_models.py')
+
+if __name__ == '__main__':
+	initialize()
+	download_models()
+

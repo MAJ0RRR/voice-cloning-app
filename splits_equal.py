@@ -2,9 +2,8 @@ import os
 import glob
 import argparse
 import tempfile
+from FileSpliter import FileSpliter
 
-def split_file(file_path: str, out_dir: str, length: int):
-	os.system(f"sox {file_path} \"{out_dir}/$(basename -s .wav {file_path})\".wav --show-progress trim 0 {length} : newfile : restart")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -20,7 +19,7 @@ if __name__ == "__main__":
 
     parsed = parser.parse_args()
 
-		# get tempdir
+    # get tempdir
     tempdir = tempfile.TemporaryDirectory()
 	
 	# clear splits directory
@@ -33,9 +32,8 @@ if __name__ == "__main__":
     os.system(f"find {parsed.source} -name '*.wav' -exec bash -c 'for f; do ffmpeg -y -i \"$f\" -acodec pcm_s16le -ar 22050 -ac 1 \"{tempdir.name}/$(basename -s .wav $f)\".wav -loglevel error; done' _ {{}} +")
 
 	# do split files
-    audiofiles = glob.glob(f"{tempdir.name}/*.wav")
-    for audiofile in audiofiles:
-        split_file(audiofile, f"{parsed.destination}", parsed.length)
+    fs = FileSpliter('audiofiles/temp/*.wav', 'audiofiles/splits')
+    fs.split_length(parsed.length)
 	
 	# close tempdir
     tempdir.cleanup()
