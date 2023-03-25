@@ -6,6 +6,9 @@ from noise import remove_noise
 from whispertrans import create_transcription
 from discard_transcriptions import discard_transcriptions
 from distutils.dir_util import copy_tree
+from train_experimental import train
+
+# TODO dodać cięcie audio raw do danego rozmiaru
 
 if __name__ == "__main__":
     gpu_num = "2"
