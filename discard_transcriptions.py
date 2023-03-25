@@ -32,7 +32,7 @@ def is_valid_string(string,alphabet,symbols):
                 return False
     return True
 
-def discard_transciprions(alph="pl",path="audiofiles/datasets/dataset",word_count=3):
+def discard_transcriptions(alph="pl",path="audiofiles/datasets/dataset",word_count=3):
     polish_alphabet = list("AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ")
     english_alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     symbols = list(" ,.?!")
@@ -98,4 +98,4 @@ def discard_transciprions(alph="pl",path="audiofiles/datasets/dataset",word_coun
 
 
 if __name__ == "__main__":
-    discard_transciprions()
+    discard_transcriptions()
