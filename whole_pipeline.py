@@ -1,14 +1,39 @@
 import os
+import wave
+from pydub import AudioSegment
+from distutils.dir_util import copy_tree
+import glob
 
 from splits_equal import split_equal
 from splits_silence import split_silence
 from noise import remove_noise
 from whispertrans import create_transcription
 from discard_transcriptions import discard_transcriptions
-from distutils.dir_util import copy_tree
 from train_experimental import train
 
-# TODO dodać cięcie audio raw do danego rozmiaru
+
+def trim_wavs(source, destinantion, desired_len_ms):
+    len_sum = 0
+    audiofiles_src = glob.glob(source + "/*")
+    for idx, audiofile in enumerate(audiofiles_src):
+        ext = os.path.splitext(audiofile)[1]
+        if  ext == ".wav":
+            audio_segment = AudioSegment.from_wav(audiofile)
+        elif ext == ".mp3":
+            audio_segment = AudioSegment.from_mp3(audiofile)
+        else:
+            print(f"UNSUPPORTED EXTENSION:{ext}, {audiofile}")
+        len_sum += len(audio_segment)
+        if len_sum > desired_len_ms:
+            trimmed_len = len_sum - desired_len_ms
+            trimmed_audio_segment = audio_segment[:-trimmed_len]
+        else:
+            trimmed_audio_segment = audio_segment
+        # Export the trimmed audio segment as a wav file
+        dest_file = os.path.join(destinantion, str(idx) + ext)
+        trimmed_audio_segment.export(dest_file, format=ext[1:])
+        if len_sum >= desired_len_ms:
+            break
 
 if __name__ == "__main__":
     gpu_num = "2"
