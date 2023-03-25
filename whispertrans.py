@@ -9,6 +9,10 @@ from pathlib import Path
 def create_transcription(project_root, dataset_name, language, vram):
 
     dataset_path = os.path.join(project_root, 'audiofiles', 'datasets', dataset_name)
+
+    if not os.path.exists(dataset_path):
+        os.mkdir(dataset_path)
+
     wavs_path = os.path.join(dataset_path,'wavs')
     
     if language=='en':
