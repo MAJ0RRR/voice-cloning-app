@@ -1,4 +1,4 @@
-
+import os
 import glob
 import pydub
 import pathlib
@@ -38,5 +38,4 @@ class FileSpliter:
 	def split_length(self, length: int):
 		audiofiles_src = glob.glob(self.source)
 		for audiofile in audiofiles_src:
-			os.system(f"sox {audiofile} \"{self.destination}/$(basename -s .wav {audiofile})\".wav --show-progress trim 0 {length} : newfile : restart")		
-
+			os.system(f"sox {audiofile} \"{self.destination}/$(basename -s .wav {audiofile})\".wav --show-progress trim 0 {length} : newfile : restart")

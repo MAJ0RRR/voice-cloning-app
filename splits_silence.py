@@ -1,7 +1,7 @@
 import os
 import argparse
 import tempfile
-from FileSpliter import FileSpliter
+from file_splitter import FileSpliter
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(

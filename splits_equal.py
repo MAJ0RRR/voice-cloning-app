@@ -2,7 +2,7 @@ import os
 import glob
 import argparse
 import tempfile
-from FileSpliter import FileSpliter
+from file_splitter import FileSpliter
 
 
 if __name__ == "__main__":
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     os.system(f"find {parsed.source} -name '*.wav' -exec bash -c 'for f; do ffmpeg -y -i \"$f\" -acodec pcm_s16le -ar 22050 -ac 1 \"{tempdir.name}/$(basename -s .wav $f)\".wav -loglevel error; done' _ {{}} +")
 
 	# do split files
-    fs = FileSpliter('audiofiles/temp/*.wav', 'audiofiles/splits')
+    fs = FileSpliter(f"{tempdir.name}/*.wav", 'audiofiles/splits')
     fs.split_length(parsed.length)
 	
 	# close tempdir
