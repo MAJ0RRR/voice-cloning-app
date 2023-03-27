@@ -29,7 +29,8 @@ if __name__ == "__main__":
 	tempdir = tempfile.TemporaryDirectory()
 	
 	# clear splits directory
-	os.system(f"rm {parsed.destination}/*")
+	if os.path.exists(f"{parsed.destination}/*"):
+		os.system(f"rm {parsed.destination}/*")
 	
 	# convert mp3 to proper wav
 	os.system(f"find {parsed.source} -name '*.mp3' -exec bash -c 'for f; do ffmpeg -i \"$f\" -acodec pcm_s16le -ar 22050 -ac 1 \"{tempdir.name}/$(basename -s .mp3 $f)\".wav -loglevel error; done' _ {{}} +")
