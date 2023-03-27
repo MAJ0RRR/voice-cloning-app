@@ -15,9 +15,10 @@ CONFIG_FILE_NAME = "config.json"
 DEFAULT_RUN_NAME = "new_model"
 DATASETS_DIR = "audiofiles/datasets"
 TEST_SENTENCES_FILE = "test_sentences.json"
+ROOT_DIR = ""
 
 
-def validate_input(args):
+def validate_input(root_dir, args):
     assert int(args.gpu_num) >= 0, f'gpu_num is smaller than 0, gpu_num={args.gpu_num}'
 
     assert args.language in ('en', 'pl'), f'incorrect language ID, language={args.language}'
@@ -25,25 +26,25 @@ def validate_input(args):
     assert args.run_name, f'run_name cannot be empty'
 
     assert args.dataset_name, f'dataset_name cannot be empty'
-    assert os.path.exists(os.path.join(DATASETS_DIR, args.dataset_name)), \
-        f'directory dataset_name does not exist, dataset_name={args.dataset_name}'
+    assert os.path.exists(os.path.join(root_dir, DATASETS_DIR, args.dataset_name)), \
+        f'directory dataset_name does not exist, dataset_name={os.path.join(root_dir, DATASETS_DIR, args.dataset_name)}'
 
     if args.model_path:
         assert args.model_path.endswith('.pth'), f'model_path file type incorrect, model_path={args.model_path}'
 
-        assert os.path.exists(os.path.join(OUTPUT_PATH, args.model_path)),\
+        assert os.path.exists(os.path.join(root_dir, OUTPUT_PATH, args.model_path)),\
             f'model_path file type incorrect, model_path={args.model_path}'
 
-        model_dir_path = os.path.join(*args.model_path.split('/')[0:-1])
-        assert CONFIG_FILE_NAME in os.listdir(os.path.join(OUTPUT_PATH, model_dir_path)),\
-            f'model_path directory does not contain {CONFIG_FILE_NAME} file file'
+        model_dir_path = os.path.join(root_dir,OUTPUT_PATH,*args.model_path.split('/')[0:-1])
+        assert CONFIG_FILE_NAME in os.listdir(os.path.join(model_dir_path)),\
+            f'model_path directory does not contain {os.path.join(model_dir_path)} file file'
 
 
-def train(model_path, dataset_name, language, run_name):
+def train(root_dir, model_path, dataset_name, language, run_name):
     mode = 'continue' if model_path else 'new'
 
     dataset_config = BaseDatasetConfig(
-        formatter="ljspeech", meta_file_train="metadata.csv", path=os.path.join(DATASETS_DIR, dataset_name))
+        formatter="ljspeech", meta_file_train="metadata.csv", path=os.path.join(root_dir, DATASETS_DIR, dataset_name))
 
     audio_config = VitsAudioConfig(
         sample_rate=22050, win_length=1024, hop_length=256, num_mels=80, mel_fmin=0, mel_fmax=None
@@ -73,26 +74,30 @@ def train(model_path, dataset_name, language, run_name):
             eval_split_size=0.1,
             use_phonemes=True,
             phoneme_language=language,
-            phoneme_cache_path=os.path.join(OUTPUT_PATH, "phoneme_cache"),
+            phoneme_cache_path=os.path.join(root_dir, OUTPUT_PATH, "phoneme_cache"),
             compute_input_seq_cache=True,
             print_step=10,
             print_eval=True,
             mixed_precision=True,
-            output_path=OUTPUT_PATH,
+            output_path=os.path.join(root_dir, OUTPUT_PATH),
             datasets=[dataset_config],
             cudnn_benchmark=False,
         )
     else:
         model_dir = model_path[:model_path.rfind("/")]
-        config = load_config(os.path.join(OUTPUT_PATH, model_dir, CONFIG_FILE_NAME))
+        config = load_config(os.path.join(root_dir, OUTPUT_PATH, model_dir, CONFIG_FILE_NAME))
         config.run_name = run_name
-        config.output_path = os.path.join(os.getcwd(), OUTPUT_PATH)
-        config.phoneme_cache_path = os.path.join(os.getcwd(), OUTPUT_PATH, 'phoneme_cache')
-        config.datasets[0]["path"] = os.path.join(os.getcwd(), DATASETS_DIR, dataset_name)
-        config.restore_path = model_path
+        old_root_dir = root_dir
+        if root_dir == "":
+            root_dir = os.getcwd()
+        config.output_path = os.path.join(root_dir , OUTPUT_PATH)
+        config.phoneme_cache_path = os.path.join(root_dir , OUTPUT_PATH, 'phoneme_cache')
+        config.datasets[0]["path"] = os.path.join(root_dir , DATASETS_DIR, dataset_name)
+        config.restore_path = os.path.join(root_dir, model_path)
+        root_dir = old_root_dir
 
     try:
-     with open(TEST_SENTENCES_FILE, "r", encoding="utf-8") as json_file:
+     with open(os.path.join(root_dir,TEST_SENTENCES_FILE), "r", encoding="utf-8") as json_file:
         test_sentences = json.load(json_file)
         config.test_sentences = test_sentences[language]
     except FileNotFoundError:
@@ -128,13 +133,13 @@ def train(model_path, dataset_name, language, run_name):
 
     model = Vits(config, ap, tokenizer, speaker_manager=None)
     if mode == 'continue':
-        model.load_checkpoint(config, os.path.join(OUTPUT_PATH, model_path))
+        model.load_checkpoint(config, os.path.join(root_dir, OUTPUT_PATH, model_path))
 
     # init the trainer and begin
     trainer = Trainer(
         TrainerArgs(),
         config,
-        OUTPUT_PATH,
+        os.path.join(root_dir, OUTPUT_PATH),
         model=model,
         train_samples=train_samples,
         eval_samples=eval_samples,
@@ -158,8 +163,8 @@ if __name__=='__main__':
     parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', required=True, help='GPU number.')
 
     args = parser.parse_args()
-    validate_input(args)
+    validate_input(ROOT_DIR, args)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
 
-    train(args.model_path, args.dataset_name, args.language, args.run_name)
+    train(ROOT_DIR, args.model_path, args.dataset_name, args.language, args.run_name)
