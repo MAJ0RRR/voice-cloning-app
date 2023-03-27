@@ -12,6 +12,7 @@ class Language(Enum):
 
 
 class Options(Enum):
-    train = 1
-    synthesize_speech = 2
-    generate_samples = 3
+    train_old = 1
+    train_new = 2
+    synthesize_speech = 3
+    generate_samples = 4

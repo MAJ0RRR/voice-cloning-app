@@ -69,10 +69,10 @@ class VoiceModelDbService:
         return rows
 
     def initialize(self):
-        path_model1 = os.path.join(MODEL_DIR, 'woman_1/checkpoint_672000.pth')
-        path_config1 = os.path.join(MODEL_DIR, 'woman_1/config.json')
-        path_model2 = os.path.join(MODEL_DIR, 'woman_2/checkpoint_50000.pth')
-        path_config2 = os.path.join(MODEL_DIR, 'woman_2/config.json')
+        path_model1 = os.path.join(MODEL_DIR, 'basic/woman_1/checkpoint_672000.pth')
+        path_config1 = os.path.join(MODEL_DIR, 'basic/woman_1/config.json')
+        path_model2 = os.path.join(MODEL_DIR, 'basic/woman_2/checkpoint_50000.pth')
+        path_config2 = os.path.join(MODEL_DIR, 'basic/woman_2/config.json')
         self.insert(VoiceModel('test1', path_model1, path_config1, 'woman', 'english'))
         self.insert(VoiceModel('test2', path_model2, path_config2, 'woman', 'polish'))
 

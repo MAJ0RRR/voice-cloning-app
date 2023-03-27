@@ -44,6 +44,8 @@ class ChooseGenderLanguageView(BasicView):
     def switch_to_next_view(self):
         if self.option == Options.generate_samples:
             self.switch_to_choose_audio()
+        elif self.option == Options.train_new:
+            self.switch_to_choose_audio()
         else:
             self.switch_to_choose_model()
 
@@ -57,7 +59,10 @@ class ChooseGenderLanguageView(BasicView):
 
     def switch_to_choose_audio(self):
         language = self.language.get()
+        gender = None
+        if self.option == Options.train_new:
+            gender = self.language.get()
         for widget in self.root.winfo_children():
             widget.destroy()
         ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
-                        self.version_service, self.option, language)
+                        self.version_service, self.option, language, gender)

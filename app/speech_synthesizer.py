@@ -8,25 +8,33 @@ from app.settings import GENERATED_DIR
 
 class SpeachSynthesizer:
 
-    def __init__(self, model):
+    def __init__(self, model=None, model_path=None, config_path=None):
         self.model = model
+        self.model_path = model_path
+        self.config_path = config_path
         self.stop_event = threading.Event()
 
-    def generate_audio(self, output_name, text, callback):
-        model_path = self.model['path_model']
-        config_path = self.model['path_config']
+    def generate_audio(self, output_name, text, callback=None):
+        if self.model:
+            print('checkpoint1')
+            model_path = self.model['path_model']
+            config_path = self.model['path_config']
+        else:
+            print('checkpoint2')
+            model_path = self.model_path
+            config_path = self.config_path
+        print('checkpoint3')
         changed_text = f'\"{text}\"'
-        print(changed_text)
         self.synthesize_audio(changed_text, model_path, config_path, output_name, callback)
 
     def synthesize_audio(self, text, model_path, config_path, output_file, callback):
         process = subprocess.Popen(["sh", "../synthesize.sh", text, model_path, config_path, output_file])
         while process.poll() is None:
             if self.stop_event.is_set():
-                print("destoring process")
                 process.kill()
                 self.stop_event = threading.Event()
-        callback(output_file)
+        if callback:
+            callback(output_file)
 
     def generate_sample_name(self):
         dt = datetime.now()

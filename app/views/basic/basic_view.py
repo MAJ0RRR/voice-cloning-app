@@ -5,6 +5,7 @@ from app.enums import Options
 choose_audio_for_samples_view = lazy_module("app.views.choose_audio_for_generating_samples_view")
 choose_gender_view = lazy_module("app.views.choose_gender_language_view")
 main_menu_module = lazy_module("app.views.main_view")
+after_train_view = lazy_module("app.views.after_train_view")
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -31,11 +32,21 @@ class BasicView:
         self.voice_model_service = voice_model_service
         self.voice_recordings_service = voice_recordings_service
 
-    def switch_to_choose_gender_language_train(self):
+    def switch_to_choose_gender_language_train_old(self):
         for widget in self.root.winfo_children():
             widget.destroy()
         choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
-                                                    self.version_service, Options.train)
+                                                    self.version_service, Options.train_old)
+
+    def switch_to_choose_gender_language_train_new(self):
+        # for widget in self.root.winfo_children():
+        #    widget.destroy()
+        # choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
+        #                                            self.version_service, Options.train_new)
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                        self.version_service, 'woman', 'polish')
 
     def switch_to_choose_gender_language_synthesize(self):
         for widget in self.root.winfo_children():
