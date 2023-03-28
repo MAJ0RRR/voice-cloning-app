@@ -14,3 +14,6 @@ RAW_AUDIO_DIR = os.path.join(WORKING_DIR, 'audiofiles/raw')
 
 # path to db_file
 db_file = os.path.join(WORKING_DIR, 'app/db_file.db')
+
+#path to output dir
+OUTPUT_DIR = os.path.join(WORKING_DIR, "output")

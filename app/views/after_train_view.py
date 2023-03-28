@@ -88,7 +88,7 @@ class AfterTrainView(BasicView):
         if self.stop:
             self.root.after(0, self.switch_to_main_view)
         else:
-            self.root.after(0, self.display_models())
+            self.root.after(0, self.display_models)
 
     def generate_basic_audio(self, voice_model_path, text):
         speech_synthesizer = SpeachSynthesizer(model_path=voice_model_path, config_path=self.config_file_path)
