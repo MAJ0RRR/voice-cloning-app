@@ -59,7 +59,7 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
         audio_source = os.path.join(experiment_dir, 'trimmed')
         trim_wavs(raw_source, audio_source, trim_source_length)
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = gpu_num
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_num)
     if silence_split_type == "equal":
         split_equal(splits_dir, audio_source, length=split_len)
     else:
@@ -78,4 +78,4 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
 
 
 if __name__ == "__main__":
-    run_pipeline(gpu_num="2", experiment_dir="experiment1", raw_source="audiofiles/raw")
+    run_pipeline(gpu_num=2, experiment_dir="experiment1", raw_source="audiofiles/raw")

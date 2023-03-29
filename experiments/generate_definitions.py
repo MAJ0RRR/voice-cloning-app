@@ -16,9 +16,9 @@ def _set_definition_values(definition: dict, name: str, source: dict, trim_len: 
     definition["SilenceSplitType"] = split_type
     definition["RemoveNoise"] = remove_noise
     if discard == 0:
-        definition["DiscardTranscripts"] = True
-    else:
         definition["DiscardTranscripts"] = False
+    else:
+        definition["DiscardTranscripts"] = True
         definition["DiscardWordCount"] = discard
 
 
@@ -80,7 +80,7 @@ def generate_definitions(name_idx_start: int = 0, sources: List[dict] = None,
 if __name__ == '__main__':
     sources = [
         {
-            "RawSource": "../audiofiles/raw",
+            "RawSource": "audiofiles/raw",
             "ModelPath": "",
             "Language": "en"
         }

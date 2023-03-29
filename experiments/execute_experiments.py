@@ -1,11 +1,11 @@
 import json
-from ..whole_pipeline import run_pipeline
+from whole_pipeline import run_pipeline
 
 DEFINITIONS_FILE_NAME = "definitions.json"
 
 def run_experiments():
     with open(DEFINITIONS_FILE_NAME, 'r') as file:
-        definitions = json.load(file.read())
+        definitions = json.load(file)
     
     whisper_vram = definitions["WhisperVram"]
     gpu = definitions["Gpu"]
@@ -19,10 +19,12 @@ def run_experiments():
         split_len = None
         thresh = None
         silence_len = None
+        discard_words_len = 0
         remove_noise = experiment["RemoveNoise"]
         language = experiment["Language"]
         discard_transcripts = experiment["DiscardTranscripts"]
-        discard_words_len = experiment["DiscardWordCount"]
+        if discard_transcripts:
+            discard_words_len = experiment["DiscardWordCount"]
         model_path = experiment["ModelPath"]
         
         if split_type == 'equal':
@@ -35,3 +37,6 @@ def run_experiments():
                      silence_split_type=split_type, split_len=split_len, split_min_silence_lens=silence_len,
                      split_silence_threshs=thresh, remove_noises=remove_noise, discard_transcripts=discard_transcripts,
                      discard_word_count=discard_words_len, language=language, model_path=model_path)
+
+if __name__ == "__main__":
+    run_experiments()
