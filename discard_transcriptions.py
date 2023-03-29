@@ -18,7 +18,7 @@ def is_valid_string(string,alphabet,symbols):
 def discard_transciprions(alph: str = 'en', path: str = 'audiofiles/datasets/dataset', word_count: int = 3):
     polish_alphabet = list("AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ")
     english_alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-    symbols = list(" ,.?!")
+    symbols = list(" ,.?!-0123456789")
     min_words = 3
 
     alphabets = {
