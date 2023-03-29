@@ -220,12 +220,13 @@ class GenerateRecordingsView(BasicView):
             print('error')
 
     def worker(self, q):
-        if self.event.is_set():
-            return
-        try:
-            func = q.get(block=False, timeout=5)
-            if func is not None:
-                func()
-                q.task_done()
-        except:
-            pass
+        while (True):
+            if self.event.is_set():
+                return
+            try:
+                func = q.get(block=False, timeout=5)
+                if func is not None:
+                    func()
+                    q.task_done()
+            except:
+                pass

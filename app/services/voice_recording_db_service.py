@@ -2,7 +2,7 @@ import os
 import sqlite3
 
 from app.entities.voice_recording import VoiceRecording
-from app.settings import GENERATED_DIR
+from app.settings import WORKING_DIR
 
 
 class VoiceRecordingDbService:
@@ -73,8 +73,14 @@ class VoiceRecordingDbService:
         return voice_recordings[0]
 
     def initialize(self):
-        path1 = os.path.join(GENERATED_DIR, 'test1.mp3')
-        self.insert(VoiceRecording('basic', path1, 1))
+        path1 = os.path.join(WORKING_DIR, 'basic_audio/EN/MALE_1/basic.wav')
+        self.insert(VoiceRecording('basic', path1, 3))
+        path2 = os.path.join(WORKING_DIR, 'basic_audio/EN/MALE_2/basic.wav')
+        self.insert(VoiceRecording('basic', path2, 4))
+        path3 = os.path.join(WORKING_DIR, 'basic_audio/PL/FEMALE_1/basic.wav')
+        self.insert(VoiceRecording('basic', path3, 1))
+        path4 = os.path.join(WORKING_DIR, 'basic_audio/PL/FEMALE_2/basic.wav')
+        self.insert(VoiceRecording('basic', path4, 2))
 
     def delete_by_id(self, voice_recording_id):
         query = "DELETE FROM voice_recordings WHERE id = ?"

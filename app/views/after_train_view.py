@@ -1,6 +1,7 @@
+from lazy_import import lazy_module
 import os
 import shutil
-
+from pathlib import Path
 import playsound
 import threading
 import tkinter as tk
@@ -10,10 +11,11 @@ import queue
 from app.entities.voice_model import VoiceModel
 from app.views.basic.basic_view import WIDTH, HEIGHT, POPUP_HEIGHT, POPUP_WIDTH, BUTTON_FONT, Y_FIRST_MODEL, PAD_Y, \
     BUTTON_WIDTH_2, BUTTON_HEIGHT_2, MAX_FONT, BUTTON_HEIGHT_1, BUTTON_WIDTH_1
-from app.settings import WORKING_DIR, MODEL_DIR_GENERATED
+from app.settings import WORKING_DIR, MODEL_DIR_GENERATED, OUTPUT_DIR
 from app.speech_synthesizer import SpeachSynthesizer
 from app.views.basic.basic_view import BasicView
 
+train_module = lazy_module("app.views.train_view")
 X_MODELS = 100
 POPUP_WIDTH = 500
 POPUP_HEIGHT = 150
@@ -21,9 +23,13 @@ POPUP_HEIGHT = 150
 
 class AfterTrainView(BasicView):
 
-    def __init__(self, root, voice_model_service, voice_recordings_service, version_service, gender, language):
+    def __init__(self, root, voice_model_service, voice_recordings_service, version_service, gender, language,
+                 dir_with_result, dataset, gpu):
         super(AfterTrainView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
         self.gender = gender
+        self.gpu = gpu
+        self.dataset = dataset
+        self.dir_with_result = dir_with_result
         self.language = language
         self.choosen_model = tk.IntVar()
         self.choosen_model.set("0")  # default value
@@ -132,10 +138,9 @@ class AfterTrainView(BasicView):
         self.stop = False
 
     def find_paths_to_generated_voice_models(self):
-        path = os.path.join(WORKING_DIR, 'models/test/generated')
         paths = []
-        for f in os.listdir(path):
-            paths.append(os.path.join(path, f))
+        for f in os.listdir(self.dir_with_result):
+            paths.append(os.path.join(self.dir_with_result, f))
         return paths
 
     def display_widgets(self):
@@ -172,28 +177,38 @@ class AfterTrainView(BasicView):
         self.entry2.pack()
 
         cancel_button = tk.Button(self.popup, text="Anuluj", command=lambda: self.destro_popup())
-        cancel_button.pack(side=tk.LEFT, pady=PAD_Y / 2, padx=(160,40))
+        cancel_button.pack(side=tk.LEFT, pady=PAD_Y / 2, padx=(160, 40))
         ok_button = tk.Button(self.popup, text="Zapisz", command=lambda: self.save_model(self.entry2.get()))
-        ok_button.pack(side=tk.LEFT, pady=PAD_Y/2)
+        ok_button.pack(side=tk.LEFT, pady=PAD_Y / 2)
 
     def save_model(self, name):
         if name == '':
             messagebox.showerror("Uzupełnij nazwę modelu!")
             return
-        path_model, path_config = self.copy_model_to_saved_models()
+        if self.model_name_exists:
+            messagebox.showerror("Model z taką nazwą już istnieje!")
+            return
+        path_model, path_config = self.copy_model_to_saved_models(name)
         voice_model = VoiceModel(name, path_model, path_config, self.gender, self.language)
         self.voice_model_service.insert(voice_model)
         self.popup.destroy()
         messagebox.showinfo("Model głosu został zapisany.")
 
-    def copy_model_to_saved_models(self):
+    def model_name_exists(self, name):
+        language = 'PL' if self.language == 'polish' else 'EN'
+        gender = "MALE" if self.gender == 'man' else "FEMALE"
+        directory = os.path.join(OUTPUT_DIR, f"{language}/{gender}")
+        file_path = os.path.join(directory, name)
+        path = Path(file_path)
+        return path.is_file()
+
+    def copy_model_to_saved_models(self, name):
         language = 'PL' if self.language == 'polish' else 'EN'
         gender = "MALE" if self.gender == 'man' else "FEMALE"
         path_model = self.paths_to_generated_voice_models[self.choosen_model]
         path_config = self.config_file_path
-        filename = os.path.basename(path_model)
-        dest_dir =  os.path.join(MODEL_DIR_GENERATED, f"{language}/{gender}")
-        dest_path_model = os.path.join(dest_dir, filename)
+        dest_dir = os.path.join(MODEL_DIR_GENERATED, f"{language}/{gender}")
+        dest_path_model = os.path.join(dest_dir, 'name.pth')
         dest_path_config = os.path.join(dest_dir, 'config.json')
         shutil.copy(path_model, dest_path_model)
         shutil.copy(path_config, dest_path_config)
@@ -220,7 +235,29 @@ class AfterTrainView(BasicView):
             path_to_model = self.choosen_model.get()  # maybe need to move somewhere
             self.event.set()
             self.thread.join()  # destroy models
-            # call train_view
+            self.train_model(path_to_model)
+
+    def rm_all_files_from_output_dir_except_model(self, model_filename):
+        for filename in os.listdir(OUTPUT_DIR):
+            if filename in ["config.json", model_filename]:
+                continue
+            file_path = os.path.join(OUTPUT_DIR, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    def train_model(self, model_path):
+        model_filename = os.path.basename(model_path)
+        dest_dir = os.path.join(OUTPUT_DIR, model_filename)
+        shutil.move(model_path, dest_dir)
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        train_module.TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service,
+                               self.gender, self.language, self.option, self.gpu, self.dataset, model_path)
 
     def display_models(self):
         model_labels = []

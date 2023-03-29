@@ -1,11 +1,11 @@
 import tkinter as tk
-
+from lazy_import import lazy_module
 from app.enums import Options
 from app.views.basic.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, WIDTH, BUTTON_FONT
-from app.views.choose_voice_model_view import ChooseVoiceModelView
-from app.views.choose_audio_view import ChooseAudioView
 
 RADIO_BUTTON_WIDTH = 150
+choose_audio_module = lazy_module('app.views.choose_audio_view')
+choose_voice_module = lazy_module('app.views.choose_voice_model_view')
 
 
 class ChooseGenderLanguageView(BasicView):
@@ -13,6 +13,7 @@ class ChooseGenderLanguageView(BasicView):
     def __init__(self, root, voice_model_service, voice_recordings_service, version_service, option):
         super(ChooseGenderLanguageView, self).__init__(root, voice_model_service, voice_recordings_service,
                                                        version_service)
+        print('test2')
         self.option = option
         self.language = tk.StringVar()
         self.language.set("polish")
@@ -54,8 +55,9 @@ class ChooseGenderLanguageView(BasicView):
         language = self.language.get()
         for widget in self.root.winfo_children():
             widget.destroy()
-        ChooseVoiceModelView(self.root, gender, language, self.voice_model_service, self.voice_recordings_service,
-                             self.version_service, self.option)
+        choose_voice_module.ChooseVoiceModelView(self.root, gender, language, self.voice_model_service,
+                                                 self.voice_recordings_service,
+                                                 self.version_service, self.option)
 
     def switch_to_choose_audio(self):
         language = self.language.get()
@@ -64,5 +66,5 @@ class ChooseGenderLanguageView(BasicView):
             gender = self.language.get()
         for widget in self.root.winfo_children():
             widget.destroy()
-        ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
-                        self.version_service, self.option, language, gender)
+        choose_audio_module.ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                            self.version_service, self.option, language, gender)

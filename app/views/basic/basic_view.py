@@ -33,8 +33,10 @@ class BasicView:
         self.voice_recordings_service = voice_recordings_service
 
     def switch_to_choose_gender_language_train_old(self):
+        print('test')
         for widget in self.root.winfo_children():
             widget.destroy()
+        print('test')
         choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
                                                     self.version_service, Options.train_old)
 

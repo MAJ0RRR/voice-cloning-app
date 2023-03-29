@@ -15,6 +15,7 @@ class SpeachSynthesizer:
         self.stop_event = threading.Event()
 
     def generate_audio(self, output_name, text, callback=None):
+        print('here i am')
         if self.model:
             print('checkpoint1')
             model_path = self.model['path_model']

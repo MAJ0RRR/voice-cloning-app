@@ -7,10 +7,10 @@ from app.enums import Options
 from app.views.all_recordings_model_view import AllRecordingsModelView
 from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
     PAGING, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
-from app.views.choose_audio_view import ChooseAudioView
 from app.views.generate_recordings_view import GenerateRecordingsView
 
 choose_gender_language_module = lazy_module("choose_gender_language.view")
+choose_audio_module = lazy_module("app.views.choose_audio_view")
 PAD_Y = 40
 
 
@@ -60,9 +60,9 @@ class ChooseVoiceModelView(BasicView):
             widget.destroy()
         model_id = self.choosen_model.get()
         if self.option == Options.train_old:
-            ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
-                            self.version_service, self.gender,
-                            self.language, model_id)
+            choose_audio_module.ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                                self.version_service, self.gender,
+                                                self.language, model_id)
         else:
             GenerateRecordingsView(self.root, self.gender, self.language, self.voice_model_service,
                                    self.voice_recordings_service, self.version_service, model_id, self.option)

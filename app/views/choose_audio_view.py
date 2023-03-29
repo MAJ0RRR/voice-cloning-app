@@ -11,11 +11,11 @@ from app.enums import Options
 from app.samples_generator import SamplesGenerator
 from app.views.basic.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_FONT, Y_MENU, ALLOWED_EXTENSIONS, WIDTH, \
     POPUP_WIDTH, HEIGHT, POPUP_HEIGHT, BasicView, PAD_Y
-from app.views.train_view import TrainView
-from app.settings import RAW_AUDIO_DIR
+from app.settings import RAW_AUDIO_DIR, OUTPUT_DIR
 from app.enums import Options
 
 choose_voice_model_view = lazy_module("app.views.choose_voice_model_view")
+train_module = lazy_module("app.views.train_view")
 
 
 class ChooseAudioView(BasicView):
@@ -34,8 +34,8 @@ class ChooseAudioView(BasicView):
         self.VRAM = tk.IntVar()
         self.VRAM.set('1')
         try:
-            self.choosen_model = tk.IntVar()
-            self.choosen_model.set(self.gpu_ids[0])
+            self.choosen_gpu = tk.IntVar()
+            self.choosen_gpu.set(self.gpu_ids[0])
         except ValueError:
             self.no_gpu_available()
         self.display_widgets()
@@ -47,19 +47,20 @@ class ChooseAudioView(BasicView):
         self.stop = None
 
     def no_gpu_available(self):
-        messagebox.showerror("Brak karty Nvidii", "Nie wykryto karty graficznej Nvidii. Zostaniesz przekierowany do menu głównego.")
+        messagebox.showerror("Brak karty Nvidii",
+                             "Nie wykryto karty graficznej Nvidii. Zostaniesz przekierowany do menu głównego.")
         super().switch_to_main_view()
 
     def display_widgets_choose_gpu(self):
         counter = 0
         label = tk.Label(self.root, activebackground='green',
-                                   text="Wybierz kartę graficzną", bg='green', font=BUTTON_FONT)
+                         text="Wybierz kartę graficzną", bg='green', font=BUTTON_FONT)
         label.place(x=1350, y=Y_MENU)
         for gpu_id in self.gpu_ids:
             label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
                                    text=str(gpu_id), bg='green', font=BUTTON_FONT, variable=self.choosen_gpu,
                                    value=gpu_id)
-            label.place(x=1350, y=Y_MENU + PAD_Y/2 * (counter+1))
+            label.place(x=1350, y=Y_MENU + PAD_Y / 2 * (counter + 1))
             counter += 1
 
     def display_VRAM_widgets(self, x):
@@ -71,11 +72,11 @@ class ChooseAudioView(BasicView):
                                value=1)
         label.place(x=x, y=Y_MENU + PAD_Y / 2 * 1)
         label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="<2;5) GB", bg='green', font=BUTTON_FONT, variable=self.choosen_gpu,
+                               text="<2;5) GB", bg='green', font=BUTTON_FONT, variable=self.VRAM,
                                value=3)
         label.place(x=x, y=Y_MENU + PAD_Y / 2 * 2)
         label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="Powyżej 5 GB", bg='green', font=BUTTON_FONT, variable=self.choosen_gpu,
+                               text="Powyżej 5 GB", bg='green', font=BUTTON_FONT, variable=self.VRAM,
                                value=8)
         label.place(x=x, y=Y_MENU + PAD_Y / 2 * 3)
 
@@ -124,9 +125,9 @@ class ChooseAudioView(BasicView):
                                                      self.voice_recordings_service, self.version_service, self.option)
 
     def get_gpu_ids(self):
-        #output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
-        #return [int(x) for x in output.decode().strip().split('\n') #uncomment after tests
-        return [0,1]
+        # output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
+        # return [int(x) for x in output.decode().strip().split('\n') #uncomment after tests
+        return [0, 1]
 
     def switch_to_main_view(self):
         self.event.set()
@@ -149,7 +150,8 @@ class ChooseAudioView(BasicView):
         version = self.version_service.get_version()
         self.samples_generator.stop_event = threading.Event()
         screen_pos = self.root.winfo_x()  # we need this to popup on the same screen which is app
-        self.q.put(lambda: self.samples_generator.generate_samples(version, self.choosen_gpu.get(), self.VRAM.get(), self.finish_generating), ())
+        self.q.put(lambda: self.samples_generator.generate_samples(version, self.choosen_gpu.get(), self.VRAM.get(),
+                                                                   self.finish_generating), ())
         x = (WIDTH - POPUP_WIDTH) // 2 + screen_pos
         y = (HEIGHT - POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
@@ -181,7 +183,22 @@ class ChooseAudioView(BasicView):
         for widget in self.root.winfo_children():
             widget.destroy()
         dataset = f"dataset_{self.version_service.get_version()}"
-        TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service, self.gender, self.language, self.option, gpu, dataset, self.model_id)
+        model_path, config_path = self.copy_model_to_output_dir()
+        train_module.TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service,
+                               self.gender, self.language, self.option, gpu, dataset, model_path)
+
+    def copy_model_to_output_dir(self):
+        if not self.model_id:
+            return None, None
+        voice_model = self.voice_model_service.select_by_id(self.model_id)
+        path_model, path_config = voice_model['path_model'], voice_model['path_config']
+        model_name = os.path.basename(path_model)
+        config_name = os.path.basename(path_config)
+        dst_model = os.path.join(OUTPUT_DIR, model_name)
+        dst_config = os.path.join(OUTPUT_DIR, config_name)
+        shutil.copy(path_model, dst_model)
+        shutil.copy(path_config, dst_config)
+        return dst_model, dst_config
 
     def finish_generating(self, version, path):
         self.root.after(0, lambda: self.after_generating(version, path))

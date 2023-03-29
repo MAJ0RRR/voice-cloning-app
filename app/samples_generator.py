@@ -22,17 +22,19 @@ class SamplesGenerator:
                 process.terminate()
                 self.finish_generating(callback)
         source_2 = os.path.join(WORKING_DIR, "audiofiles/splits")
+        print('debug')
         process2 = subprocess.Popen(["python", "../noise.py", "-s", source_2, "--destination", f"dataset{version}"])
         while process2.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
-        process = subprocess.Popen(["python", "../whispertrans.py", '-l', self.language, '-n', f"dataset{version}", '-g', gpu, '-v', vram])
+        process = subprocess.Popen(
+            ["python", "../whispertrans.py", '-l', self.language, '-n', f"dataset{version}", '-g', gpu, '-v', vram])
         while process.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
-        #create_transcription(WORKING_DIR, f"dataset{version}", self.language, 1) for tests
+        # create_transcription(WORKING_DIR, f"dataset{version}", self.language, 1)
         root = os.path.join(WORKING_DIR, f'audiofiles/datasets/dataset{version}')
         process3 = subprocess.Popen(["python", "../discard_transcriptions.py", self.language, root])
         while process3.poll() is None:
