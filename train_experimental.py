@@ -12,7 +12,6 @@ import argparse
 OUTPUT_PATH = "output/"
 CONFIG_FILE_NAME = "config.json"
 DEFAULT_RUN_NAME = "new_model"
-DATASETS_DIR = "audiofiles/datasets"
 
 
 def validate_input(args):
@@ -22,9 +21,9 @@ def validate_input(args):
 
     assert args.run_name, f'run_name cannot be empty'
 
-    assert args.dataset_name, f'dataset_name cannot be empty'
-    assert os.path.exists(os.path.join(DATASETS_DIR, args.dataset_name)), \
-        f'directory dataset_name does not exist, dataset_name={args.dataset_name}'
+    assert args.dataset_path, f'dataset_path cannot be empty'
+    assert os.path.exists(args.dataset_path), \
+        f'directory dataset_path does not exist, dataset_path={args.dataset_path}'
 
     if args.model_path:
         assert args.model_path.endswith('.pth'), f'model_path file type incorrect, model_path={args.model_path}'
@@ -37,11 +36,11 @@ def validate_input(args):
             f'model_path directory does not contain {CONFIG_FILE_NAME} file file'
 
 
-def train(model_path, dataset_name, language, run_name):
+def train(model_path, dataset_path, language, run_name):
     mode = 'continue' if model_path else 'new'
 
     dataset_config = BaseDatasetConfig(
-        formatter="ljspeech", meta_file_train="metadata.csv", path=os.path.join(DATASETS_DIR, dataset_name))
+        formatter="ljspeech", meta_file_train="metadata.csv", path=dataset_path)
 
     audio_config = VitsAudioConfig(
         sample_rate=22050, win_length=1024, hop_length=256, num_mels=80, mel_fmin=0, mel_fmax=None
@@ -133,13 +132,12 @@ if __name__=='__main__':
                         help=f'Run name. Default {DEFAULT_RUN_NAME}')
     parser.add_argument('-l', '--language', action='store', dest='language', default='en',
                         help='Language of model (en/pl). Default: en.')
-    parser.add_argument('-d', '--dataset', action='store', dest='dataset_name', default='dataset',
-                        help=f'Dataset name (from {DATASETS_DIR}). Default: dataset.')
+    parser.add_argument('-d', '--dataset', action='store', dest='dataset_path', default='audiofiles/datasets/dataset',
+                        help=f'Dataset path. Default: dataset.')
     parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', required=True, help='GPU number.')
 
     args = parser.parse_args()
     validate_input(args)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
-
-    train(args.model_path, args.dataset_name, args.language, args.run_name)
+    train(args.model_path, args.dataset_path, args.language, args.run_name)

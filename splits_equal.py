@@ -21,7 +21,7 @@ def split_equal(destination, source, length):
         f"find {source} -name '*.wav' -exec bash -c 'for f; do ffmpeg -y -i \"$f\" -acodec pcm_s16le -ar 22050 -ac 1 \"{tempdir.name}/$(basename -s .wav $f)\".wav -loglevel error; done' _ {{}} +")
 
     # do split files
-    fs = FileSpliter(f"{tempdir.name}/*.wav", 'audiofiles/splits')
+    fs = FileSpliter(f"{tempdir.name}/*.wav", destination)
     fs.split_length(length)
 
     # close tempdir

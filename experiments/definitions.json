@@ -1,0 +1,19 @@
+{
+    "Experiments":
+    [
+        {
+           "Name": "exp1",
+           "RawSource": "audiofiles/raw",
+           "TrimSourceLengthMs": 0,
+           "SilenceSplitType": "equal",
+           "SplitSilenceLength": 8,
+           "RemoveNoise": true,
+           "DiscardTranscripts": false,
+           "DiscardWordCount": 3,
+           "Language": "en",
+           "ModelPath": ""
+        }
+    ],
+    "Gpu": "2",
+    "WhisperVram": 10
+}
