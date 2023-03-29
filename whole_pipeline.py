@@ -17,7 +17,7 @@ def trim_wavs(source, destinantion, desired_len_ms):
     audiofiles_src = glob.glob(source + "/*")
     for idx, audiofile in enumerate(audiofiles_src):
         ext = os.path.splitext(audiofile)[1]
-        if  ext == ".wav":
+        if ext == ".wav":
             audio_segment = AudioSegment.from_wav(audiofile)
         elif ext == ".mp3":
             audio_segment = AudioSegment.from_mp3(audiofile)
@@ -35,47 +35,42 @@ def trim_wavs(source, destinantion, desired_len_ms):
         if len_sum >= desired_len_ms:
             break
 
-if __name__ == "__main__":
-    gpu_num = "2"
 
-    silence_split_type = "equal"
-    remove_noises = True
-    discard = True
+def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, silence_split_type="equal", split_len=8,
+                 split_min_silence_lens=None, split_silence_threshs=None, remove_noises=True, dataset_name="dataset",
+                 whisper_vram=10, discard_transcripts=True, discard_word_count=3, language="en",
+                 model_path=None, run_name="experiment"):
+    if split_silence_threshs is None:
+        split_silence_threshs = [-45]
+    if split_min_silence_lens is None:
+        split_min_silence_lens = [300]
+    if trim_source_length == 0:
+        audio_source = raw_source
+    else:
+        audio_source = os.path.join(experiment_dir, 'trimmed')
+        trim_wavs(raw_source, audio_source, trim_source_length)
 
-    raw_audio = "audiofiles/raw"
-    split_audio = "audiofiles/splits"
-    split_len = 8
-
-    split_min_silence_lens = [300]
-    split_silence_threshs = [-45]
-
-    dataset_name = "dataset"
-    dataset_dir = "audiofiles/datasets"
-    dataset_path = os.path.join(dataset_dir, dataset_name)
-
-    language = "en"
-    whisper_vram = 10
-    discard_word_count = 3
-
-    model_path = None
-    run_name = "experimental"
-
-    os.environ["CUDA_VISIBLE_DEVICES"] = gpu_num   
+    os.environ["CUDA_VISIBLE_DEVICES"] = gpu_num
+    splits_dir = os.path.join(experiment_dir, 'splits')
+    dataset_dir = os.path.join(experiment_dir, 'datasets', dataset_name)
 
     if silence_split_type == "equal":
-        split_equal(split_audio, raw_audio,length=split_len)
+        split_equal(splits_dir, audio_source, length=split_len)
     else:
-        split_silence(split_audio, raw_audio, split_silence_threshs, split_min_silence_lens)
+        split_silence(splits_dir, audio_source, split_silence_threshs, split_min_silence_lens)
 
     if remove_noises:
-        remove_noise(split_audio, dataset_name)
+        remove_noise(splits_dir, dataset_dir)
     else:
-        copy_tree(split_audio, dataset_path)
+        copy_tree(splits_dir, dataset_dir)
 
-    create_transcription(os.getcwd(), dataset_name, language, whisper_vram)
+    create_transcription(dataset_dir, language, whisper_vram)
 
-    if discard:
-        discard_transcriptions(language, dataset_path, discard_word_count)
+    if discard_transcripts:
+        discard_transcriptions(language, dataset_dir, discard_word_count)
 
     train(model_path, dataset_name, language, run_name)
 
+
+if __name__ == "__main__":
+    run_pipeline(gpu_num="2", experiment_dir="experiment1", raw_source="audiofiles/raw")
