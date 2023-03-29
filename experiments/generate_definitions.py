@@ -10,21 +10,15 @@ def _set_definition_values(definition: dict, name: str, source: dict, trim_len: 
                            split_type: str, remove_noise: bool, discard: int):
     definition["Name"] = name
     definition["RawSource"] = source["RawSource"]
-
-    if trim_len == 0:
-        definition["TrimSource"] = False
-    else:
-        definition["TrimSource"] = False
-        definition["TrimSourceLengthMs"] = trim_len * 60 * 1000
-
+    definition["TrimSourceLengthMs"] = trim_len * 60 * 1000
     definition["ModelPath"] = source["ModelPath"]
     definition["Language"] = source["Language"]
     definition["SilenceSplitType"] = split_type
     definition["RemoveNoise"] = remove_noise
     if discard == 0:
-        definition["DiscardTranscripts"] = False
-    else:
         definition["DiscardTranscripts"] = True
+    else:
+        definition["DiscardTranscripts"] = False
         definition["DiscardWordCount"] = discard
 
 
