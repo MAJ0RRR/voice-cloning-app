@@ -91,7 +91,7 @@ if __name__ == '__main__':
     split_min_silence_lens = [300]
     split_silence_threshs = [-45]
     remove_noises = [True, False]
-    discard_word_counts = [0, 3]
+    discard_word_counts = [0]
     generate_definitions(sources=sources, trim_source_lengths_mins=trim_source_lengths_mins,
                          silence_split_types=silence_split_types, split_lengths=split_lengths,
                          split_min_silence_lens=split_min_silence_lens, split_silence_threshs=split_silence_threshs,
