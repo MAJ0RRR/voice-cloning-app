@@ -1,4 +1,6 @@
 import os
+import shutil
+
 import playsound
 import threading
 import tkinter as tk
@@ -8,7 +10,7 @@ import queue
 from app.entities.voice_model import VoiceModel
 from app.views.basic.basic_view import WIDTH, HEIGHT, POPUP_HEIGHT, POPUP_WIDTH, BUTTON_FONT, Y_FIRST_MODEL, PAD_Y, \
     BUTTON_WIDTH_2, BUTTON_HEIGHT_2, MAX_FONT, BUTTON_HEIGHT_1, BUTTON_WIDTH_1
-from app.settings import WORKING_DIR
+from app.settings import WORKING_DIR, MODEL_DIR_GENERATED
 from app.speech_synthesizer import SpeachSynthesizer
 from app.views.basic.basic_view import BasicView
 
@@ -33,7 +35,7 @@ class AfterTrainView(BasicView):
         self.thread = threading.Thread(target=self.worker, args=(self.q,))
         self.thread.start()
         self.paths_to_basic_audio = []
-        self.config_file_path = os.path.join(WORKING_DIR, "voice_models/test/config.json")
+        self.config_file_path = os.path.join(WORKING_DIR, "models/test/config.json")
         self.popup = None
         self.start_synthesize_basic_audio()
         self.input_field = tk.Entry(root, width=60, font=BUTTON_FONT)
@@ -130,7 +132,7 @@ class AfterTrainView(BasicView):
         self.stop = False
 
     def find_paths_to_generated_voice_models(self):
-        path = os.path.join(WORKING_DIR, 'voice_models/test/generated')
+        path = os.path.join(WORKING_DIR, 'models/test/generated')
         paths = []
         for f in os.listdir(path):
             paths.append(os.path.join(path, f))
@@ -156,27 +158,46 @@ class AfterTrainView(BasicView):
         pass
 
     def display_window_to_enter_name_for_model(self):
+        screen_pos = self.root.winfo_x()  # we need this to popup on the same screen which is app
+        x = (WIDTH - POPUP_WIDTH) // 2 + screen_pos
+        y = (HEIGHT - POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
+        self.popup.geometry(f"{POPUP_WIDTH}x{POPUP_HEIGHT}+{x}+{y}")
         self.popup.title("Wpisz nazwę")
         self.popup.grab_set()
         label = tk.Label(self.popup, text="Wpisz nazwę dla modelu:")
         label.pack()
 
-        self.entry2 = tk.Entry(self.popup)
+        self.entry2 = tk.Entry(self.popup, width=50)
         self.entry2.pack()
 
+        cancel_button = tk.Button(self.popup, text="Anuluj", command=lambda: self.destro_popup())
+        cancel_button.pack(side=tk.LEFT, pady=PAD_Y / 2, padx=(160,40))
         ok_button = tk.Button(self.popup, text="Zapisz", command=lambda: self.save_model(self.entry2.get()))
-        ok_button.pack(side=tk.LEFT)
+        ok_button.pack(side=tk.LEFT, pady=PAD_Y/2)
 
     def save_model(self, name):
         if name == '':
             messagebox.showerror("Uzupełnij nazwę modelu!")
             return
-        # move model to place with generated models(config also)
-        voice_model = VoiceModel(name, ..., ..., self.gender, self.language)
+        path_model, path_config = self.copy_model_to_saved_models()
+        voice_model = VoiceModel(name, path_model, path_config, self.gender, self.language)
         self.voice_model_service.insert(voice_model)
         self.popup.destroy()
         messagebox.showinfo("Model głosu został zapisany.")
+
+    def copy_model_to_saved_models(self):
+        language = 'PL' if self.language == 'polish' else 'EN'
+        gender = "MALE" if self.gender == 'man' else "FEMALE"
+        path_model = self.paths_to_generated_voice_models[self.choosen_model]
+        path_config = self.config_file_path
+        filename = os.path.basename(path_model)
+        dest_dir =  os.path.join(MODEL_DIR_GENERATED, f"{language}/{gender}")
+        dest_path_model = os.path.join(dest_dir, filename)
+        dest_path_config = os.path.join(dest_dir, 'config.json')
+        shutil.copy(path_model, dest_path_model)
+        shutil.copy(path_config, dest_path_config)
+        return dest_path_model, dest_path_config
 
     def switch_to_main_view(self):
         confirm = messagebox.askyesno("Powrót do menu głównego",
@@ -187,6 +208,9 @@ class AfterTrainView(BasicView):
             self.thread.join()
             # destroy all models
             super().switch_to_main_view()
+
+    def destroy_popup(self):
+        self.popup.destroy()
 
     def continue_training(self):
         confirm = messagebox.askyesno("Kontunuowanie treningu",

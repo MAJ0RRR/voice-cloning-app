@@ -6,19 +6,21 @@ from time import sleep
 import tkinter as tk
 from tkinter import messagebox
 
-from app.settings import OUTPUT_DIR
+from app.settings import OUTPUT_DIR, WORKING_DIR
 from app.views.basic.basic_view import BasicView, WIDTH, HEIGHT, POPUP_HEIGHT, POPUP_WIDTH
 
 
 class TrainView(BasicView):
 
-    def __init__(self, root, voice_model_service, voice_recordings_service, version_service, gender, language, option,
+    def __init__(self, root, voice_model_service, voice_recordings_service, version_service, gender, language, option, gpu, dataset,
                  model_id=None):
         super(TrainView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
         self.gender = gender
         self.language = language
         self.model_id = model_id
-        self.run_name = self
+        self.dataset = dataset
+        self.gpu = gpu
+        self.run_name = self.generate_run_name()
         self.popup = None
         self.model_path, self.config_path = self.copy_model_to_output_dir()
         self.process = None
@@ -99,7 +101,8 @@ class TrainView(BasicView):
         cancel_button.pack(padx=10, pady=10)
 
     def start_train(self):
-        self.process = subprocess.Popen([["python", "../tarain.py", "-s", source_1, "-d", dest_1]])
+        language = 'pl' if self.language == 'polish' else 'en'
+        self.process = subprocess.Popen([["python", "../train.py", '-m', self.model_path, '-r', WORKING_DIR, '-n', self.run_name, '-l', language, '-d', self.dataset, '-g', self.gpu]])
 
 
 

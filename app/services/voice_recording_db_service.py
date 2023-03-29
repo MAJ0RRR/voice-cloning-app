@@ -18,7 +18,7 @@ class VoiceRecordingDbService:
                 f"name TEXT NOT NULL," \
                 f"path TEXT NOT NULL UNIQUE," \
                 "model_id INTEGER NOT NULL," \
-                "FOREIGN KEY(model_id)  REFERENCES voice_models(id));"
+                "FOREIGN KEY(model_id)  REFERENCES models(id));"
         self.cursor.execute(query)
         self.conn.commit()
 

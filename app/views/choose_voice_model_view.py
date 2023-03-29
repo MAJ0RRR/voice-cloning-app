@@ -40,7 +40,7 @@ class ChooseVoiceModelView(BasicView):
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
                                      width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
         back_button = tk.Button(self.root, text="Cofnij", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
-                                command=self.switch_to_choose_gender_language_train)
+                                command=self.switch_to_choose_gender_language)
         continue_button = tk.Button(self.root, text="Dalej", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
                                     command=self.switch_to_next_view)
 
@@ -59,7 +59,7 @@ class ChooseVoiceModelView(BasicView):
         for widget in self.root.winfo_children():
             widget.destroy()
         model_id = self.choosen_model.get()
-        if self.option == Options.train:
+        if self.option == Options.train_old:
             ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
                             self.version_service, self.gender,
                             self.language, model_id)

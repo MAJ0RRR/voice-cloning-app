@@ -13,7 +13,7 @@ class SamplesGenerator:
         self.language = 'en' if language == 'english' else 'pl'
         self.version_service = version_service
 
-    def generate_samples(self, version, callback):
+    def generate_samples(self, version, gpu, vram, callback):
         source_1 = os.path.join(WORKING_DIR, "audiofiles/raw")
         dest_1 = os.path.join(WORKING_DIR, "audiofiles/splits")
         process = subprocess.Popen(["python", "../splits_equal.py", "-s", source_1, "-d", dest_1])
@@ -27,9 +27,12 @@ class SamplesGenerator:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
-        print("after 2")
-        create_transcription(WORKING_DIR, f"dataset{version}", self.language, 1)
-        print("after 3")
+        process = subprocess.Popen(["python", "../whispertrans.py", '-l', self.language, '-n', f"dataset{version}", '-g', gpu, '-v', vram])
+        while process.poll() is None:
+            if self.stop_event.is_set():
+                process.terminate()
+                self.finish_generating(callback)
+        #create_transcription(WORKING_DIR, f"dataset{version}", self.language, 1) for tests
         root = os.path.join(WORKING_DIR, f'audiofiles/datasets/dataset{version}')
         process3 = subprocess.Popen(["python", "../discard_transcriptions.py", self.language, root])
         while process3.poll() is None:

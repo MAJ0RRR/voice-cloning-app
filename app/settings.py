@@ -3,8 +3,11 @@ from pathlib import Path
 
 WORKING_DIR = Path(os.getcwd()).parent
 
-# dir for voice models
-MODEL_DIR = os.path.join(WORKING_DIR, 'voice_models')
+# dir for basic voice models
+MODEL_DIR_BASIC = os.path.join(WORKING_DIR, 'models/default')
+
+#dir for generated voice models
+MODEL_DIR_GENERATED = os.path.join(WORKING_DIR, 'models/generated')
 
 # dir for synthesized audio
 GENERATED_DIR = os.path.join(WORKING_DIR, 'audiofiles/generated')

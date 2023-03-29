@@ -10,7 +10,7 @@ class VoiceRecording:
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50))
     path = Column(String(200))
-    model_id = Column(Integer, ForeignKey("voice_models.id"))
+    model_id = Column(Integer, ForeignKey("models.id"))
 
     def __init__(self, name, path, model_id):
         self.name = name

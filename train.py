@@ -154,6 +154,8 @@ if __name__=='__main__':
     parser.add_argument('-m', '--model_path', action='store', dest='model_path', default=None,
                         help='Model path (from output/), starts from scratch if not given.'
                              ' There must be config.json next to model!')
+    parser.add_argument('-r', '--root', action='store', dest='root', default="",
+                        help='Specifies root dir.')
     parser.add_argument('-n', '--run_name', action='store', dest='run_name', default=DEFAULT_RUN_NAME,
                         help=f'Run name. Default {DEFAULT_RUN_NAME}')
     parser.add_argument('-l', '--language', action='store', dest='language', default='en',
@@ -163,7 +165,7 @@ if __name__=='__main__':
     parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', required=True, help='GPU number.')
 
     args = parser.parse_args()
-    validate_input(ROOT_DIR, args)
+    validate_input(args.root, args)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
 

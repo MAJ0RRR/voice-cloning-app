@@ -5,7 +5,7 @@ Base = declarative_base()
 
 
 class VoiceModel(Base):
-    __tablename__ = 'voice_models'
+    __tablename__ = 'models'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50))
