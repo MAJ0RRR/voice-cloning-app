@@ -4,13 +4,13 @@ import shutil
 import tkinter as tk
 
 from app.enums import Options
-from app.views.all_recordings_model_view import AllRecordingsModelView
 from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
     PAGING, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
-from app.views.generate_recordings_view import GenerateRecordingsView
 
 choose_gender_language_module = lazy_module("choose_gender_language.view")
 choose_audio_module = lazy_module("app.views.choose_audio_view")
+generate_recordings_module = lazy_module("app.views.generate_recordings_view")
+all_recording_module = lazy_module("app.views.all_recordings_model_view")
 PAD_Y = 40
 
 
@@ -22,9 +22,10 @@ class ChooseVoiceModelView(BasicView):
         self.option = option
         self.gender = gender
         self.language = language
-        self.choosen_model = tk.IntVar()
-        self.choosen_model.set("1")  # default value
         self.model_entities = self.voice_model_service.select_gender_language(gender, language)
+        self.choosen_model = tk.IntVar()
+        if len(self.model_entities) >0:
+            self.choosen_model.set(self.model_entities[0]['id'])  # default value
         self.model_labels = []
         self.model_buttons = []
         self.display_models()
@@ -59,13 +60,18 @@ class ChooseVoiceModelView(BasicView):
         for widget in self.root.winfo_children():
             widget.destroy()
         model_id = self.choosen_model.get()
-        if self.option == Options.train_old:
-            choose_audio_module.ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
-                                                self.version_service, self.gender,
-                                                self.language, model_id)
+        if self.option == Options.synthesize_speech:
+            generate_recordings_module.GenerateRecordingsView(self.root, self.gender, self.language,
+                                                          self.voice_model_service,
+                                                          self.voice_recordings_service, self.version_service, model_id,
+                                                          self.option)
         else:
-            GenerateRecordingsView(self.root, self.gender, self.language, self.voice_model_service,
-                                   self.voice_recordings_service, self.version_service, model_id, self.option)
+            if self.option == Options.train_new:
+                model_id = None
+        choose_audio_module.ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                                self.version_service, self.option,
+                                                self.language,  self.gender,model_id)
+
 
     def display_models(self):
         models = self.model_entities[self.page * 10:self.page * 10 + 10]
@@ -125,7 +131,7 @@ class ChooseVoiceModelView(BasicView):
     def switch_to_recordings_of_model(self, model_id):
         for widget in self.root.winfo_children():
             widget.destroy()
-        AllRecordingsModelView(self.root, self.gender, self.language, self.voice_model_service,
+        all_recording_module.AllRecordingsModelView(self.root, self.gender, self.language, self.voice_model_service,
                                self.voice_recordings_service, self.version_service, model_id, self.option)
 
     def play_audio(self, id):

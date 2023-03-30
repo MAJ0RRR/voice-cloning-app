@@ -1,10 +1,10 @@
 import tkinter as tk
 
 from app.views.main_view import MainView
-from services.voice_model_db_service import VoiceModelDbService
-from services.voice_recording_db_service import VoiceRecordingDbService
-from services.version_service import VersionService
-from settings import db_file
+from app.services.voice_model_db_service import VoiceModelDbService
+from app.services.voice_recording_db_service import VoiceRecordingDbService
+from app.services.version_service import VersionService
+from app.settings import db_file
 
 voice_model_db_service = VoiceModelDbService(db_file)
 voice_records_db_service = VoiceRecordingDbService(db_file)

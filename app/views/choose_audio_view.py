@@ -3,11 +3,11 @@ import os
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import shutil
 import subprocess
+import shutil
 import queue
 
-from app.enums import Options
+
 from app.samples_generator import SamplesGenerator
 from app.views.basic.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_FONT, Y_MENU, ALLOWED_EXTENSIONS, WIDTH, \
     POPUP_WIDTH, HEIGHT, POPUP_HEIGHT, BasicView, PAD_Y
@@ -36,8 +36,9 @@ class ChooseAudioView(BasicView):
         try:
             self.choosen_gpu = tk.IntVar()
             self.choosen_gpu.set(self.gpu_ids[0])
-        except ValueError:
+        except IndexError:
             self.no_gpu_available()
+            return
         self.display_widgets()
         self.samples_generator = SamplesGenerator(self.language, self.version_service)
         self.q = queue.Queue()
@@ -125,9 +126,12 @@ class ChooseAudioView(BasicView):
                                                      self.voice_recordings_service, self.version_service, self.option)
 
     def get_gpu_ids(self):
-        # output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
-        # return [int(x) for x in output.decode().strip().split('\n') #uncomment after tests
-        return [0, 1]
+        try:
+            output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
+            return [int(x) for x in output.decode().strip().split('\n')]
+        except FileNotFoundError:
+            return []
+        # return [0, 1]     for test without nvidia
 
     def switch_to_main_view(self):
         self.event.set()
@@ -182,7 +186,7 @@ class ChooseAudioView(BasicView):
         gpu = self.choosen_gpu.get()
         for widget in self.root.winfo_children():
             widget.destroy()
-        dataset = f"dataset_{self.version_service.get_version()}"
+        dataset = f"dataset_{self.version_service.get_version()-1}"
         model_path, config_path = self.copy_model_to_output_dir()
         train_module.TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service,
                                self.gender, self.language, self.option, gpu, dataset, model_path)

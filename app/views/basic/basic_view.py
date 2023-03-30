@@ -6,6 +6,7 @@ choose_audio_for_samples_view = lazy_module("app.views.choose_audio_for_generati
 choose_gender_view = lazy_module("app.views.choose_gender_language_view")
 main_menu_module = lazy_module("app.views.main_view")
 after_train_view = lazy_module("app.views.after_train_view")
+train_module = lazy_module("app.views.train_view")
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -33,10 +34,8 @@ class BasicView:
         self.voice_recordings_service = voice_recordings_service
 
     def switch_to_choose_gender_language_train_old(self):
-        print('test')
         for widget in self.root.winfo_children():
             widget.destroy()
-        print('test')
         choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
                                                     self.version_service, Options.train_old)
 
@@ -47,14 +46,16 @@ class BasicView:
                                                     self.version_service, self.option)
 
     def switch_to_choose_gender_language_train_new(self):
-        # for widget in self.root.winfo_children():
-        #    widget.destroy()
-        # choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
-        #                                            self.version_service, Options.train_new)
         for widget in self.root.winfo_children():
-            widget.destroy()
-        after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
-                                        self.version_service, 'woman', 'polish')
+           widget.destroy()
+        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                                   self.version_service, Options.train_new)
+
+        #for widget in self.root.winfo_children():
+        #    widget.destroy()
+        #after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
+        #                               self.version_service, 'woman', 'polish', '/home/dawid/sem6/ProjektGrupowy22-23/output/dir' , 'dataset_8', 0)
+
 
     def switch_to_choose_gender_language_synthesize(self):
         for widget in self.root.winfo_children():

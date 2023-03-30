@@ -6,6 +6,7 @@ import threading
 from time import sleep
 import tkinter as tk
 from tkinter import messagebox
+import webbrowser
 
 from app.settings import OUTPUT_DIR, WORKING_DIR
 from app.views.basic.basic_view import BasicView, WIDTH, HEIGHT, POPUP_HEIGHT, POPUP_WIDTH
@@ -29,13 +30,14 @@ class TrainView(BasicView):
         self.popup = None
         self.process = None
         self.start_train()
+        self.dir_with_result = './output/tescik-March-27-2023_07+02PMf71a482'
         self.thread = threading.Thread(target=self.wait_for_dir)
         self.thread.start()
         self.display_widgets()
-        self.dir_with_result = ''
+
 
     def generate_run_name(self):
-        return f"{self.gender}_{self.language}_{self.model_id}"
+        return f"{self.gender}_{self.language}"
 
     def display_widgets(self):
         screen_pos = self.root.winfo_x()  # we need this to popup on the same screen where app is open
@@ -61,14 +63,10 @@ class TrainView(BasicView):
         pass
 
     def wait_for_dir(self):
-        while ():
-            sleep(2 * 60)  # creating this files lasts about 2 minutes
-            dir_exists = False
-            for dir in os.listdir(path):
-                if dir.startswith(self.run_name):
-                    dir_exists = True  # maybe later also check if in this dir is file that Pawel mentioned
-                    break
-            if dir_exists:
+        while (True):
+            sleep(30)  # creating this files lasts about 2 minutes uncommment
+            self.find_path_to_dir_result()
+            if self.dir_with_result:
                 self.run_tensorboard()
                 self.create_new_popup()
                 break
@@ -92,14 +90,15 @@ class TrainView(BasicView):
         for widget in self.popup.winfo_children():
             widget.destroy()
         self.popup.title('Trwa trenowanie głosu')
-        self.link = tk.Hyperlink(
-            self.popup,
-            text="Sprawdź rezultat uczenia",
-            url="localhost:6006",
-        )
-        self.link.pack(pady=10)
-        cancel_button = tk.Button(self.popup, text="Anuluj", command=self.cancel_while_training)
+        link = tk.Label(self.popup, text="Sprawdź rezultat uczenia", fg="blue")
+        link.pack(padx=10, pady=10)
+
+        link.bind("<Button-1>", lambda e: self.open_url())
+        cancel_button = tk.Button(self.popup, text="Przerwij trening", command=self.cancel_while_training)
         cancel_button.pack(padx=10, pady=10)
+
+    def open_url(self):
+        webbrowser.open_new("http://localhost:6006")
 
     def cancel_while_training(self):
         confirm = messagebox.askyesno("Przerwanie przygotowywania trenowania",
@@ -120,10 +119,12 @@ class TrainView(BasicView):
     def start_train(self):
         language = 'pl' if self.language == 'polish' else 'en'
         if self.model_path:
+            parts = self.model_path.split("/")
+            relative_path_to_model = "/".join(parts[-2:]).lstrip("/")
             self.process = subprocess.Popen(
-                ["python", "../train.py", '-m', self.model_path, '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
-                 '-d', self.dataset, '-g', self.gpu])
+                ["python", "../train.py", '-m', relative_path_to_model, '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
+                 '-d', self.dataset, '-g', str(self.gpu)])
         else:
             self.process = subprocess.Popen(
                 ["python", "../train.py", '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
-                 '-d', self.dataset, '-g', self.gpu])
+                 '-d', self.dataset, '-g', str(self.gpu)])  #uncomment after tests

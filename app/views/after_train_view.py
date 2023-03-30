@@ -92,7 +92,6 @@ class AfterTrainView(BasicView):
             if not self.stop:
                 self.paths_to_basic_audio.append(self.generate_basic_audio(voice_model_path, text))
         self.popup.destroy()
-        print(len(self.paths_to_basic_audio))
         if self.stop:
             self.root.after(0, self.switch_to_main_view)
         else:
@@ -154,7 +153,7 @@ class AfterTrainView(BasicView):
                                      width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
         save_button = tk.Button(self.root, text="Zapisz wybrany model", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
                                 command=self.display_window_to_enter_name_for_model)
-        continue_training_button = tk.Button(self.root, text="Generuj nową próbkę", width=BUTTON_WIDTH_1,
+        continue_training_button = tk.Button(self.root, text="Dotrenuj model", width=BUTTON_WIDTH_1,
                                              height=BUTTON_HEIGHT_1, command=self.continue_training)
 
         main_menu_button.place(x=200, y=700)

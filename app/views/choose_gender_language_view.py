@@ -13,7 +13,6 @@ class ChooseGenderLanguageView(BasicView):
     def __init__(self, root, voice_model_service, voice_recordings_service, version_service, option):
         super(ChooseGenderLanguageView, self).__init__(root, voice_model_service, voice_recordings_service,
                                                        version_service)
-        print('test2')
         self.option = option
         self.language = tk.StringVar()
         self.language.set("polish")

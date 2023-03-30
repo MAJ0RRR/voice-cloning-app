@@ -11,10 +11,10 @@ class MainView(BasicView):
 
     def display_widgets(self):
         b1 = tk.Button(self.root, text="Stwórz nowy model głosu",
-                       command=self.switch_to_choose_gender_language_train_old,
+                       command=self.switch_to_choose_gender_language_train_new,
                        width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
         b2 = tk.Button(self.root, text="Dotrenuj model głosu", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
-                       command=self.switch_to_choose_gender_language_train_new,
+                       command=self.switch_to_choose_gender_language_train_old,
                        font=BUTTON_FONT)
         b3 = tk.Button(self.root, text="Syntezuj mowę na podstawie modelu", width=BUTTON_WIDTH_1,
                        height=BUTTON_HEIGHT_1, font=BUTTON_FONT,
