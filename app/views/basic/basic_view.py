@@ -46,15 +46,15 @@ class BasicView:
                                                     self.version_service, self.option)
 
     def switch_to_choose_gender_language_train_new(self):
-        #for widget in self.root.winfo_children():
-        #   widget.destroy()
-        #choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
-        #                                           self.version_service, Options.train_new)
-
         for widget in self.root.winfo_children():
-            widget.destroy()
-        after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
-                                       self.version_service, 'woman', 'polish', '/home/dawid/sem6/ProjektGrupowy22-23/output/dir' , 'dataset_8', 0)
+           widget.destroy()
+        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                                   self.version_service, Options.train_new)
+
+        #for widget in self.root.winfo_children():
+        #    widget.destroy()
+        #after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
+        #                               self.version_service, 'woman', 'polish', '/home/dawid/sem6/ProjektGrupowy22-23/output/dir' , 'dataset_8', 0)
 
 
     def switch_to_choose_gender_language_synthesize(self):

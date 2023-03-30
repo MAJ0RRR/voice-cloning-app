@@ -81,14 +81,27 @@ class ChooseVoiceModelView(BasicView):
                                    value=model["id"])
             label.place(x=WIDTH / 2 - 350, y=Y_FIRST_MODEL + len(self.model_labels) * PAD_Y)
             self.model_labels.append(label)
+            id = model['id']
             button = tk.Button(self.root, text="Odsłuchaj", width=BUTTON_WIDTH_2, height=BUTTON_HEIGHT_2,
-                               font=BUTTON_FONT, command=lambda: self.play_audio(model['id']))
+                               font=BUTTON_FONT, command=self.create_play_audio_function(id))
             button.place(x=WIDTH / 2 - 100, y=Y_FIRST_MODEL + (len(self.model_labels) - 1) * PAD_Y)
             button_2 = tk.Button(self.root, text="Więcej próbek", width=BUTTON_WIDTH_2, height=BUTTON_HEIGHT_2,
-                                 font=BUTTON_FONT, command=lambda: self.switch_to_recordings_of_model(model['id']))
+                                 font=BUTTON_FONT, command=self.create_switch_to_recordings_function(id))
             button_2.place(x=WIDTH / 2 + 200, y=Y_FIRST_MODEL + (len(self.model_labels) - 1) * PAD_Y)
             self.model_buttons.append(button)
             self.model_buttons.append(button_2)
+
+    def create_play_audio_function(self, id):
+        def play_audio_function():
+            self.play_audio(id)
+
+        return play_audio_function
+
+    def create_switch_to_recordings_function(self, id):
+        def switch_to_recordings_function():
+            self.switch_to_recordings_of_model(id)
+
+        return switch_to_recordings_function
 
     def has_next_page(self):
         return len(self.model_entities) > (self.page * 10 + 10)
