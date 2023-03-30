@@ -9,6 +9,7 @@ from tkinter import messagebox
 import queue
 
 from app.entities.voice_model import VoiceModel
+from app.entities.voice_recording import VoiceRecording
 from app.views.basic.basic_view import WIDTH, HEIGHT, POPUP_HEIGHT, POPUP_WIDTH, BUTTON_FONT, Y_FIRST_MODEL, PAD_Y, \
     BUTTON_WIDTH_2, BUTTON_HEIGHT_2, MAX_FONT, BUTTON_HEIGHT_1, BUTTON_WIDTH_1
 from app.settings import WORKING_DIR, MODEL_DIR_GENERATED, OUTPUT_DIR
@@ -109,7 +110,7 @@ class AfterTrainView(BasicView):
         if not text:
             messagebox.showerror(title="Błąd", message="Nie wprowadzono tekstu do syntezy")
             return
-        if text == self.audio_text and voice_model_path == self.audio_model:
+        if text == self.audio_text and self.choosen_model.get() == self.audio_model:
             self.play_audio(self.audio_path)
             return
         self.speech_synthesizer = SpeachSynthesizer(model_path=voice_model_path, config_path=self.config_file_path)
@@ -139,7 +140,8 @@ class AfterTrainView(BasicView):
     def find_paths_to_generated_voice_models(self):
         paths = []
         for f in os.listdir(self.dir_with_result):
-            paths.append(os.path.join(self.dir_with_result, f))
+            if f.startswith('checkpoint'):
+                paths.append(os.path.join(self.dir_with_result, f))
         return paths
 
     def display_widgets(self):
@@ -175,7 +177,7 @@ class AfterTrainView(BasicView):
         self.entry2 = tk.Entry(self.popup, width=50)
         self.entry2.pack()
 
-        cancel_button = tk.Button(self.popup, text="Anuluj", command=lambda: self.destro_popup())
+        cancel_button = tk.Button(self.popup, text="Anuluj", command=lambda: self.destroy_popup())
         cancel_button.pack(side=tk.LEFT, pady=PAD_Y / 2, padx=(160, 40))
         ok_button = tk.Button(self.popup, text="Zapisz", command=lambda: self.save_model(self.entry2.get()))
         ok_button.pack(side=tk.LEFT, pady=PAD_Y / 2)
@@ -184,14 +186,23 @@ class AfterTrainView(BasicView):
         if name == '':
             messagebox.showerror("Uzupełnij nazwę modelu!")
             return
-        if self.model_name_exists:
+        if self.model_name_exists(name):
             messagebox.showerror("Model z taką nazwą już istnieje!")
             return
         path_model, path_config = self.copy_model_to_saved_models(name)
         voice_model = VoiceModel(name, path_model, path_config, self.gender, self.language)
-        self.voice_model_service.insert(voice_model)
+        model_id = self.voice_model_service.insert(voice_model)
+
+        self.save_recording(model_id)
         self.popup.destroy()
         messagebox.showinfo("Model głosu został zapisany.")
+
+    def save_recording(self, model_id):
+        path_audio = self.paths_to_basic_audio[self.choosen_model.get()]
+        name = 'basic'
+        voice_recording = VoiceRecording(name , path_audio, model_id)
+        self.voice_recordings_service.insert(voice_recording)
+
 
     def model_name_exists(self, name):
         language = 'PL' if self.language == 'polish' else 'EN'
@@ -204,13 +215,16 @@ class AfterTrainView(BasicView):
     def copy_model_to_saved_models(self, name):
         language = 'PL' if self.language == 'polish' else 'EN'
         gender = "MALE" if self.gender == 'man' else "FEMALE"
-        path_model = self.paths_to_generated_voice_models[self.choosen_model]
+        path_model = self.paths_to_generated_voice_models[self.choosen_model.get()]
         path_config = self.config_file_path
-        dest_dir = os.path.join(MODEL_DIR_GENERATED, f"{language}/{gender}")
-        dest_path_model = os.path.join(dest_dir, 'name.pth')
-        dest_path_config = os.path.join(dest_dir, 'config.json')
-        shutil.copy(path_model, dest_path_model)
-        shutil.copy(path_config, dest_path_config)
+        filename = os.path.basename(path_model)
+
+        dest_dir = os.path.join(MODEL_DIR_GENERATED, f"{language}/{gender}/{name}")
+        Path(dest_dir).mkdir(parents=True, exist_ok=True)
+        dest_path_model = os.path.join(dest_dir, filename )
+        dest_path_config = os.path.join(dest_dir, "config.json")
+        shutil.copy(path_model, dest_dir)
+        shutil.copy(path_config, dest_dir)
         return dest_path_model, dest_path_config
 
     def switch_to_main_view(self):
