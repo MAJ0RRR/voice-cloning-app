@@ -169,4 +169,4 @@ if __name__=='__main__':
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
 
-    train(ROOT_DIR, args.model_path, args.dataset_name, args.language, args.run_name)
+    train(args.root, args.model_path, args.dataset_name, args.language, args.run_name)

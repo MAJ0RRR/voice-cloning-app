@@ -1,17 +1,16 @@
 from lazy_import import lazy_module
-from playsound import playsound
+import pygame
 import shutil
 import tkinter as tk
+from tkinter import messagebox
 
 from app.enums import Options
-from app.views.basic.basic_view import BasicView, BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_HEIGHT_2, BUTTON_WIDTH_2, \
-    PAGING, WIDTH, BUTTON_FONT, Y_FIRST_MODEL
+from app.views.basic.basic_view import BasicView
 
 choose_gender_language_module = lazy_module("choose_gender_language.view")
 choose_audio_module = lazy_module("app.views.choose_audio_view")
 generate_recordings_module = lazy_module("app.views.generate_recordings_view")
 all_recording_module = lazy_module("app.views.all_recordings_model_view")
-PAD_Y = 40
 
 
 class ChooseVoiceModelView(BasicView):
@@ -19,6 +18,8 @@ class ChooseVoiceModelView(BasicView):
     def __init__(self, root, gender, language, voice_model_service, voice_recordings_service, version_service, option):
         super(ChooseVoiceModelView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
         self.page = 0
+        self.PAD_Y = 1.333*self.size_grid
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.option = option
         self.gender = gender
         self.language = language
@@ -31,23 +32,29 @@ class ChooseVoiceModelView(BasicView):
         self.display_models()
         self.next_page_button = None
         if self.has_next_page():
-            self.next_page_button = tk.Button(self.root, text="Następna strona", width=BUTTON_WIDTH_2,
-                                              height=BUTTON_HEIGHT_2,
-                                              command=self.next_page, font=BUTTON_FONT)
-            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + PAGING * PAD_Y)
+            self.next_page_button = tk.Button(self.root, text="Następna strona", width=self.BUTTON_WIDTH_2,
+                                              height=self.BUTTON_HEIGHT_2,
+                                              command=self.next_page, font=self.BUTTON_FONT)
+            self.next_page_button.place(x=self.WIDTH / 2 + 1.666*self.size_grid, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y)
         self.display_widgets()
 
-    def display_widgets(self):
-        main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
-                                     width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
-        back_button = tk.Button(self.root, text="Cofnij", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
-                                command=self.switch_to_choose_gender_language)
-        continue_button = tk.Button(self.root, text="Dalej", width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1,
-                                    command=self.switch_to_next_view)
+    def on_closing(self):
+        if messagebox.askokcancel("Wyjście", "Czy na pewno chcesz zamknąć program?"):
+            self.root.destroy()
 
-        main_menu_button.place(x=200, y=700)
-        back_button.place(x=800, y=700)
-        continue_button.place(x=1400, y=700)
+    def display_widgets(self):
+        label = tk.Label(self.root, bg='green', font= self.MAX_FONT, text='Wybierz moderz głosu')
+        label.pack(pady=self.PAD_Y)
+        main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
+                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, font= self.BUTTON_FONT)
+        back_button = tk.Button(self.root, text="Cofnij", width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1,
+                                command=self.switch_to_choose_gender_language, font=self.BUTTON_FONT)
+        continue_button = tk.Button(self.root, text="Dalej", width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1,
+                                    command=self.switch_to_next_view, font=self.BUTTON_FONT)
+
+        main_menu_button.place(x=6.667*self.size_grid, y=23.333*self.size_grid)
+        back_button.place(x=26.667*self.size_grid, y=23.333*self.size_grid)
+        continue_button.place(x=46.667*self.size_grid, y=23.333*self.size_grid)
 
     def switch_to_choose_gender_language_view(self):
         for widget in self.root.winfo_children():
@@ -68,7 +75,7 @@ class ChooseVoiceModelView(BasicView):
         else:
             if self.option == Options.train_new:
                 model_id = None
-        choose_audio_module.ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
+            choose_audio_module.ChooseAudioView(self.root, self.voice_model_service, self.voice_recordings_service,
                                                 self.version_service, self.option,
                                                 self.language,  self.gender,model_id)
 
@@ -77,17 +84,17 @@ class ChooseVoiceModelView(BasicView):
         models = self.model_entities[self.page * 10:self.page * 10 + 10]
         for model in models:
             label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                                   text=model["name"], bg='green', font=BUTTON_FONT, variable=self.choosen_model,
+                                   text=model["name"], bg='green', font=self.BUTTON_FONT, variable=self.choosen_model,
                                    value=model["id"])
-            label.place(x=WIDTH / 2 - 350, y=Y_FIRST_MODEL + len(self.model_labels) * PAD_Y)
+            label.place(x=self.WIDTH / 2 - 11.667*self.size_grid, y=self.Y_FIRST_MODEL + len(self.model_labels) * self.PAD_Y)
             self.model_labels.append(label)
             id = model['id']
-            button = tk.Button(self.root, text="Odsłuchaj", width=BUTTON_WIDTH_2, height=BUTTON_HEIGHT_2,
-                               font=BUTTON_FONT, command=self.create_play_audio_function(id))
-            button.place(x=WIDTH / 2 - 100, y=Y_FIRST_MODEL + (len(self.model_labels) - 1) * PAD_Y)
-            button_2 = tk.Button(self.root, text="Więcej próbek", width=BUTTON_WIDTH_2, height=BUTTON_HEIGHT_2,
-                                 font=BUTTON_FONT, command=self.create_switch_to_recordings_function(id))
-            button_2.place(x=WIDTH / 2 + 200, y=Y_FIRST_MODEL + (len(self.model_labels) - 1) * PAD_Y)
+            button = tk.Button(self.root, text="Odsłuchaj", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
+                               font=self.BUTTON_FONT, command=self.create_play_audio_function(id))
+            button.place(x=self.WIDTH / 2 - 3.333*self.size_grid, y=self.Y_FIRST_MODEL + (len(self.model_labels) - 1) * self.PAD_Y)
+            button_2 = tk.Button(self.root, text="Więcej próbek", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
+                                 font=self.BUTTON_FONT, command=self.create_switch_to_recordings_function(id))
+            button_2.place(x=self.WIDTH / 2 + 6.667*self.size_grid, y=self.Y_FIRST_MODEL + (len(self.model_labels) - 1) * self.PAD_Y)
             self.model_buttons.append(button)
             self.model_buttons.append(button_2)
 
@@ -115,10 +122,10 @@ class ChooseVoiceModelView(BasicView):
         self.model_buttons = []
         self.page += 1
         if self.page == 1:
-            self.previous_page_button = tk.Button(self.root, text="Poprzednia strona", width=BUTTON_WIDTH_2,
-                                                  height=BUTTON_HEIGHT_2,
-                                                  command=self.previous_page, font=BUTTON_FONT)
-            self.previous_page_button.place(x=WIDTH / 2 - 200, y=Y_FIRST_MODEL + PAGING * PAD_Y)
+            self.previous_page_button = tk.Button(self.root, text="Poprzednia strona", width=self.BUTTON_WIDTH_2,
+                                                  height=self.BUTTON_HEIGHT_2,
+                                                  command=self.previous_page, font=self.BUTTON_FONT)
+            self.previous_page_button.place(x=self.WIDTH / 2 - 6.667*self.size_grid, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y)
 
         if not self.has_next_page():
             self.next_page_button.destroy()
@@ -132,10 +139,10 @@ class ChooseVoiceModelView(BasicView):
         self.model_labels = []
         self.model_buttons = []
         if not self.has_next_page():  # check if there was a next page button before
-            self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=BUTTON_WIDTH_2,
-                                              height=BUTTON_HEIGHT_2,
-                                              command=self.next_page, font=BUTTON_FONT)
-            self.next_page_button.place(x=WIDTH / 2 + 50, y=Y_FIRST_MODEL + PAGING * PAD_Y)
+            self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=self.BUTTON_WIDTH_2,
+                                              height=self.BUTTON_HEIGHT_2,
+                                              command=self.next_page, font=self.BUTTON_FONT)
+            self.next_page_button.place(x=self.WIDTH / 2 + 1.667*self.size_grid, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y)
         self.page -= 1
         if self.page == 0:
             self.previous_page_button.destroy()
@@ -148,7 +155,11 @@ class ChooseVoiceModelView(BasicView):
                                self.voice_recordings_service, self.version_service, model_id, self.option)
 
     def play_audio(self, id):
+        pygame.mixer.music.stop()
         if voice_recording := self.voice_recordings_service.select_voice_recordings(name='basic', model_id=id)[0]:
-            playsound(voice_recording['path'])
+            pygame.mixer.music.load(voice_recording['path'])
+            pygame.mixer.music.play()
         else:
             print('error')
+
+

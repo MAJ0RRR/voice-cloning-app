@@ -1,1 +1,0 @@
-tts --text "$1" --model_path $2 --config_path $3 --out_path $4

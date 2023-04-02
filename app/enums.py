@@ -16,3 +16,4 @@ class Options(Enum):
     train_new = 2
     synthesize_speech = 3
     generate_samples = 4
+    retrain = 5

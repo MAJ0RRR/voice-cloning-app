@@ -1,20 +1,17 @@
 from lazy_import import lazy_module
 import os
-import playsound
+import pygame
 import queue
 import tkinter as tk
 from tkinter import messagebox
 import threading
 
 from app.entities.voice_recording import VoiceRecording
-from app.speech_synthesizer import SpeachSynthesizer
-from app.views.basic.basic_view import BasicView, BUTTON_HEIGHT_1, BUTTON_WIDTH_1, PAD_Y, BUTTON_FONT, MAX_FONT, PAGING, \
-    BUTTON_HEIGHT_2, BUTTON_WIDTH_2, Y_FIRST_MODEL, WIDTH, POPUP_WIDTH, HEIGHT, POPUP_HEIGHT
+from app.speech_synthesizer import SpeechSynthesizer
+from app.views.basic.basic_view import BasicView
 
 all_recordings_model_module = lazy_module('app.views.all_recordings_model_view')
 choose_voice_model_module = lazy_module('app.views.choose_voice_model_view')
-
-PAD_Y_2 = 40
 
 
 class GenerateRecordingsView(BasicView):
@@ -22,21 +19,22 @@ class GenerateRecordingsView(BasicView):
     def __init__(self, root, gender, language, voice_model_service, voice_records_service, version_service, model_id,
                  option):
         super(GenerateRecordingsView, self).__init__(root, voice_model_service, voice_records_service, version_service)
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.option = option
+        self.PAD_Y_2 = 1.333*self.size_grid
         self.gender = gender
         self.language = language
         self.model_id = model_id
         self.model = self.voice_model_service.select_by_id(model_id)
-        self.input_field = tk.Entry(root, width=60, font=BUTTON_FONT)
-        self.input_field.place(x=100, y=3 * PAD_Y)
-
+        self.input_field = tk.Entry(root, width=60, font=self.BUTTON_FONT)
+        self.input_field.place(x=3.333*self.size_grid, y=3 * self.PAD_Y)
         self.recording_entities = []
         self.recording_labels = []
         self.recording_buttons = []
         self.stop = False
         self.previous_page_button = None
         self.next_page_button = None
-        self.speech_synthesizer = SpeachSynthesizer(self.model)
+        self.speech_synthesizer = SpeechSynthesizer(self.model)
         self.popup = None
         self.page = 0
         self.event = threading.Event()
@@ -46,25 +44,35 @@ class GenerateRecordingsView(BasicView):
         self.thread.start()
         self.display_widgets()
 
+    def on_closing(self):
+        if messagebox.askokcancel("Wyjście", "Czy chcesz zakmnąć program? "):
+            self.root.destroy()
+            self.event.set()
+            self.thread.join()
+            if self.speech_synthesizer:
+                self.speech_synthesizer.stop_event.set()
+
     def display_widgets(self):
-        label = tk.Label(self.root, text=f"Model {self.model['name']}", font=MAX_FONT, bg='green')
-        label.place(x=290, y=PAD_Y)
-        label = tk.Label(self.root, text="Wpisz tekst, aby syntezować mowę", font=MAX_FONT, bg='green')
-        label.place(x=125, y=2 * PAD_Y)
-        generate_button = tk.Button(self.root, text="Generuj audio", command=self.generate_audio, font=BUTTON_FONT)
-        generate_button.place(x=300, y=4 * PAD_Y)
-        label = tk.Label(self.root, text="Wygenerowane próbki", font=MAX_FONT, bg='green')
-        label.place(x=900, y=PAD_Y)
+        label = tk.Label(self.root, text=f"Model {self.model['name']}", font=self.MAX_FONT, bg='green')
+        label.place(x=4.16*self.size_grid, y=self.PAD_Y)
+        label = tk.Label(self.root, text="Wpisz tekst, aby syntezować mowę", font=self.MAX_FONT, bg='green')
+        label.place(x=4.16*self.size_grid, y=2 * self.PAD_Y)
+        generate_button = tk.Button(self.root, text="Generuj audio", command=self.generate_audio, font=self.BUTTON_FONT)
+        generate_button.place(x=10*self.size_grid, y=4 * self.PAD_Y)
+        label = tk.Label(self.root, text="Wygenerowane próbki", font=self.MAX_FONT, bg='green')
+        label.place(x=30*self.size_grid, y=self.PAD_Y)
+        frame = tk.Frame(self.root, width=27.333*self.size_grid, height=16.667*self.size_grid, bg='white')
+        frame.place(x=30*self.size_grid - 10, y=self.PAD_Y + 2*self.size_grid)  # place for files
         model_list_button = tk.Button(self.root, text="Lista modeli głosu", command=self.switch_to_choose_model,
-                                      font=BUTTON_FONT, width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
-        main_menu_button = tk.Button(self.root, text="Menu główne", font=BUTTON_FONT, command=self.switch_to_main_view,
-                                     width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
+                                      font=self.BUTTON_FONT, width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
+        main_menu_button = tk.Button(self.root, text="Menu główne", font=self.BUTTON_FONT, command=self.switch_to_main_view,
+                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
         all_recordings_button = tk.Button(self.root, text="Wszystkie nagrania modelu",
-                                          command=self.switch_to_recordings_of_model, font=BUTTON_FONT,
-                                          width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1)
-        main_menu_button.place(x=200, y=700)
-        all_recordings_button.place(x=800, y=700)
-        model_list_button.place(x=1400, y=700)
+                                          command=self.switch_to_recordings_of_model, font=self.BUTTON_FONT,
+                                          width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
+        main_menu_button.place(x=6.667*self.size_grid, y=23.333*self.size_grid)
+        all_recordings_button.place(x=26.667*self.size_grid, y=23.333*self.size_grid)
+        model_list_button.place(x=46.667*self.size_grid, y=23.333*self.size_grid)
 
     def switch_to_main_view(self):
         self.event.set()
@@ -98,12 +106,12 @@ class GenerateRecordingsView(BasicView):
             return
         output_name = self.speech_synthesizer.generate_sample_name()
         self.q.put(lambda: self.speech_synthesizer.generate_audio(output_name, text, self.finish_sythesize), ())
-        x = (WIDTH - POPUP_WIDTH) // 2 + screen_pos
-        y = (HEIGHT - POPUP_HEIGHT) // 2
+        x = (self.WIDTH - self.POPUP_WIDTH) // 2 + screen_pos
+        y = (self.HEIGHT - self.POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
-        self.popup.geometry(f"{POPUP_WIDTH}x{POPUP_HEIGHT}+{x}+{y}")
+        self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT)}+{int(x)}+{int(y)}")
         self.popup.title("Trwa proces")
-
+        self.popup.protocol("WM_DELETE_WINDOW", self.cancel_process)
         label = tk.Label(self.popup, text="Aby przerwać syntezę kliknij anuluj.")
         label.pack(padx=10, pady=10)
 
@@ -111,7 +119,7 @@ class GenerateRecordingsView(BasicView):
         cancel_button.pack(padx=10, pady=10)
 
     def cancel_process(self):
-        confirm = messagebox.askyesno("Przerwanie syntezowania", "Czy na pewno chcesz przerwać syntezę głosu?")
+        confirm = messagebox.askyesno("Przerwanie syntezowania", "Czy na pewno chcesz przerwać syntezę głosu?", parent=self.popup)
 
         if confirm:
             self.popup.destroy()
@@ -138,26 +146,26 @@ class GenerateRecordingsView(BasicView):
         return recording
 
     def add_recording_label(self, recording):
-        if len(self.recording_entities) > ((self.page + 1) * PAGING):
+        if len(self.recording_entities) > ((self.page + 1) * self.PAGING):
             if self.next_page_button:
                 return
-            self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=BUTTON_WIDTH_2,
-                                              height=BUTTON_HEIGHT_2,
-                                              command=self.next_page, font=BUTTON_FONT)
-            self.next_page_button.place(x=1350, y=Y_FIRST_MODEL + PAGING * PAD_Y_2)
+            self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=self.BUTTON_WIDTH_2,
+                                              height=self.BUTTON_HEIGHT_2,
+                                              command=self.next_page, font=self.BUTTON_FONT)
+            self.next_page_button.place(x=45*self.size_grid, y=self.FIRST_MODEL + self.PAGING * self.PAD_Y_2)
             return
         self.display_recording(recording)
 
     def display_recording(self, recording):
-        label = tk.Label(self.root, text=recording["name"], bg='green', font=BUTTON_FONT)
-        label.place(x=900, y=Y_FIRST_MODEL + len(self.recording_labels) * PAD_Y_2)
+        label = tk.Label(self.root, text=recording["name"], bg='white', font=self.BUTTON_FONT)
+        label.place(x=30*self.size_grid, y=self.Y_FIRST_MODEL + len(self.recording_labels) * self.PAD_Y_2)
         self.recording_labels.append(label)
-        button = tk.Button(self.root, text="Odsłuchaj", width=BUTTON_WIDTH_2, height=BUTTON_HEIGHT_2,
-                           font=BUTTON_FONT, command=lambda: self.play_audio(recording['id']))
-        button.place(x=1200, y=Y_FIRST_MODEL + (len(self.recording_labels) - 1) * PAD_Y_2)
-        button_2 = tk.Button(self.root, text="Usuń", width=BUTTON_WIDTH_2, height=BUTTON_HEIGHT_2,
-                             font=BUTTON_FONT, command=lambda: self.delete_recording(recording['id']))
-        button_2.place(x=1500, y=Y_FIRST_MODEL + (len(self.recording_labels) - 1) * PAD_Y_2)
+        button = tk.Button(self.root, text="Odsłuchaj", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
+                           font=self.BUTTON_FONT, command=lambda: self.play_audio(recording['id']))
+        button.place(x=40*self.size_grid, y=self.Y_FIRST_MODEL + (len(self.recording_labels) - 1) * self.PAD_Y_2)
+        button_2 = tk.Button(self.root, text="Usuń", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
+                             font=self.BUTTON_FONT, command=lambda: self.delete_recording(recording['id']))
+        button_2.place(x=50*self.size_grid, y=self.Y_FIRST_MODEL + (len(self.recording_labels) - 1) * self.PAD_Y_2)
         self.recording_buttons.append(button)
         self.recording_buttons.append(button_2)
 
@@ -192,10 +200,10 @@ class GenerateRecordingsView(BasicView):
         self.delete_all_recordings_labels_buttons()
         self.page += 1
         if self.page == 1:
-            self.previous_page_button = tk.Button(self.root, text="Poprzednia strona", width=BUTTON_WIDTH_2,
-                                                  height=BUTTON_HEIGHT_2,
-                                                  command=self.previous_page, font=BUTTON_FONT)
-            self.previous_page_button.place(x=1150, y=Y_FIRST_MODEL + PAGING * PAD_Y_2)
+            self.previous_page_button = tk.Button(self.root, text="Poprzednia strona", width=self.BUTTON_WIDTH_2,
+                                                  height=self.BUTTON_HEIGHT_2,
+                                                  command=self.previous_page, font=self.BUTTON_FONT)
+            self.previous_page_button.place(x=38.333*self.size_grid, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y_2)
 
         if not self.has_next_page():
             self.next_page_button.destroy()
@@ -204,18 +212,20 @@ class GenerateRecordingsView(BasicView):
     def previous_page(self):
         self.delete_all_recordings_labels_buttons()
         if not self.has_next_page():  # check if there was a next page button before
-            self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=BUTTON_WIDTH_2,
-                                              height=BUTTON_HEIGHT_2,
-                                              command=self.next_page, font=BUTTON_FONT)
-            self.next_page_button.place(x=1350, y=Y_FIRST_MODEL + PAGING * PAD_Y_2)
+            self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=self.BUTTON_WIDTH_2,
+                                              height=self.BUTTON_HEIGHT_2,
+                                              command=self.next_page, font=self.BUTTON_FONT)
+            self.next_page_button.place(x=45*self.size_grid, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y_2)
         self.page -= 1
         if self.page == 0:
             self.previous_page_button.destroy()
         self.display_recordings()
 
     def play_audio(self, recording_id):
+        pygame.mixer.music.stop()
         if voice_recording := self.voice_recordings_service.select_by_id(recording_id):
-            playsound.playsound(voice_recording['path'])
+            pygame.mixer.music.load(voice_recording['path'])
+            pygame.mixer.music.play()
         else:
             print('error')
 

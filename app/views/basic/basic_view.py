@@ -8,30 +8,36 @@ main_menu_module = lazy_module("app.views.main_view")
 after_train_view = lazy_module("app.views.after_train_view")
 train_module = lazy_module("app.views.train_view")
 
-WIDTH = 1920
-HEIGHT = 1080
-PAD_Y = 80
-BUTTON_WIDTH_1 = 30
-BUTTON_HEIGHT_1 = 3
-BUTTON_WIDTH_2 = 17
-BUTTON_HEIGHT_2 = 1
-PAGING = 10
-Y_FIRST_MODEL = 150
-Y_MENU = 800
-POPUP_WIDTH = 300
-POPUP_HEIGHT = 100
-BUTTON_FONT = ("Helvetica", 14)
-MAX_FONT = ("Helvetica", 25)
-ALLOWED_EXTENSIONS = ('.mp3', '.mp4', '.wav')
+
 
 
 class BasicView:
 
+
+    BUTTON_WIDTH_1 = 30
+    BUTTON_HEIGHT_1 = 3
+    BUTTON_WIDTH_2 = 17
+    BUTTON_HEIGHT_2 = 1
+    SMALL_FONT = ("Helvetica", 10)
+    BUTTON_FONT = ("Helvetica", 14)
+    MAX_FONT = ("Helvetica", 25)
+    ALLOWED_EXTENSIONS = ('.mp3', '.mp4', '.wav')
+    PAGING = 10
+
     def __init__(self, root, voice_model_service, voice_recordings_service, version_service):
+        self.size_grid = root.winfo_screenheight()/36
         self.root = root
         self.version_service = version_service
         self.voice_model_service = voice_model_service
         self.voice_recordings_service = voice_recordings_service
+        print(self.root.winfo_height())
+        self.WIDTH = 64 * self.size_grid
+        self.HEIGHT = 36 * self.size_grid
+        self.PAD_Y = 2.667 * self.size_grid
+        self.Y_FIRST_MODEL = 5* self.size_grid
+        self.Y_MENU = 26.666* self.size_grid
+        self.POPUP_WIDTH = 10* self.size_grid
+        self.POPUP_HEIGHT = 3.333 * self.size_grid
 
     def switch_to_choose_gender_language_train_old(self):
         for widget in self.root.winfo_children():
@@ -46,16 +52,20 @@ class BasicView:
                                                     self.version_service, self.option)
 
     def switch_to_choose_gender_language_train_new(self):
-        for widget in self.root.winfo_children():
-           widget.destroy()
-        choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
-                                                   self.version_service, Options.train_new)
-
         #for widget in self.root.winfo_children():
-        #    widget.destroy()
-        #after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
-        #                               self.version_service, 'woman', 'polish', '/home/dawid/sem6/ProjektGrupowy22-23/output/dir' , 'dataset_8', 0)
+        #   widget.destroy()
+        #choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
+        #                                           self.version_service, Options.train_new)
 
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
+                                       self.version_service, 'woman', 'polish', '/home/dawid/sem6/ProjektGrupowy22-23/output/woman_polish' , 'dataset_8', 0)
+        #for widget in self.root.winfo_children():
+        #   widget.destroy()
+        #train_module.TrainView(self.root,self.voice_model_service, self.voice_recordings_service,
+        #                               self.version_service, 'woman', 'polish', Options.train_new,
+        #         0, 15, '/home/dawid/sem6/ProjektGrupowy22-23/output/checkpoint_672000.pth',)
 
     def switch_to_choose_gender_language_synthesize(self):
         for widget in self.root.winfo_children():

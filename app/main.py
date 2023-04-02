@@ -1,3 +1,4 @@
+import pygame
 import tkinter as tk
 
 from app.views.main_view import MainView
@@ -11,6 +12,9 @@ voice_records_db_service = VoiceRecordingDbService(db_file)
 version_db_service = VersionService(db_file)
 root = tk.Tk()
 root.configure(bg='green')
-root.geometry("1920x1080")
+screen_height = root.winfo_screenheight()
+screen_width = int(16 * screen_height /9)
+root.geometry(f"{screen_width}x{screen_height}")
+pygame.mixer.init()
 MainView(root, voice_model_db_service, voice_records_db_service, version_db_service)
 root.mainloop()

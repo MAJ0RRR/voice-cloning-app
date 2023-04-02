@@ -9,8 +9,9 @@ MODEL_DIR_BASIC = os.path.join(WORKING_DIR, 'models/default')
 # dir for generated voice models
 MODEL_DIR_GENERATED = os.path.join(WORKING_DIR, 'models/generated')
 
-# dir for synthesized audio
+# dirs for synthesized audio
 GENERATED_DIR = os.path.join(WORKING_DIR, 'audiofiles/generated')
+GENERATED_TEMP_DIR = os.path.join(WORKING_DIR, 'audiofiles/generated_temp')
 
 # dir to put raw audio to generate samples
 RAW_AUDIO_DIR = os.path.join(WORKING_DIR, 'audiofiles/raw')

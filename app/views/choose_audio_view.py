@@ -9,8 +9,7 @@ import queue
 
 
 from app.samples_generator import SamplesGenerator
-from app.views.basic.basic_view import BUTTON_WIDTH_1, BUTTON_HEIGHT_1, BUTTON_FONT, Y_MENU, ALLOWED_EXTENSIONS, WIDTH, \
-    POPUP_WIDTH, HEIGHT, POPUP_HEIGHT, BasicView, PAD_Y
+from app.views.basic.basic_view import BasicView
 from app.settings import RAW_AUDIO_DIR, OUTPUT_DIR
 from app.enums import Options
 
@@ -23,6 +22,7 @@ class ChooseAudioView(BasicView):
     def __init__(self, root, voice_model_service, voice_records_service, version_service, option, language, gender=None,
                  model_id=None):
         super(ChooseAudioView, self).__init__(root, voice_model_service, voice_records_service, version_service)
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.option = option
         self.gender = gender
         self.language = language
@@ -46,6 +46,7 @@ class ChooseAudioView(BasicView):
         self.thread = threading.Thread(target=self.worker, args=(self.q,))
         self.thread.start()
         self.stop = None
+        self.files = []
 
     def no_gpu_available(self):
         messagebox.showerror("Brak karty Nvidii",
@@ -55,67 +56,73 @@ class ChooseAudioView(BasicView):
     def display_widgets_choose_gpu(self):
         counter = 0
         label = tk.Label(self.root, activebackground='green',
-                         text="Wybierz kartę graficzną", bg='green', font=BUTTON_FONT)
-        label.place(x=1350, y=Y_MENU)
+                         text="Wybierz kartę graficzną", bg='green', font=self.MAX_FONT)
+        label.place(x=48.333*self.size_grid, y=self.Y_MENU- 10*self.size_grid)
         for gpu_id in self.gpu_ids:
             label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                                   text=str(gpu_id), bg='green', font=BUTTON_FONT, variable=self.choosen_gpu,
+                                   text=str(gpu_id), bg='green', font=self.MAX_FONT, variable=self.choosen_gpu,
                                    value=gpu_id)
-            label.place(x=1350, y=Y_MENU + PAD_Y / 2 * (counter + 1))
+            label.place(x=48.333*self.size_grid, y=self.Y_MENU + self.PAD_Y * (counter + 1) - 10*self.size_grid)
             counter += 1
 
     def display_VRAM_widgets(self, x):
         label = tk.Label(self.root, activebackground='green',
-                         text="VRAM", bg='green', font=BUTTON_FONT)
-        label.place(x=x, y=Y_MENU)
+                         text="VRAM", bg='green', font=self.MAX_FONT)
+        label.place(x=x, y=self.Y_MENU-10*self.size_grid)
         label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="Poniżej 2  GB", bg='green', font=BUTTON_FONT, variable=self.VRAM,
+                               text="Poniżej 2  GB", bg='green', font=self.MAX_FONT, variable=self.VRAM,
                                value=1)
-        label.place(x=x, y=Y_MENU + PAD_Y / 2 * 1)
+        label.place(x=x, y=self.Y_MENU + self.PAD_Y * 1 -10*self.size_grid)
         label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="<2;5) GB", bg='green', font=BUTTON_FONT, variable=self.VRAM,
+                               text="<2;5) GB", bg='green', font=self.MAX_FONT, variable=self.VRAM,
                                value=3)
-        label.place(x=x, y=Y_MENU + PAD_Y / 2 * 2)
+        label.place(x=x, y=self.Y_MENU + self.PAD_Y  * 2 -10*self.size_grid)
         label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="Powyżej 5 GB", bg='green', font=BUTTON_FONT, variable=self.VRAM,
+                               text="Powyżej 5 GB", bg='green', font=self.MAX_FONT, variable=self.VRAM,
                                value=8)
-        label.place(x=x, y=Y_MENU + PAD_Y / 2 * 3)
+        label.place(x=x, y=self.Y_MENU + self.PAD_Y * 3 -10*self.size_grid)
 
     def display_widgets(self):
+        label = tk.Label(self.root, font=self.MAX_FONT, text='Wybierz audio do uczenia modelu', bg='green')
+        label.pack(pady=self.PAD_Y/2)
+        frame = tk.Frame(self.root, width=14.333*self.size_grid, height=18.333*self.size_grid, bg='white')
+        frame.place(x=3.33*self.size_grid, y=6*self.size_grid) #place for files
+        frame = tk.Frame(self.root, width=14.333*self.size_grid, height=10*self.size_grid, bg='white')
+        frame.place(x=30*self.size_grid, y=6*self.size_grid) #place for dirs
         if len(self.gpu_ids):
             self.display_widgets_choose_gpu()
-            self.display_VRAM_widgets(1150)
+            self.display_VRAM_widgets(33.33*self.size_grid)
         else:
-            self.display_VRAM_widgets(1350)
+            self.display_VRAM_widgets(45*self.size_grid)
         continue_button = tk.Button(self.root, text="Rozpocznij proces", command=self.start_generate_samples,
-                                    width=BUTTON_WIDTH_1,
-                                    height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
-        continue_button.place(x=1550, y=943)
+                                    width=self.BUTTON_WIDTH_1,
+                                    height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
+        continue_button.place(x=51.667*self.size_grid, y=31.34*self.size_grid)
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
-                                     width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
+                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
         if self.option == Options.train_new:
-            back_button = tk.Button(self.root, text="Wybierz ponownie model głosu", width=BUTTON_WIDTH_1,
-                                    height=BUTTON_HEIGHT_1,
-                                    command=self.switch_to_choose_model, font=BUTTON_FONT)
+            back_button = tk.Button(self.root, text="Wybierz ponownie model głosu", width=self.BUTTON_WIDTH_1,
+                                    height=self.BUTTON_HEIGHT_1,
+                                    command=self.switch_to_choose_model, font=self.BUTTON_FONT)
         else:
-            back_button = tk.Button(self.root, text="Wybierz ponownie język", width=BUTTON_WIDTH_1,
-                                    height=BUTTON_HEIGHT_1,
-                                    command=self.switch_to_choose_gender_language, font=BUTTON_FONT)
-        back_button.place(x=750, y=Y_MENU)
-        main_menu_button.place(x=250, y=Y_MENU)
+            back_button = tk.Button(self.root, text="Wybierz ponownie język", width=self.BUTTON_WIDTH_1,
+                                    height=self.BUTTON_HEIGHT_1,
+                                    command=self.switch_to_choose_gender_language, font=self.BUTTON_FONT)
+        back_button.place(x=18.333*self.size_grid, y=self.Y_MENU)
+        main_menu_button.place(x=5*self.size_grid, y=self.Y_MENU)
         directory_button = tk.Button(self.root, text="Select directory", command=self.open_directory,
-                                     width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
-        file_button = tk.Button(self.root, text="Select file", command=self.open_file, width=BUTTON_WIDTH_1,
-                                height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
-        directory_button.place(x=950, y=100)
-        file_button.place(x=150, y=100)
+                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
+        file_button = tk.Button(self.root, text="Select file", command=self.open_file, width=self.BUTTON_WIDTH_1,
+                                height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
+        directory_button.place(x=31.667*self.size_grid, y=3.333*self.size_grid)
+        file_button.place(x=5*self.size_grid, y=3.333*self.size_grid)
         delete_dir_button = tk.Button(self.root, text="Delete last directory", command=self.delete_dir,
-                                      width=BUTTON_WIDTH_1, height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
+                                      width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
         delete_file_button = tk.Button(self.root, text="Delete last file", command=self.delete_file,
-                                       width=BUTTON_WIDTH_1,
-                                       height=BUTTON_HEIGHT_1, font=BUTTON_FONT)
-        delete_dir_button.place(x=1350, y=100)
-        delete_file_button.place(x=550, y=100)
+                                       width=self.BUTTON_WIDTH_1,
+                                       height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
+        delete_dir_button.place(x=45*self.size_grid, y=3.333*self.size_grid)
+        delete_file_button.place(x=18.333*self.size_grid, y=3.333*self.size_grid)
 
     def switch_to_choose_model(self):
         self.event.set()
@@ -126,12 +133,12 @@ class ChooseAudioView(BasicView):
                                                      self.voice_recordings_service, self.version_service, self.option)
 
     def get_gpu_ids(self):
-        try:
-            output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
-            return [int(x) for x in output.decode().strip().split('\n')]
-        except FileNotFoundError:
-            return []
-        # return [0, 1]     for test without nvidia
+        #try:
+        #    output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
+        #    return [int(x) for x in output.decode().strip().split('\n')]
+        #except FileNotFoundError:
+        #    return []
+        return [0]     #for test without nvidia
 
     def switch_to_main_view(self):
         self.event.set()
@@ -142,6 +149,10 @@ class ChooseAudioView(BasicView):
         self.event.set()
         self.thread.join()
         super().switch_to_choose_language()
+
+    def on_closing(self):
+        if messagebox.askokcancel("Wyjście", "Czy na pewno chcesz zamknąć program?"):
+            self.root.destroy()
 
     def warning_no_files(self):
         messagebox.showerror('Brak plików', 'Nie wybrano żadnych plików!')
@@ -156,10 +167,10 @@ class ChooseAudioView(BasicView):
         screen_pos = self.root.winfo_x()  # we need this to popup on the same screen which is app
         self.q.put(lambda: self.samples_generator.generate_samples(version, self.choosen_gpu.get(), self.VRAM.get(),
                                                                    self.finish_generating), ())
-        x = (WIDTH - POPUP_WIDTH) // 2 + screen_pos
-        y = (HEIGHT - POPUP_HEIGHT) // 2
+        x = (self.WIDTH - self.POPUP_WIDTH) // 2 + screen_pos
+        y = (self.HEIGHT - self.POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
-        self.popup.geometry(f"{POPUP_WIDTH}x{POPUP_HEIGHT}+{x}+{y}")
+        self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT)}+{int(x)}+{int(y)}")
         self.popup.title("Próbki są generowane")
 
         label = tk.Label(self.popup, text="Aby przerwać generowanie")
@@ -177,6 +188,7 @@ class ChooseAudioView(BasicView):
         self.version_service.update_version(version, version + 1)
         if self.option in [Options.train_old, Options.train_new]:
             self.switch_to_train()
+            return
         self.delete_all_file_and_dir_labels()
         self.inform_about_generated_samples(path)
 
@@ -189,7 +201,7 @@ class ChooseAudioView(BasicView):
         dataset = f"dataset_{self.version_service.get_version()-1}"
         model_path, config_path = self.copy_model_to_output_dir()
         train_module.TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service,
-                               self.gender, self.language, self.option, gpu, dataset, model_path)
+                               self.gender, self.language, self.option, gpu, dataset, model_path, self.model_id)
 
     def copy_model_to_output_dir(self):
         if not self.model_id:
@@ -214,17 +226,19 @@ class ChooseAudioView(BasicView):
     def open_directory(self):
         directory_path = filedialog.askdirectory()
         if directory_path:
-            label_dir = tk.Label(self.root, text=directory_path, bg='green', font=BUTTON_FONT)
+            label_dir = tk.Label(self.root, text=directory_path, font=self.SMALL_FONT)
             self.dir_labels.append(label_dir)
-            label_dir.place(x=950, y=160 + len(self.dir_labels) + 20)
+            label_dir.place(x=900, y=170 + len(self.dir_labels) + 15)
 
     def open_file(self):
         allowed_extensions = self.allowed_extensions()
         file_path = filedialog.askopenfilename(filetypes=(("Audio files", allowed_extensions),))
         if file_path:
-            label_file = tk.Label(self.root, text=file_path, bg='green', font=BUTTON_FONT)
+            filename = file_path.split('/')[-1]
+            label_file = tk.Label(self.root, text=filename, font=self.SMALL_FONT)
             self.file_labels.append(label_file)
-            label_file.place(x=150, y=160 + len(self.file_labels) * 20)
+            self.files.append(file_path)
+            label_file.place(x=3.333*self.size_grid, y=5.667*self.size_grid + len(self.file_labels) * 15)
 
     def delete_all_file_and_dir_labels(self):
         for _ in self.file_labels:
@@ -244,9 +258,8 @@ class ChooseAudioView(BasicView):
 
     def copy_all_files_to_dir(self):
         counter = 0
-        for file in self.file_labels:
-            source_path = file.cget("text")
-            self.copy_file_to_dir(source_path)
+        for file in self.files:
+            self.copy_file_to_dir(file)
             counter += 1
         for dir_label in self.dir_labels:
             dir = dir_label.cget("text")
@@ -260,7 +273,7 @@ class ChooseAudioView(BasicView):
         ret = []
         for file in os.listdir(dir):
             filename, extension = os.path.splitext(file)
-            if extension in ALLOWED_EXTENSIONS:
+            if extension in self.ALLOWED_EXTENSIONS:
                 ret.append(os.path.join(dir, file))
         return ret
 
@@ -273,7 +286,7 @@ class ChooseAudioView(BasicView):
 
     def allowed_extensions(self):
         ret = ""
-        for extension in ALLOWED_EXTENSIONS:
+        for extension in self.ALLOWED_EXTENSIONS:
             ret += f"{extension} "
         return ret[:-1]
 
