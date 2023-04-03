@@ -21,13 +21,13 @@ class GenerateRecordingsView(BasicView):
         super(GenerateRecordingsView, self).__init__(root, voice_model_service, voice_records_service, version_service)
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.option = option
-        self.PAD_Y_2 = 1.333*self.size_grid
+        self.PAD_Y_2 = 1.333 * self.size_grid_y
         self.gender = gender
         self.language = language
         self.model_id = model_id
         self.model = self.voice_model_service.select_by_id(model_id)
         self.input_field = tk.Entry(root, width=60, font=self.BUTTON_FONT)
-        self.input_field.place(x=3.333*self.size_grid, y=3 * self.PAD_Y)
+        self.input_field.place(x=3.333 * self.size_grid_x, y=3 * self.PAD_Y)
         self.recording_entities = []
         self.recording_labels = []
         self.recording_buttons = []
@@ -45,7 +45,7 @@ class GenerateRecordingsView(BasicView):
         self.display_widgets()
 
     def on_closing(self):
-        if messagebox.askokcancel("Wyjście", "Czy chcesz zakmnąć program? "):
+        if messagebox.askokcancel("Wyjście", "Czy chcesz zamknąć program? "):
             self.root.destroy()
             self.event.set()
             self.thread.join()
@@ -54,25 +54,26 @@ class GenerateRecordingsView(BasicView):
 
     def display_widgets(self):
         label = tk.Label(self.root, text=f"Model {self.model['name']}", font=self.MAX_FONT, bg='green')
-        label.place(x=4.16*self.size_grid, y=self.PAD_Y)
+        label.place(x=4.16 * self.size_grid_x, y=self.PAD_Y)
         label = tk.Label(self.root, text="Wpisz tekst, aby syntezować mowę", font=self.MAX_FONT, bg='green')
-        label.place(x=4.16*self.size_grid, y=2 * self.PAD_Y)
-        generate_button = tk.Button(self.root, text="Generuj audio", command=self.generate_audio, font=self.BUTTON_FONT)
-        generate_button.place(x=10*self.size_grid, y=4 * self.PAD_Y)
+        label.place(x=4.16 * self.size_grid_x, y=2 * self.PAD_Y)
+        generate_button = tk.Button(self.root, text="Generuj audio", command=self.generate_audio, font=self.BUTTON_FONT, height=self.BUTTON_HEIGHT_1,width=self.BUTTON_WIDTH_1 )
+        generate_button.place(x=10 * self.size_grid_x, y=4 * self.PAD_Y)
         label = tk.Label(self.root, text="Wygenerowane próbki", font=self.MAX_FONT, bg='green')
-        label.place(x=30*self.size_grid, y=self.PAD_Y)
-        frame = tk.Frame(self.root, width=27.333*self.size_grid, height=16.667*self.size_grid, bg='white')
-        frame.place(x=30*self.size_grid - 10, y=self.PAD_Y + 2*self.size_grid)  # place for files
+        label.place(x=30 * self.size_grid_x, y=self.PAD_Y)
+        frame = tk.Frame(self.root, width=27.333 * self.size_grid_x, height=16.667 * self.size_grid_y, bg='white')
+        frame.place(x=30 * self.size_grid_x - 10, y=self.PAD_Y + 2 * self.size_grid_y)  # place for files
         model_list_button = tk.Button(self.root, text="Lista modeli głosu", command=self.switch_to_choose_model,
                                       font=self.BUTTON_FONT, width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
-        main_menu_button = tk.Button(self.root, text="Menu główne", font=self.BUTTON_FONT, command=self.switch_to_main_view,
+        main_menu_button = tk.Button(self.root, text="Menu główne", font=self.BUTTON_FONT,
+                                     command=self.switch_to_main_view,
                                      width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
         all_recordings_button = tk.Button(self.root, text="Wszystkie nagrania modelu",
                                           command=self.switch_to_recordings_of_model, font=self.BUTTON_FONT,
                                           width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
-        main_menu_button.place(x=6.667*self.size_grid, y=23.333*self.size_grid)
-        all_recordings_button.place(x=26.667*self.size_grid, y=23.333*self.size_grid)
-        model_list_button.place(x=46.667*self.size_grid, y=23.333*self.size_grid)
+        main_menu_button.place(x=15* self.size_grid_x, y=23.333 * self.size_grid_y)
+        all_recordings_button.place(x=30 * self.size_grid_x, y=23.333 * self.size_grid_y)
+        model_list_button.place(x=45 * self.size_grid_x, y=23.333 * self.size_grid_y)
 
     def switch_to_main_view(self):
         self.event.set()
@@ -119,7 +120,8 @@ class GenerateRecordingsView(BasicView):
         cancel_button.pack(padx=10, pady=10)
 
     def cancel_process(self):
-        confirm = messagebox.askyesno("Przerwanie syntezowania", "Czy na pewno chcesz przerwać syntezę głosu?", parent=self.popup)
+        confirm = messagebox.askyesno("Przerwanie syntezowania", "Czy na pewno chcesz przerwać syntezę głosu?",
+                                      parent=self.popup)
 
         if confirm:
             self.popup.destroy()
@@ -152,20 +154,20 @@ class GenerateRecordingsView(BasicView):
             self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=self.BUTTON_WIDTH_2,
                                               height=self.BUTTON_HEIGHT_2,
                                               command=self.next_page, font=self.BUTTON_FONT)
-            self.next_page_button.place(x=45*self.size_grid, y=self.FIRST_MODEL + self.PAGING * self.PAD_Y_2)
+            self.next_page_button.place(x=45 * self.size_grid_x, y=self.FIRST_MODEL + self.PAGING * self.PAD_Y_2)
             return
         self.display_recording(recording)
 
     def display_recording(self, recording):
         label = tk.Label(self.root, text=recording["name"], bg='white', font=self.BUTTON_FONT)
-        label.place(x=30*self.size_grid, y=self.Y_FIRST_MODEL + len(self.recording_labels) * self.PAD_Y_2)
+        label.place(x=30 * self.size_grid_x, y=self.Y_FIRST_MODEL + len(self.recording_labels) * self.PAD_Y_2)
         self.recording_labels.append(label)
         button = tk.Button(self.root, text="Odsłuchaj", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
                            font=self.BUTTON_FONT, command=lambda: self.play_audio(recording['id']))
-        button.place(x=40*self.size_grid, y=self.Y_FIRST_MODEL + (len(self.recording_labels) - 1) * self.PAD_Y_2)
+        button.place(x=40 * self.size_grid_x, y=self.Y_FIRST_MODEL + (len(self.recording_labels) - 1) * self.PAD_Y_2)
         button_2 = tk.Button(self.root, text="Usuń", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
                              font=self.BUTTON_FONT, command=lambda: self.delete_recording(recording['id']))
-        button_2.place(x=50*self.size_grid, y=self.Y_FIRST_MODEL + (len(self.recording_labels) - 1) * self.PAD_Y_2)
+        button_2.place(x=50 * self.size_grid_x, y=self.Y_FIRST_MODEL + (len(self.recording_labels) - 1) * self.PAD_Y_2)
         self.recording_buttons.append(button)
         self.recording_buttons.append(button_2)
 
@@ -203,7 +205,8 @@ class GenerateRecordingsView(BasicView):
             self.previous_page_button = tk.Button(self.root, text="Poprzednia strona", width=self.BUTTON_WIDTH_2,
                                                   height=self.BUTTON_HEIGHT_2,
                                                   command=self.previous_page, font=self.BUTTON_FONT)
-            self.previous_page_button.place(x=38.333*self.size_grid, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y_2)
+            self.previous_page_button.place(x=38.333 * self.size_grid_x,
+                                            y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y_2)
 
         if not self.has_next_page():
             self.next_page_button.destroy()
@@ -215,7 +218,7 @@ class GenerateRecordingsView(BasicView):
             self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=self.BUTTON_WIDTH_2,
                                               height=self.BUTTON_HEIGHT_2,
                                               command=self.next_page, font=self.BUTTON_FONT)
-            self.next_page_button.place(x=45*self.size_grid, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y_2)
+            self.next_page_button.place(x=45 * self.size_grid_x, y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y_2)
         self.page -= 1
         if self.page == 0:
             self.previous_page_button.destroy()

@@ -40,7 +40,8 @@ class TrainView(BasicView):
         self.display_widgets()
 
     def on_closing(self):
-        if messagebox.askokcancel("Wyjście", "Czy na pewno chcesz zamknąc program? Wszystkie efekty treningu zostaną stracone."):
+        if messagebox.askokcancel("Wyjście",
+                                  "Czy na pewno chcesz zamknąć program? Wszystkie efekty treningu zostaną stracone."):
             self.root.destroy()
             self.event.set()
             if self.thread:
@@ -70,7 +71,7 @@ class TrainView(BasicView):
 
     def cancel_before_train(self):
         confirm = messagebox.askyesno("Przerwanie przygotowywania trenowania",
-                                      "Czy na pewno chcesz przerwać proces trenowania?", parent = self.popup)
+                                      "Czy na pewno chcesz przerwać proces trenowania?", parent=self.popup)
         if confirm:
             self.event.set()
             self.popup.destroy()
@@ -88,7 +89,7 @@ class TrainView(BasicView):
                                             self.language, self.gender, self.model_id)
 
     def wait_for_dir(self):
-        for i in range(int(2*60/5)):
+        for i in range(int(2 * 60 / 5)):
             sleep(5)  # check every 5 seconds if event is set or dir_with result is created
             if self.event.is_set():
                 return
@@ -109,9 +110,9 @@ class TrainView(BasicView):
         paths = os.listdir(OUTPUT_DIR)
         for path in paths:
             if path.startswith(self.run_name):
-                for path2 in os.listdir(os.path.join(OUTPUT_DIR,path)):
+                for path2 in os.listdir(os.path.join(OUTPUT_DIR, path)):
                     if path2.startswith('events'):
-                        self.dir_with_result = os.path.join(OUTPUT_DIR,path)
+                        self.dir_with_result = os.path.join(OUTPUT_DIR, path)
                         return
 
     def run_tensorboard(self):
@@ -134,13 +135,13 @@ class TrainView(BasicView):
 
     def cancel_while_training(self):
         confirm = messagebox.askyesno("Przerwanie przygotowywania trenowania",
-                                      "Czy na pewno chcesz przerwać proces trenowania?",parent=self.popup )
+                                      "Czy na pewno chcesz przerwać proces trenowania?", parent=self.popup)
         if confirm:
             self.popup.destroy()
             self.switch_to_after_train()
 
     def switch_to_after_train(self):
-        #self.process.terminate() #uncomment it
+        self.process.terminate() #uncomment it
         self.process2.terminate()
         for widget in self.root.winfo_children():
             widget.destroy()
@@ -149,15 +150,14 @@ class TrainView(BasicView):
                                           self.dataset, self.gpu)
 
     def start_train(self):
-        #language = 'pl' if self.language == 'polish' else 'en'
-        #if self.model_path:
-        #    parts = self.model_path.split("/")
-        #    relative_path_to_model = "/".join(parts[-2:]).lstrip("/")
-        #    self.process = subprocess.Popen(
-        #        ["python", "../train.py", '-m', relative_path_to_model, '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
-        #         '-d', self.dataset, '-g', str(self.gpu)])
-        #else:
-        #    self.process = subprocess.Popen(
-        #        ["python", "../train.py", '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
-        #         '-d', self.dataset, '-g', str(self.gpu)])  #uncomment after tests
-        pass
+        language = 'pl' if self.language == 'polish' else 'en'
+        if self.model_path:
+           parts = self.model_path.split("/")
+           relative_path_to_model = "/".join(parts[-2:]).lstrip("/")
+           self.process = subprocess.Popen(
+               ["python", "../train.py", '-m', relative_path_to_model, '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
+                '-d', self.dataset, '-g', str(self.gpu)])
+        else:
+           self.process = subprocess.Popen(
+               ["python", "../train.py", '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
+                '-d', self.dataset, '-g', str(self.gpu)])  #uncomment after tests

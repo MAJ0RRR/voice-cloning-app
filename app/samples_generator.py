@@ -28,7 +28,8 @@ class SamplesGenerator:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
-        process = subprocess.Popen(["python", "../whispertrans.py", "-l", self.language, "-p", root, "-g", str(gpu), "-v", str(vram)])
+        process = subprocess.Popen(
+            ["python", "../whispertrans.py", "-l", self.language, "-p", root, "-g", str(gpu), "-v", str(vram)])
         while process.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()

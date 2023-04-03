@@ -17,14 +17,15 @@ from app.views.basic.basic_view import BasicView
 
 train_module = lazy_module("app.views.train_view")
 
+
 class AfterTrainView(BasicView):
 
     def __init__(self, root, voice_model_service, voice_recordings_service, version_service, gender, language,
                  dir_with_result, dataset, gpu):
         super(AfterTrainView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
-        self.X_MODELS = 3.33*self.size_grid
-        self.POPUP_WIDTH = 16.666*self.size_grid
-        self.POPUP_HEIGHT = 5 * self.size_grid
+        self.X_MODELS = 3.33 * self.size_grid_x
+        self.POPUP_WIDTH = 16.666 * self.size_grid_x
+        self.POPUP_HEIGHT = 5 * self.size_grid_y
         self.gender = gender
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.gpu = gpu
@@ -45,7 +46,7 @@ class AfterTrainView(BasicView):
         self.popup = None
         self.start_synthesize_basic_audio()
         self.input_field = tk.Entry(root, width=60, font=self.BUTTON_FONT)
-        self.input_field.place(x=33.33*self.size_grid, y=2 * self.PAD_Y)
+        self.input_field.place(x=33.33 * self.size_grid_x, y=2 * self.PAD_Y)
         self.display_widgets()
         self.audio_text = ''
         self.audio_model = ''
@@ -53,7 +54,8 @@ class AfterTrainView(BasicView):
         self.entry2 = None
 
     def on_closing(self):
-        if messagebox.askokcancel("Wyjście", "Czy na pewno chcesz zamknąc program? Wszystkie niezapisane zmiany zostaną usunięte."):
+        if messagebox.askokcancel("Wyjście",
+                                  "Czy na pewno chcesz zamknąc program? Wszystkie niezapisane zmiany zostaną usunięte."):
             self.root.destroy()
             self.event.set()
             self.thread.join()
@@ -81,7 +83,8 @@ class AfterTrainView(BasicView):
 
     def cancel_process(self):
         confirm = messagebox.askyesno("Przerwanie syntezowania audio",
-                                      "Po skończeniu syntezowania cały proces uczenia zostanie utracony. Czy jesteś pewien?", parent= self.popup)
+                                      "Po skończeniu syntezowania cały proces uczenia zostanie utracony. Czy jesteś pewien?",
+                                      parent=self.popup)
         if confirm:
             self.stop = True
             self.event.set()
@@ -92,7 +95,7 @@ class AfterTrainView(BasicView):
 
     def cancel_synthesize(self):
         confirm = messagebox.askyesno("Przerwanie syntezowania audio",
-                                      "Czy jesteś pewien, że chcesz przerwać syntezowanie audio?", parent= self.popup)
+                                      "Czy jesteś pewien, że chcesz przerwać syntezowanie audio?", parent=self.popup)
         if confirm:
             self.popup.destroy()
             self.stop = True
@@ -109,7 +112,8 @@ class AfterTrainView(BasicView):
             self.root.after(0, self.display_models)
 
     def generate_basic_audio(self, voice_model_path, text):
-        self.speech_synthesizer = SpeechSynthesizer(model_path=voice_model_path, config_path=self.config_file_path, temp=True)
+        self.speech_synthesizer = SpeechSynthesizer(model_path=voice_model_path, config_path=self.config_file_path,
+                                                    temp=True)
         output_name = self.speech_synthesizer.generate_sample_name()
         self.speech_synthesizer.generate_audio(output_name, text)
         return output_name
@@ -123,7 +127,8 @@ class AfterTrainView(BasicView):
         if text == self.audio_text and self.choosen_model.get() == self.audio_model:
             self.play_audio(self.audio_path)
             return
-        self.speech_synthesizer = SpeechSynthesizer(model_path=voice_model_path, config_path=self.config_file_path, temp=True)
+        self.speech_synthesizer = SpeechSynthesizer(model_path=voice_model_path, config_path=self.config_file_path,
+                                                    temp=True)
         screen_pos = self.root.winfo_x()  # we need this to popup on the same screen where the app is open
         output_name = self.speech_synthesizer.generate_sample_name()
         x = (self.WIDTH - self.POPUP_WIDTH) // 2 + screen_pos
@@ -158,24 +163,25 @@ class AfterTrainView(BasicView):
     def display_widgets(self):
         label = tk.Label(self.root, font=self.MAX_FONT, text="Wytrenowane modele:", bg='green')
         label.place(x=self.X_MODELS, y=self.PAD_Y)
-        frame = tk.Frame(self.root, width=self.size_grid*15.5, height=16.5*self.size_grid, bg='white')
-        frame.place(x=self.X_MODELS-10, y=self.PAD_Y+2.3*self.size_grid)  # place for files
+        frame = tk.Frame(self.root, width=self.size_grid_x * 15.5, height=16.5 * self.size_grid_y, bg='white')
+        frame.place(x=self.X_MODELS - 10, y=self.PAD_Y + 2.3 * self.size_grid_y)  # place for files
         label = tk.Label(self.root, font=self.MAX_FONT, text="Wpisz tekst", bg='green')
-        label.place(x=35*self.size_grid, y=self.PAD_Y)
+        label.place(x=35 * self.size_grid_x, y=self.PAD_Y)
         # on the bottom is menu to save mdoel, go to main menu(with popup to be sure) and continue training
         play_button = tk.Button(self.root, text="Odsłuchaj", command=self.synthesize_audio,
                                 width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
-        play_button.place(x=43.3*self.size_grid, y=3 * self.PAD_Y)
+        play_button.place(x=43.3 * self.size_grid_x, y=3 * self.PAD_Y)
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
                                      width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
-        save_button = tk.Button(self.root, text="Zapisz wybrany model", width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1,
+        save_button = tk.Button(self.root, text="Zapisz wybrany model", width=self.BUTTON_WIDTH_1,
+                                height=self.BUTTON_HEIGHT_1,
                                 command=self.display_window_to_enter_name_for_model)
         continue_training_button = tk.Button(self.root, text="Dotrenuj model", width=self.BUTTON_WIDTH_1,
                                              height=self.BUTTON_HEIGHT_1, command=self.continue_training)
 
-        main_menu_button.place(x=6.6*self.size_grid, y=23.3*self.size_grid)
-        save_button.place(x=26.6*self.size_grid, y=23.3*self.size_grid)
-        continue_training_button.place(x=46.6*self.size_grid, y=23.3*self.size_grid)
+        main_menu_button.place(x=6.6 * self.size_grid_x, y=23.3 * self.size_grid_y)
+        save_button.place(x=26.6 * self.size_grid_x, y=23.3 * self.size_grid_y)
+        continue_training_button.place(x=46.6 * self.size_grid_x, y=23.3 * self.size_grid_y)
         pass
 
     def display_window_to_enter_name_for_model(self):
@@ -210,7 +216,7 @@ class AfterTrainView(BasicView):
 
         self.save_recording(model_id)
         self.popup.destroy()
-        messagebox.showinfo(message = "Model głosu został zapisany.")
+        messagebox.showinfo(message="Model głosu został zapisany.")
 
     def save_recording(self, model_id):
         path_audio = self.paths_to_basic_audio[self.choosen_model.get()]
@@ -236,7 +242,7 @@ class AfterTrainView(BasicView):
 
         dest_dir = os.path.join(MODEL_DIR_GENERATED, f"{language}/{gender}/{name}")
         Path(dest_dir).mkdir(parents=True, exist_ok=True)
-        dest_path_model = os.path.join(dest_dir, filename )
+        dest_path_model = os.path.join(dest_dir, filename)
         dest_path_config = os.path.join(dest_dir, "config.json")
         shutil.copy(path_model, dest_dir)
         shutil.copy(path_config, dest_dir)
@@ -252,13 +258,12 @@ class AfterTrainView(BasicView):
             self.destroy_all_files_in_dir(OUTPUT_DIR)
             super().switch_to_main_view()
 
-
-    def destroy_all_files_in_dir(self, directory, model_path = None):
+    def destroy_all_files_in_dir(self, directory, model_path=None):
         for root, dirs, files in os.walk(directory):
             for file in files:
                 file_path = os.path.join(root, file)
                 try:
-                    if not(model_path and (model_path == file_path or file_path == self.config_file_path)):
+                    if not (model_path and (model_path == file_path or file_path == self.config_file_path)):
                         os.remove(file_path)
                 except OSError as e:
                     print(str(e))
@@ -312,7 +317,8 @@ class AfterTrainView(BasicView):
         counter = 0
         for _ in self.paths_to_generated_voice_models:
             label = tk.Radiobutton(self.root, activebackground='white', highlightthickness=0, highlightcolor='white',
-                                   text=f"model_{counter}", bg='white', font=self.BUTTON_FONT, variable=self.choosen_model,
+                                   text=f"model_{counter}", bg='white', font=self.BUTTON_FONT,
+                                   variable=self.choosen_model,
                                    value=len(
                                        model_labels))  # value is index in self.paths_to_generated_voice_models list
             label.place(x=self.X_MODELS, y=self.Y_FIRST_MODEL + len(model_labels) * self.PAD_Y)
@@ -340,6 +346,3 @@ class AfterTrainView(BasicView):
                     q.task_done()
             except Exception as e:
                 print(str(e))
-
-
-

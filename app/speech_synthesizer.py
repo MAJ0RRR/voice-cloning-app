@@ -26,10 +26,11 @@ class SpeechSynthesizer:
         self.synthesize_audio(changed_text, model_path, config_path, output_name, callback)
 
     def synthesize_audio(self, text, model_path, config_path, output_file, callback):
-        process = subprocess.Popen(['tts', '--text', text, '--model_path', model_path, '--config_path', config_path,  '--out_path', output_file])
+        process = subprocess.Popen(
+            ['tts', '--text', text, '--model_path', model_path, '--config_path', config_path, '--out_path',
+             output_file])
         while process.poll() is None:
             if self.stop_event.is_set():
-                print('terminacja')
                 process.terminate()
                 self.stop_event = threading.Event()
         if callback:
