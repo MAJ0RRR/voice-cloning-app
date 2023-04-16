@@ -54,74 +54,82 @@ class ChooseAudioView(BasicView):
 
     def display_widgets_choose_gpu(self):
         counter = 0
-        label = tk.Label(self.root, activebackground='green',
-                         text="Wybierz kartę graficzną", bg='green', font=self.MAX_FONT)
+        label = tk.Label(self.root, activebackground=self.BACKGROUND_COLOR,
+                         text="Wybierz kartę graficzną", bg=self.BACKGROUND_COLOR, font=self.MAX_FONT)
         label.place(x=48.333 * self.size_grid_x, y=self.Y_MENU - 10 * self.size_grid_y)
         for gpu_id in self.gpu_ids:
-            label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                                   text=str(gpu_id), bg='green', font=self.MAX_FONT, variable=self.choosen_gpu,
+            label = tk.Radiobutton(self.root, activebackground=self.BACKGROUND_COLOR, highlightthickness=0,
+                                   highlightcolor=self.BACKGROUND_COLOR,
+                                   text=str(gpu_id), bg=self.BACKGROUND_COLOR, font=self.MAX_FONT,
+                                   variable=self.choosen_gpu,
                                    value=gpu_id)
             label.place(x=48.333 * self.size_grid_x, y=self.Y_MENU + self.PAD_Y * (counter + 1) - 10 * self.size_grid_y)
             counter += 1
 
     def display_VRAM_widgets(self, x):
-        label = tk.Label(self.root, activebackground='green',
-                         text="VRAM", bg='green', font=self.MAX_FONT)
+        label = tk.Label(self.root, activebackground=self.BACKGROUND_COLOR,
+                         text="VRAM", bg=self.BACKGROUND_COLOR, font=self.MAX_FONT)
         label.place(x=x, y=self.Y_MENU - 10 * self.size_grid_y)
-        label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="Poniżej 2  GB", bg='green', font=self.MAX_FONT, variable=self.VRAM,
+        label = tk.Radiobutton(self.root, activebackground=self.BACKGROUND_COLOR, highlightthickness=0,
+                               highlightcolor=self.BACKGROUND_COLOR,
+                               text="Poniżej 2  GB", bg=self.BACKGROUND_COLOR, font=self.MAX_FONT, variable=self.VRAM,
                                value=1)
         label.place(x=x, y=self.Y_MENU + self.PAD_Y * 1 - 10 * self.size_grid_y)
-        label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="<2;5) GB", bg='green', font=self.MAX_FONT, variable=self.VRAM,
+        label = tk.Radiobutton(self.root, activebackground=self.BACKGROUND_COLOR, highlightthickness=0,
+                               highlightcolor=self.BACKGROUND_COLOR,
+                               text="<2;5) GB", bg=self.BACKGROUND_COLOR, font=self.MAX_FONT, variable=self.VRAM,
                                value=3)
         label.place(x=x, y=self.Y_MENU + self.PAD_Y * 2 - 10 * self.size_grid_y)
-        label = tk.Radiobutton(self.root, activebackground='green', highlightthickness=0, highlightcolor='green',
-                               text="Powyżej 5 GB", bg='green', font=self.MAX_FONT, variable=self.VRAM,
+        label = tk.Radiobutton(self.root, activebackground=self.BACKGROUND_COLOR, highlightthickness=0,
+                               highlightcolor=self.BACKGROUND_COLOR,
+                               text="Powyżej 5 GB", bg=self.BACKGROUND_COLOR, font=self.MAX_FONT, variable=self.VRAM,
                                value=8)
         label.place(x=x, y=self.Y_MENU + self.PAD_Y * 3 - 10 * self.size_grid_y)
 
     def display_widgets(self):
-        label = tk.Label(self.root, font=self.MAX_FONT, text='Wybierz audio do uczenia modelu', bg='green')
+        label = tk.Label(self.root, font=self.MAX_FONT, text='Wybierz audio do uczenia modelu',
+                         bg=self.BACKGROUND_COLOR)
         label.pack(pady=self.PAD_Y / 2)
         frame = tk.Frame(self.root, width=14.333 * self.size_grid_x, height=18.333 * self.size_grid_y, bg='white')
-        frame.place(x=3.33 * self.size_grid_x, y=6 * self.size_grid_y)  # place for files
+        frame.place(x=3.5 * self.size_grid_x, y=6 * self.size_grid_y)  # place for files
         frame = tk.Frame(self.root, width=14.333 * self.size_grid_x, height=10 * self.size_grid_y, bg='white')
-        frame.place(x=30 * self.size_grid_x, y=6 * self.size_grid_y)  # place for dirs
+        frame.place(x=30.5 * self.size_grid_x, y=6 * self.size_grid_y)  # place for dirs
         if len(self.gpu_ids):
             self.display_widgets_choose_gpu()
             self.display_VRAM_widgets(33.33 * self.size_grid_x)
         else:
             self.display_VRAM_widgets(45 * self.size_grid_x)
         continue_button = tk.Button(self.root, text="Rozpocznij proces", command=self.start_generate_samples,
-                                    width=self.BUTTON_WIDTH_1,
-                                    height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
-        continue_button.place(x=51.667 * self.size_grid_x, y=31.34 * self.size_grid_y)
+                                    font=self.BUTTON_FONT)
+        continue_button.place(x=51.667 * self.size_grid_x, y=31.34 * self.size_grid_y, width=self.BUTTON_WIDTH_1,
+                              height=self.BUTTON_HEIGHT_1)
         main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
-                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
+                                     font=self.BUTTON_FONT)
         if self.option == Options.train_new:
-            back_button = tk.Button(self.root, text="Wybierz ponownie model głosu", width=self.BUTTON_WIDTH_1,
-                                    height=self.BUTTON_HEIGHT_1,
+            back_button = tk.Button(self.root, text="Wybierz ponownie model głosu",
                                     command=self.switch_to_choose_model, font=self.BUTTON_FONT)
         else:
-            back_button = tk.Button(self.root, text="Wybierz ponownie język", width=self.BUTTON_WIDTH_1,
-                                    height=self.BUTTON_HEIGHT_1,
+            back_button = tk.Button(self.root, text="Wybierz ponownie język",
                                     command=self.switch_to_choose_gender_language, font=self.BUTTON_FONT)
-        back_button.place(x=18.333 * self.size_grid_x, y=self.Y_MENU)
-        main_menu_button.place(x=5 * self.size_grid_x, y=self.Y_MENU)
+        back_button.place(x=18.333 * self.size_grid_x, y=self.Y_MENU, width=self.BUTTON_WIDTH_1,
+                          height=self.BUTTON_HEIGHT_1)
+        main_menu_button.place(x=5 * self.size_grid_x, y=self.Y_MENU, width=self.BUTTON_WIDTH_1,
+                               height=self.BUTTON_HEIGHT_1)
         directory_button = tk.Button(self.root, text="Select directory", command=self.open_directory,
-                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
-        file_button = tk.Button(self.root, text="Select file", command=self.open_file, width=self.BUTTON_WIDTH_1,
-                                height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
-        directory_button.place(x=31.667 * self.size_grid_x, y=3.333 * self.size_grid_y)
-        file_button.place(x=5 * self.size_grid_x, y=3.333 * self.size_grid_y)
+                                     font=self.BUTTON_FONT)
+        file_button = tk.Button(self.root, text="Select file", command=self.open_file, font=self.BUTTON_FONT)
+        directory_button.place(x=31.667 * self.size_grid_x, y=3.333 * self.size_grid_y, width=self.BUTTON_WIDTH_1,
+                               height=self.BUTTON_HEIGHT_1)
+        file_button.place(x=5 * self.size_grid_x, y=3.333 * self.size_grid_y, width=self.BUTTON_WIDTH_1,
+                          height=self.BUTTON_HEIGHT_1)
         delete_dir_button = tk.Button(self.root, text="Delete last directory", command=self.delete_dir,
-                                      width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
+                                      font=self.BUTTON_FONT)
         delete_file_button = tk.Button(self.root, text="Delete last file", command=self.delete_file,
-                                       width=self.BUTTON_WIDTH_1,
-                                       height=self.BUTTON_HEIGHT_1, font=self.BUTTON_FONT)
-        delete_dir_button.place(x=45 * self.size_grid_x, y=3.333 * self.size_grid_y)
-        delete_file_button.place(x=18.333 * self.size_grid_x, y=3.333 * self.size_grid_y)
+                                       font=self.BUTTON_FONT)
+        delete_dir_button.place(x=45 * self.size_grid_x, y=3.333 * self.size_grid_y, width=self.BUTTON_WIDTH_1,
+                                height=self.BUTTON_HEIGHT_1)
+        delete_file_button.place(x=18.333 * self.size_grid_x, y=3.333 * self.size_grid_y, width=self.BUTTON_WIDTH_1,
+                                 height=self.BUTTON_HEIGHT_1)
 
     def switch_to_choose_model(self):
         self.event.set()
@@ -133,11 +141,11 @@ class ChooseAudioView(BasicView):
 
     def get_gpu_ids(self):
         try:
-           output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
-           return [int(x) for x in output.decode().strip().split('\n')]
+            output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
+            return [int(x) for x in output.decode().strip().split('\n')]
         except FileNotFoundError:
-           return []
-        #return [0]  # for test without nvidia
+            return []
+        # return [0]  # for test without nvidia
 
     def switch_to_main_view(self):
         self.event.set()
@@ -169,7 +177,7 @@ class ChooseAudioView(BasicView):
         x = (self.WIDTH - self.POPUP_WIDTH) // 2 + screen_pos
         y = (self.HEIGHT - self.POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
-        self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT)}+{int(x)}+{int(y)}")
+        self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT + self.size_grid_y)}+{int(x)}+{int(y)}")
         self.popup.title("Próbki są generowane")
 
         label = tk.Label(self.popup, text="Aby przerwać generowanie")
@@ -207,13 +215,15 @@ class ChooseAudioView(BasicView):
             return None, None
         voice_model = self.voice_model_service.select_by_id(self.model_id)
         path_model, path_config = voice_model['path_model'], voice_model['path_config']
+        if not os.path.exists(os.path.join(OUTPUT_DIR, voice_model['name'])):
+            os.mkdir(os.path.join(OUTPUT_DIR, voice_model['name']))
         model_name = os.path.basename(path_model)
         config_name = os.path.basename(path_config)
-        dst_model = os.path.join(OUTPUT_DIR, model_name)
-        dst_config = os.path.join(OUTPUT_DIR, config_name)
+        dst_model = os.path.join(OUTPUT_DIR, voice_model['name'], model_name)
+        dst_config = os.path.join(OUTPUT_DIR, voice_model['name'], config_name)
         shutil.copy(path_model, dst_model)
         shutil.copy(path_config, dst_config)
-        return dst_model, dst_config
+        return f'{voice_model["name"]}/{model_name}', f'{voice_model["name"]}/{config_name}'
 
     def finish_generating(self, version, path):
         self.root.after(0, lambda: self.after_generating(version, path))
@@ -227,7 +237,7 @@ class ChooseAudioView(BasicView):
         if directory_path:
             label_dir = tk.Label(self.root, text=directory_path, font=self.SMALL_FONT)
             self.dir_labels.append(label_dir)
-            label_dir.place(x=900, y=170 + len(self.dir_labels) + 15)
+            label_dir.place(x=30.55 * self.size_grid_x, y=5.667 * self.size_grid_y + len(self.dir_labels) + 15)
 
     def open_file(self):
         allowed_extensions = self.allowed_extensions()
@@ -237,7 +247,7 @@ class ChooseAudioView(BasicView):
             label_file = tk.Label(self.root, text=filename, font=self.SMALL_FONT)
             self.file_labels.append(label_file)
             self.files.append(file_path)
-            label_file.place(x=3.333 * self.size_grid_x, y=5.667 * self.size_grid_y + len(self.file_labels) * 15)
+            label_file.place(x=3.55 * self.size_grid_x, y=5.667 * self.size_grid_y + len(self.file_labels) * 15)
 
     def delete_all_file_and_dir_labels(self):
         for _ in self.file_labels:

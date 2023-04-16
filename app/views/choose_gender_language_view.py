@@ -23,26 +23,32 @@ class ChooseGenderLanguageView(BasicView):
         self.display_widgets()
 
     def display_widgets(self):
-        language_label = tk.Label(self.root, bg='green', text="Wybierz język", font=self.MAX_FONT)
+        language_label = tk.Label(self.root, bg=self.BACKGROUND_COLOR, text="Wybierz język", font=self.MAX_FONT)
         language_label.pack(pady=self.PAD_Y)
-        rb1 = tk.Radiobutton(self.root, text="polski", variable=self.language, value='polish', font=self.BUTTON_FONT, width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
+        rb1 = tk.Radiobutton(self.root, text="polski", variable=self.language, value='polish', font=self.BUTTON_FONT)
         rb2 = tk.Radiobutton(self.root, text="angielski", variable=self.language, value='english',
-                             font=self.BUTTON_FONT,  width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
-        rb1.place(x=self.WIDTH / 2 - self.size_grid_x * 7, y=5 * self.size_grid_y)
-        rb2.place(x=self.WIDTH / 2 + self.size_grid_x * 4, y=5 * self.size_grid_y)
+                             font=self.BUTTON_FONT)
+        rb1.place(x=self.WIDTH / 2 - self.BUTTON_WIDTH_2 - self.size_grid_x * 4, y=5 * self.size_grid_y,
+                  width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
+        rb2.place(x=self.WIDTH / 2 + self.size_grid_x * 4, y=5 * self.size_grid_y, width=self.BUTTON_WIDTH_2,
+                  height=self.BUTTON_HEIGHT_2)
         if self.option != Options.generate_samples:
-            gender_label = tk.Label(self.root, text="Wybierz płeć", bg='green', font=self.MAX_FONT)
+            gender_label = tk.Label(self.root, text="Wybierz płeć", bg=self.BACKGROUND_COLOR, font=self.MAX_FONT)
             gender_label.pack(pady=self.PAD_Y)
-            rb3 = tk.Radiobutton(self.root, text="kobieta", variable=self.gender, value='woman', font=self.BUTTON_FONT, width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
-            rb4 = tk.Radiobutton(self.root, text="mężczyzna", variable=self.gender, value='man', font=self.BUTTON_FONT,width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
-            rb3.place(x=self.WIDTH / 2 - self.size_grid_x * 7, y=13 * self.size_grid_y)
-            rb4.place(x=self.WIDTH / 2 + self.size_grid_x * 4, y=13 * self.size_grid_y)
-        submit_button = tk.Button(self.root, text="Dalej", width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1,
+            rb3 = tk.Radiobutton(self.root, text="kobieta", variable=self.gender, value='woman', font=self.BUTTON_FONT)
+            rb4 = tk.Radiobutton(self.root, text="mężczyzna", variable=self.gender, value='man', font=self.BUTTON_FONT)
+            rb3.place(x=self.WIDTH / 2 - self.BUTTON_WIDTH_2 - self.size_grid_x * 4, y=13 * self.size_grid_y,
+                      width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
+            rb4.place(x=self.WIDTH / 2 + self.size_grid_x * 4, y=13 * self.size_grid_y, width=self.BUTTON_WIDTH_2,
+                      height=self.BUTTON_HEIGHT_2)
+        submit_button = tk.Button(self.root, text="Dalej",
                                   command=self.switch_to_next_view)
-        main_menu = tk.Button(self.root, text="Menu główne", width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1,
+        main_menu = tk.Button(self.root, text="Menu główne",
                               command=self.switch_to_main_view)
-        main_menu.place(x=self.WIDTH / 2 - 10 * self.size_grid_x, y=20 * self.size_grid_y)
-        submit_button.place(x=self.WIDTH / 2 +5* self.size_grid_x, y=20 * self.size_grid_y)
+        main_menu.place(x=self.WIDTH / 2 - self.BUTTON_WIDTH_1 - 5 * self.size_grid_x, y=20 * self.size_grid_y,
+                        width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
+        submit_button.place(x=self.WIDTH / 2 + 5 * self.size_grid_x, y=20 * self.size_grid_y, width=self.BUTTON_WIDTH_1,
+                            height=self.BUTTON_HEIGHT_1)
 
     def on_closing(self):
         if messagebox.askokcancel("Wyjście", "Czy na pewno chcesz zamknąć program?"):

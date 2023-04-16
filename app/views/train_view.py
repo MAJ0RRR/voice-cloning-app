@@ -141,7 +141,7 @@ class TrainView(BasicView):
             self.switch_to_after_train()
 
     def switch_to_after_train(self):
-        self.process.terminate() #uncomment it
+        self.process.terminate()  # uncomment it
         self.process2.terminate()
         for widget in self.root.winfo_children():
             widget.destroy()
@@ -151,13 +151,12 @@ class TrainView(BasicView):
 
     def start_train(self):
         language = 'pl' if self.language == 'polish' else 'en'
+        dataset_path = os.path.join(WORKING_DIR, f'audiofiles/datasets/{self.dataset}')
         if self.model_path:
-           parts = self.model_path.split("/")
-           relative_path_to_model = "/".join(parts[-2:]).lstrip("/")
-           self.process = subprocess.Popen(
-               ["python", "../train.py", '-m', relative_path_to_model, '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
-                '-d', self.dataset, '-g', str(self.gpu)])
+            self.process = subprocess.Popen(
+                ["python", "train.py", '-m', self.model_path, '-n', self.run_name, '-l', language,
+                 '-d', dataset_path, '-g', str(self.gpu)])
         else:
-           self.process = subprocess.Popen(
-               ["python", "../train.py", '-r', WORKING_DIR, '-n', self.run_name, '-l', language,
-                '-d', self.dataset, '-g', str(self.gpu)])  #uncomment after tests
+            self.process = subprocess.Popen(
+                ["python", "train.py", '-n', self.run_name, '-l', language,
+                 '-d', dataset_path, '-g', str(self.gpu)])

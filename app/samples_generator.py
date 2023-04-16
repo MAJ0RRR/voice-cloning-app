@@ -16,25 +16,25 @@ class SamplesGenerator:
     def generate_samples(self, version, gpu, vram, callback):
         source_1 = os.path.join(WORKING_DIR, "audiofiles/raw")
         dest_1 = os.path.join(WORKING_DIR, "audiofiles/splits")
-        process = subprocess.Popen(["python", "../splits_silence.py", "-s", source_1, "-d", dest_1])
+        process = subprocess.Popen(["python", "splits_silence.py", "-s", source_1, "-d", dest_1])
         while process.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
         source_2 = os.path.join(WORKING_DIR, "audiofiles/splits")
         root = os.path.join(WORKING_DIR, f'audiofiles/datasets/dataset_{version}')
-        process2 = subprocess.Popen(["python", "../noise.py", "-s", source_2, "--destination", root])
+        process2 = subprocess.Popen(["python", "noise.py", "-s", source_2, "--destination", root])
         while process2.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
         process = subprocess.Popen(
-            ["python", "../whispertrans.py", "-l", self.language, "-p", root, "-g", str(gpu), "-v", str(vram)])
+            ["python", "whispertrans.py", "-l", self.language, "-p", root, "-g", str(gpu), "-v", str(vram)])
         while process.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
-        process3 = subprocess.Popen(["python", "../discard_transcriptions.py", self.language, root])
+        process3 = subprocess.Popen(["python", "discard_transcriptions.py", self.language, root])
         while process3.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()

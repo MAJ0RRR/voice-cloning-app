@@ -39,21 +39,25 @@ class AllRecordingsModelView(BasicView):
 
     def display_widgets(self):
         model = self.voice_model_service.select_by_id(self.model_id)
-        label = tk.Label(self.root, bg='green', font=self.MAX_FONT, text=f"Wszystkie próbki modelu {model['name']}")
+        label = tk.Label(self.root, bg=self.BACKGROUND_COLOR, font=self.MAX_FONT,
+                         text=f"Wszystkie próbki modelu {model['name']}")
         label.pack(pady=self.PAD_Y)
-        frame = tk.Frame(self.root, width=self.size_grid_x * 18, height=16.5 * self.size_grid_y, bg='white')
+        frame = tk.Frame(self.root, bg='white', width=15 * self.size_grid_x, height=self.size_grid_y * 17)
         frame.pack()  # place for models
-        main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
-                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
-        back_button = tk.Button(self.root, text="Cofnij", width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1,
+        main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view)
+        back_button = tk.Button(self.root, text="Cofnij",
                                 command=self.switch_to_choose_model, font=self.BUTTON_FONT)
-        generate_new_sample_button = tk.Button(self.root, text="Generuj nową próbkę", width=self.BUTTON_WIDTH_1,
-                                               height=self.BUTTON_HEIGHT_1, command=self.switch_to_generate_recording,
+        generate_new_sample_button = tk.Button(self.root, text="Generuj nową próbkę",
+                                               command=self.switch_to_generate_recording,
                                                font=self.BUTTON_FONT)
 
-        main_menu_button.place(x=15* self.size_grid_x, y=23.333 * self.size_grid_y)
-        back_button.place(x=30 * self.size_grid_x, y=23.333 * self.size_grid_y)
-        generate_new_sample_button.place(x=45 * self.size_grid_x, y=23.333 * self.size_grid_y)
+        main_menu_button.place(x=self.WIDTH / 2 - 3 * self.BUTTON_WIDTH_1 / 2 - self.size_grid_x * 2,
+                               y=23.333 * self.size_grid_y, width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
+        back_button.place(x=self.WIDTH / 2 - self.BUTTON_WIDTH_1 / 2, y=23.333 * self.size_grid_y,
+                          width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
+        generate_new_sample_button.place(x=self.WIDTH / 2 + self.BUTTON_WIDTH_1 / 2 + self.size_grid_x * 2,
+                                         y=23.333 * self.size_grid_y, width=self.BUTTON_WIDTH_1,
+                                         height=self.BUTTON_HEIGHT_1)
 
     def switch_to_choose_model(self):
         for widget in self.root.winfo_children():
@@ -77,13 +81,14 @@ class AllRecordingsModelView(BasicView):
         for recording in recordings:
             label = tk.Label(self.root, activebackground='white', highlightthickness=0, highlightcolor='white',
                              text=recording["name"], bg='white', font=self.BUTTON_FONT)
-            label.place(x=self.WIDTH / 2 - 5 * self.size_grid_x,
+            label.place(x=self.WIDTH / 2 - 7 * self.size_grid_x,
                         y=self.Y_FIRST_MODEL + len(self.recording_labels) * self.PAD_Y)
             self.recording_labels.append(label)
-            button = tk.Button(self.root, text="Odsłuchaj", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
+            button = tk.Button(self.root, text="Odsłuchaj",
                                font=self.BUTTON_FONT, command=lambda: self.play_audio(recording['path']))
-            button.place(x=self.WIDTH / 2 + 4 * self.size_grid_x,
-                         y=self.Y_FIRST_MODEL + len(self.recording_buttons) * self.PAD_Y)
+            button.place(x=self.WIDTH / 2 + 1 * self.size_grid_x,
+                         y=self.Y_FIRST_MODEL + len(self.recording_buttons) * self.PAD_Y, width=self.BUTTON_WIDTH_2,
+                         height=self.BUTTON_HEIGHT_2, )
             self.recording_buttons.append(button)
 
     def cancel_process(self):
@@ -106,11 +111,11 @@ class AllRecordingsModelView(BasicView):
         self.recording_buttons = []
         self.page += 1
         if self.page == 1:
-            self.previous_page_button = tk.Button(self.root, text="Poprzednia strona", width=self.BUTTON_WIDTH_2,
-                                                  height=self.BUTTON_HEIGHT_2,
+            self.previous_page_button = tk.Button(self.root, text="Poprzednia strona",
                                                   command=self.previous_page, font=self.BUTTON_FONT)
             self.previous_page_button.place(x=self.WIDTH / 2 - 6.667 * self.size_grid_x,
-                                            y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y)
+                                            y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y, width=self.BUTTON_WIDTH_2,
+                                            height=self.BUTTON_HEIGHT_2)
 
         if not self.has_next_page():
             self.next_page_button.destroy()
@@ -124,10 +129,10 @@ class AllRecordingsModelView(BasicView):
         self.recording_labels = []
         self.recording_buttons = []
         if not self.has_next_page():  # check if there was a next page button before
-            self.next_page_button = tk.Button(self.root, text="Nastepna strona", width=self.BUTTON_WIDTH_2,
-                                              height=self.BUTTON_HEIGHT_2,
+            self.next_page_button = tk.Button(self.root, text="Nastepna strona",
                                               command=self.next_page, font=self.BUTTON_FONT)
-            self.next_page_button.place(x=self.WIDTH / 2 + 1.667 * self.size_grid_x,
+            self.next_page_button.place(x=self.WIDTH / 2 + 1.667 * self.size_grid_x, width=self.BUTTON_WIDTH_2,
+                                        height=self.BUTTON_HEIGHT_2,
                                         y=self.Y_FIRST_MODEL + self.PAGING * self.PAD_Y)
         self.page -= 1
         if self.page == 0:

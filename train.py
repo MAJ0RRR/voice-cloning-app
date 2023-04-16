@@ -101,9 +101,9 @@ def train(root_dir, model_path, dataset_name, language, run_name, datasets_dir=D
         test_sentences = json.load(json_file)
         config.test_sentences = test_sentences[language]
     except FileNotFoundError:
-        print(f"Error: JSON file {TEST_SENTENCES_FILE} not found.")   
+        print(f"Error: JSON file {TEST_SENTENCES_FILE} not found.")
     except json.JSONDecodeError:
-        print(f"Error: Invalid JSON format in file {TEST_SENTENCES_FILE}.")    
+        print(f"Error: Invalid JSON format in file {TEST_SENTENCES_FILE}.")
     except Exception as e:
         print(f"Error: {e}")
 
@@ -154,8 +154,6 @@ if __name__=='__main__':
     parser.add_argument('-m', '--model_path', action='store', dest='model_path', default=None,
                         help='Model path (from output/), starts from scratch if not given.'
                              ' There must be config.json next to model!')
-    parser.add_argument('-r', '--root', action='store', dest='root', default="",
-                        help='Specifies root dir.')
     parser.add_argument('-n', '--run_name', action='store', dest='run_name', default=DEFAULT_RUN_NAME,
                         help=f'Run name. Default {DEFAULT_RUN_NAME}')
     parser.add_argument('-l', '--language', action='store', dest='language', default='en',
@@ -165,8 +163,8 @@ if __name__=='__main__':
     parser.add_argument('-g', '--gpu', action='store', dest='gpu_num', required=True, help='GPU number.')
 
     args = parser.parse_args()
-    validate_input(args.root, args)
+    validate_input(ROOT_DIR, args)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
 
-    train(args.root, args.model_path, args.dataset_name, args.language, args.run_name)
+    train(ROOT_DIR, args.model_path, args.dataset_name, args.language, args.run_name)

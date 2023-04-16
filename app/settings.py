@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-WORKING_DIR = Path(os.getcwd()).parent
+WORKING_DIR = Path(os.getcwd())
 
 # dir for basic voice models
 MODEL_DIR_BASIC = os.path.join(WORKING_DIR, 'models/default')

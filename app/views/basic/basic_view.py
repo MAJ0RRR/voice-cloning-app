@@ -10,8 +10,6 @@ train_module = lazy_module("app.views.train_view")
 
 
 class BasicView:
-    BUTTON_WIDTH_1 = 30
-    BUTTON_HEIGHT_1 = 3
     BUTTON_WIDTH_2 = 17
     BUTTON_HEIGHT_2 = 1
     SMALL_FONT = ("Helvetica", 10)
@@ -19,10 +17,11 @@ class BasicView:
     MAX_FONT = ("Helvetica", 25)
     ALLOWED_EXTENSIONS = ('.mp3', '.mp4', '.wav')
     PAGING = 10
+    BACKGROUND_COLOR = '#AEA6A6'
 
     def __init__(self, root, voice_model_service, voice_recordings_service, version_service):
-        self.size_grid_y = root.winfo_height()  / 36
-        self.size_grid_x = (root.winfo_height()-64) / 36
+        self.size_grid_y = root.winfo_height() / 36
+        self.size_grid_x = (root.winfo_width()) / 64
         self.root = root
         self.version_service = version_service
         self.voice_model_service = voice_model_service
@@ -34,6 +33,10 @@ class BasicView:
         self.Y_MENU = 26.666 * self.size_grid_y
         self.POPUP_WIDTH = 10 * self.size_grid_x
         self.POPUP_HEIGHT = 3.333 * self.size_grid_y
+        self.BUTTON_WIDTH_1 = 12 * self.size_grid_x
+        self.BUTTON_HEIGHT_1 = 2.5 * self.size_grid_y
+        self.BUTTON_WIDTH_2 = self.size_grid_x * 6.5
+        self.BUTTON_HEIGHT_2 = self.size_grid_y
 
     def switch_to_choose_gender_language_train_old(self):
         for widget in self.root.winfo_children():
@@ -51,13 +54,13 @@ class BasicView:
         for widget in self.root.winfo_children():
           widget.destroy()
         choose_gender_view.ChooseGenderLanguageView(self.root, self.voice_model_service, self.voice_recordings_service,
-                                                  self.version_service, Options.train_new)
+                                                 self.version_service, Options.train_new)
 
-        #for widget in self.root.winfo_children():
-        #    widget.destroy()
-        #after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
-        #                                self.version_service, 'woman', 'polish',
-                               #         '/home/dawid/sem6/ProjektGrupowy22-23/output/woman_polish', 'dataset_8', 0)
+       #for widget in self.root.winfo_children():
+       #    widget.destroy()       # for testing
+       #after_train_view.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
+       #                                self.version_service, 'woman', 'polish',
+                                        #'/home/dawid/sem6/ProjektGrupowy22-23/output/woman_polish', 'dataset_8', 0)
         # for widget in self.root.winfo_children():
         #   widget.destroy()
         # train_module.TrainView(self.root,self.voice_model_service, self.voice_recordings_service,

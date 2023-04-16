@@ -22,6 +22,7 @@ fonttools==4.38.0
 fsspec==2023.1.0
 future==0.18.3
 g2pkk==0.1.2
+gdown==4.6.4
 google-auth==2.17.0
 google-auth-oauthlib==0.4.6
 greenlet==2.0.2
@@ -71,6 +72,7 @@ psutil==5.9.4
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
+pydub==0.25.1
 pygame==2.3.0
 pyloudnorm==0.1.1
 pynndescent==0.5.8

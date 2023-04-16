@@ -2,7 +2,6 @@ from lazy_import import lazy_module
 import os
 import shutil
 from pathlib import Path
-import playsound
 import pygame
 import threading
 import tkinter as tk
@@ -11,7 +10,7 @@ import queue
 
 from app.entities.voice_model import VoiceModel
 from app.entities.voice_recording import VoiceRecording
-from app.settings import WORKING_DIR, MODEL_DIR_GENERATED, OUTPUT_DIR, GENERATED_DIR, GENERATED_TEMP_DIR
+from app.settings import MODEL_DIR_GENERATED, OUTPUT_DIR, GENERATED_DIR
 from app.speech_synthesizer import SpeechSynthesizer
 from app.views.basic.basic_view import BasicView
 
@@ -42,7 +41,7 @@ class AfterTrainView(BasicView):
         self.thread = threading.Thread(target=self.worker, args=(self.q,))
         self.thread.start()
         self.paths_to_basic_audio = []
-        self.config_file_path = os.path.join(OUTPUT_DIR, "config.json")
+        self.config_file_path = os.path.join(OUTPUT_DIR, f"{self.dir_with_result}/config.json")
         self.popup = None
         self.start_synthesize_basic_audio()
         self.input_field = tk.Entry(root, width=60, font=self.BUTTON_FONT)
@@ -135,7 +134,7 @@ class AfterTrainView(BasicView):
         y = (self.HEIGHT - self.POPUP_HEIGHT) // 2
         self.popup = tk.Toplevel(self.root)
         self.popup.grab_set()
-        self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT)}+{int(self.x)}+{int(self.y)}")
+        self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT)}+{int(x)}+{int(y)}")
         self.popup.title("Trwa generowanie audio")
         self.popup.protocol("WM_DELETE_WINDOW", self.cancel_synthesize)
         label = tk.Label(self.popup, text="Trwa proces generowania audio dla wybranego modelu.")
@@ -161,28 +160,26 @@ class AfterTrainView(BasicView):
         return paths
 
     def display_widgets(self):
-        label = tk.Label(self.root, font=self.MAX_FONT, text="Wytrenowane modele:", bg='green')
+        label = tk.Label(self.root, font=self.MAX_FONT, text="Wytrenowane modele:", bg=self.BACKGROUND_COLOR)
         label.place(x=self.X_MODELS, y=self.PAD_Y)
-        frame = tk.Frame(self.root, width=self.size_grid_x * 15.5, height=16.5 * self.size_grid_y, bg='white')
+        frame = tk.Frame(self.root, width=self.size_grid_x * 15.5, height=15 * self.size_grid_y, bg='white')
         frame.place(x=self.X_MODELS - 10, y=self.PAD_Y + 2.3 * self.size_grid_y)  # place for files
-        label = tk.Label(self.root, font=self.MAX_FONT, text="Wpisz tekst", bg='green')
+        label = tk.Label(self.root, font=self.MAX_FONT, text="Wpisz tekst", bg=self.BACKGROUND_COLOR)
         label.place(x=35 * self.size_grid_x, y=self.PAD_Y)
-        # on the bottom is menu to save mdoel, go to main menu(with popup to be sure) and continue training
-        play_button = tk.Button(self.root, text="Odsłuchaj", command=self.synthesize_audio,
-                                width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2)
-        play_button.place(x=43.3 * self.size_grid_x, y=3 * self.PAD_Y)
-        main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view,
-                                     width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
-        save_button = tk.Button(self.root, text="Zapisz wybrany model", width=self.BUTTON_WIDTH_1,
-                                height=self.BUTTON_HEIGHT_1,
+        play_button = tk.Button(self.root, text="Odsłuchaj", command=self.synthesize_audio, )
+        play_button.place(x=43.3 * self.size_grid_x, y=3 * self.PAD_Y, width=self.BUTTON_WIDTH_2,
+                          height=self.BUTTON_HEIGHT_2)
+        main_menu_button = tk.Button(self.root, text="Menu główne", command=self.switch_to_main_view, )
+        save_button = tk.Button(self.root, text="Zapisz wybrany model",
                                 command=self.display_window_to_enter_name_for_model)
-        continue_training_button = tk.Button(self.root, text="Dotrenuj model", width=self.BUTTON_WIDTH_1,
-                                             height=self.BUTTON_HEIGHT_1, command=self.continue_training)
+        continue_training_button = tk.Button(self.root, text="Dotrenuj model", command=self.continue_training)
 
-        main_menu_button.place(x=6.6 * self.size_grid_x, y=23.3 * self.size_grid_y)
-        save_button.place(x=26.6 * self.size_grid_x, y=23.3 * self.size_grid_y)
-        continue_training_button.place(x=46.6 * self.size_grid_x, y=23.3 * self.size_grid_y)
-        pass
+        main_menu_button.place(x=self.WIDTH / 2 - 3 * self.BUTTON_WIDTH_1 / 2 - self.size_grid_x * 2,
+                               y=26 * self.size_grid_y, width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1)
+        save_button.place(x=self.WIDTH / 2 - self.BUTTON_WIDTH_1 / 2, width=self.BUTTON_WIDTH_1,
+                          height=self.BUTTON_HEIGHT_1, y=26 * self.size_grid_y)
+        continue_training_button.place(x=self.WIDTH / 2 + self.BUTTON_WIDTH_1 / 2 + self.size_grid_x * 2,
+                                       width=self.BUTTON_WIDTH_1, height=self.BUTTON_HEIGHT_1, y=26 * self.size_grid_y)
 
     def display_window_to_enter_name_for_model(self):
         screen_pos = self.root.winfo_x()  # we need this to popup on the same screen which is app
@@ -321,12 +318,13 @@ class AfterTrainView(BasicView):
                                    variable=self.choosen_model,
                                    value=len(
                                        model_labels))  # value is index in self.paths_to_generated_voice_models list
-            label.place(x=self.X_MODELS, y=self.Y_FIRST_MODEL + len(model_labels) * self.PAD_Y)
+            label.place(x=self.X_MODELS, y=self.Y_FIRST_MODEL + len(model_labels) * self.PAD_Y / 2)
             model_labels.append(label)
             audio_path = self.paths_to_basic_audio[counter]
-            button = tk.Button(self.root, text="Odsłuchaj", width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
+            button = tk.Button(self.root, text="Odsłuchaj",
                                font=self.BUTTON_FONT, command=lambda: self.play_audio(audio_path))
-            button.place(x=self.X_MODELS + 250, y=self.Y_FIRST_MODEL + (len(model_labels) - 1) * self.PAD_Y)
+            button.place(x=self.X_MODELS + 250, width=self.BUTTON_WIDTH_2, height=self.BUTTON_HEIGHT_2,
+                         y=self.Y_FIRST_MODEL + (len(model_labels) - 1) * self.PAD_Y / 2)
             counter += 1
 
     def play_audio(self, path_to_audio):
