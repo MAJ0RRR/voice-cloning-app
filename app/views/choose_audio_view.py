@@ -143,6 +143,8 @@ class ChooseAudioView(BasicView):
         try:
             output = subprocess.check_output(['nvidia-smi', '--query-gpu=index', '--format=csv,noheader'])
             return [int(x) for x in output.decode().strip().split('\n')]
+        except subprocess.CalledProcessError:
+            return []
         except FileNotFoundError:
             return []
         # return [0]  # for test without nvidia
