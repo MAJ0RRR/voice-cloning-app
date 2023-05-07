@@ -15,7 +15,6 @@ rnn = "tools/rnnoise/examples/rnnoise_demo"
 
 def remove_noise(source, destination):
     paths = glob.glob(os.path.join(source, '*.wav'))
-    paths_tmp = glob.glob(source)
     tempdir = tempfile.TemporaryDirectory()
 
     for filepath in paths:

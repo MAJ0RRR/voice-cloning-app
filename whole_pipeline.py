@@ -9,7 +9,7 @@ from splits_silence import split_silence
 from noise import remove_noise
 from whispertrans import create_transcription
 from discard_transcriptions import discard_transcriptions
-from train_experimental import train
+from train import train
 
 
 def trim_wavs(source, destinantion, desired_len_ms):
@@ -74,8 +74,7 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
 
     if discard_transcripts:
         discard_transcriptions(language, dataset_dir, discard_word_count)
-    train(model_path, dataset_dir, language, run_name)
 
+        
+    train("", model_path, dataset_name, language, run_name, datasets_dir)
 
-if __name__ == "__main__":
-    run_pipeline(gpu_num=2, experiment_dir="experiment1", raw_source="audiofiles/raw")

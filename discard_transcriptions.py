@@ -15,7 +15,7 @@ def is_valid_string(string,alphabet,symbols):
                 return False
     return True
 
-def discard_transciprions(alph: str = 'en', path: str = 'audiofiles/datasets/dataset', word_count: int = 3):
+def discard_transcriptions(alph: str = 'en', path: str = 'audiofiles/datasets/dataset', word_count: int = 3):
     polish_alphabet = list("AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ")
     english_alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     symbols = list(" ,.?!-0123456789")
@@ -80,4 +80,4 @@ if __name__ == "__main__":
 
     assert parsed.language in ('en', 'pl'), f'incorrect language ID, language={parsed.language}'
 
-    discard_transciprions(alph=parsed.language, path=parsed.source_dir, word_count=parsed.min_words)
+    discard_transcriptions(alph=parsed.language, path=parsed.source_dir, word_count=parsed.min_words)

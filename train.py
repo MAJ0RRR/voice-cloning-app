@@ -40,11 +40,11 @@ def validate_input(root_dir, args):
             f'model_path directory does not contain {os.path.join(model_dir_path)} file file'
 
 
-def train(root_dir, model_path, dataset_name, language, run_name):
+def train(root_dir, model_path, dataset_name, language, run_name, datasets_dir=DATASETS_DIR):
     mode = 'continue' if model_path else 'new'
 
     dataset_config = BaseDatasetConfig(
-        formatter="ljspeech", meta_file_train="metadata.csv", path=os.path.join(root_dir, DATASETS_DIR, dataset_name))
+        formatter="ljspeech", meta_file_train="metadata.csv", path=os.path.join(root_dir, datasets_dir, dataset_name))
 
     audio_config = VitsAudioConfig(
         sample_rate=22050, win_length=1024, hop_length=256, num_mels=80, mel_fmin=0, mel_fmax=None
