@@ -1,1 +1,142 @@
-{"Definitions": [{"Name": "experiment_0", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": true, "DiscardTranscripts": false, "SplitSilenceLength": 8}, {"Name": "experiment_1", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": true, "DiscardTranscripts": false, "SplitSilenceLength": 10}, {"Name": "experiment_2", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 8}, {"Name": "experiment_3", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 10}, {"Name": "experiment_4", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "", "Language": "en", "SilenceSplitType": "silence", "RemoveNoise": true, "DiscardTranscripts": false, "SplitSilenceMinLength": 300, "SplitSilenceThresh": -45}, {"Name": "experiment_5", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "", "Language": "en", "SilenceSplitType": "silence", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceMinLength": 300, "SplitSilenceThresh": -45}, {"Name": "experiment_6", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 600000, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": true, "DiscardTranscripts": false, "SplitSilenceLength": 8}, {"Name": "experiment_7", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 600000, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": true, "DiscardTranscripts": false, "SplitSilenceLength": 10}, {"Name": "experiment_8", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 600000, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 8}, {"Name": "experiment_9", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 600000, "ModelPath": "", "Language": "en", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 10}, {"Name": "experiment_10", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 600000, "ModelPath": "", "Language": "en", "SilenceSplitType": "silence", "RemoveNoise": true, "DiscardTranscripts": false, "SplitSilenceMinLength": 300, "SplitSilenceThresh": -45}, {"Name": "experiment_11", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 600000, "ModelPath": "", "Language": "en", "SilenceSplitType": "silence", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceMinLength": 300, "SplitSilenceThresh": -45}], "Gpu": 2, "WhisperVram": 10}
+{
+    "Definitions": [
+        {
+            "Name": "experiment_0",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": true,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 8
+        },
+        {
+            "Name": "experiment_1",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": true,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 10
+        },
+        {
+            "Name": "experiment_2",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 8
+        },
+        {
+            "Name": "experiment_3",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 10
+        },
+        {
+            "Name": "experiment_4",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "silence",
+            "RemoveNoise": true,
+            "DiscardTranscripts": false,
+            "SplitSilenceMinLength": 300,
+            "SplitSilenceThresh": -45
+        },
+        {
+            "Name": "experiment_5",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "silence",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceMinLength": 300,
+            "SplitSilenceThresh": -45
+        },
+        {
+            "Name": "experiment_6",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 600000,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": true,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 8
+        },
+        {
+            "Name": "experiment_7",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 600000,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": true,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 10
+        },
+        {
+            "Name": "experiment_8",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 600000,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 8
+        },
+        {
+            "Name": "experiment_9",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 600000,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 10
+        },
+        {
+            "Name": "experiment_10",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 600000,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "silence",
+            "RemoveNoise": true,
+            "DiscardTranscripts": false,
+            "SplitSilenceMinLength": 300,
+            "SplitSilenceThresh": -45
+        },
+        {
+            "Name": "experiment_11",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 600000,
+            "ModelPath": "",
+            "Language": "en",
+            "SilenceSplitType": "silence",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceMinLength": 300,
+            "SplitSilenceThresh": -45
+        }
+    ],
+    "Gpu": 2,
+    "WhisperVram": 10
+}
