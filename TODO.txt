@@ -1,6 +1,0 @@
-Better trim algorythm.
-Corrupted samples filter.
-Auto config refactorization.
-Input validation for all scripts
-Single function to run whole pipeline and start training
-Script for experimental purposes

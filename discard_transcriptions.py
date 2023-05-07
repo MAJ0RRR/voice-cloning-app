@@ -1,29 +1,12 @@
 """
 This script discards transcriptions that contain illegal symbols or doesn't meet criterias
 from `metadata.csv` file and deltes according `*.wav` file.
-
-Usage: # Order of arguments matter!
-------
-1) Default language and default location
-`python3 ./discard.transcriptions.py` 
-------
-2) Custom language and default location
-`python3 ./discard.transcriptions.py pl`
-`python3 ./discard.transcriptions.py en`
-------
-3) Custom language and custom location
-`python3 ./discard.transcriptions.py pl /PATH/TO/DATASET`
-`python3 ./discard.transcriptions.py en /PATH/TO/DATASET`
-------
-4) Custom language and custom location with custom min_words limit for ex. 5
-`python3 ./discard.transcriptions.py pl /PATH/TO/DATASET 5`
-`python3 ./discard.transcriptions.py en /PATH/TO/DATASET 5`
-------
 """
 
+import argparse
 import csv
 import os
-import sys
+
 
 def is_valid_string(string,alphabet,symbols):
     for char in string.upper():
@@ -32,36 +15,20 @@ def is_valid_string(string,alphabet,symbols):
                 return False
     return True
 
-def discard_transcriptions(alph="pl",path="audiofiles/datasets/dataset",word_count=3):
+def discard_transciprions(alph: str = 'en', path: str = 'audiofiles/datasets/dataset', word_count: int = 3):
     polish_alphabet = list("AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ")
     english_alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-    symbols = list(" ,.?!")
+    symbols = list(" ,.?!-0123456789")
     min_words = 3
 
     alphabets = {
         "pl" : polish_alphabet,
         "en" : english_alphabet
     }
-
-    alphabet = []
-    root = 'audiofiles/datasets/dataset'
-
-    if __name__ != "__main__": # Invoked through function
-        alphabet = alph
-        root = path
-        min_words = word_count
-    else:
-        if len(sys.argv) == 1: # Default language in default location
-            alphabet = polish_alphabet
-        elif len(sys.argv) == 2: # Custom language in default location
-            alphabet = alphabets[str(sys.argv[1])]
-        elif len(sys.argv) == 3:  # Custom language in custom location
-            alphabet = alphabets[str(sys.argv[1])]
-            root = str(sys.argv[2])
-        else: # Custom language in custom location with custom min_words limit
-            alphabet = alphabets[str(sys.argv[1])]
-            root = str(sys.argv[2])
-            min_words = int(sys.argv[3])
+ 
+    alphabet = alphabets[alph]
+    root = path
+    min_words = word_count
     
     with open(os.path.join(root,'metadata.csv')) as orginal, \
         open(os.path.join(root,'filtered.csv'), 'w') as filtered:
@@ -98,4 +65,19 @@ def discard_transcriptions(alph="pl",path="audiofiles/datasets/dataset",word_cou
 
 
 if __name__ == "__main__":
-    discard_transcriptions()
+    parser = argparse.ArgumentParser(
+        prog = 'discard_transcriptions',
+        description = 'Deletes files and entries in csv with wrong transcription.'
+        )
+    parser.add_argument('-l', '--language', action='store', dest='language', 
+        default='en', help='Language of speech in your data (en/pl). Default: en.')
+    parser.add_argument('-s', '--source-directory', action='store', dest='source_dir', 
+        default='audiofiles/datasets/dataset', help='Directory with dataset. Default: audiofiles/datasets/dataset.')
+    parser.add_argument('-m', '--min-words', action='store', dest='min_words', 
+        default=3, type=int, help='Minimal number of words in transriptions. Default: 3')
+
+    parsed = parser.parse_args()
+
+    assert parsed.language in ('en', 'pl'), f'incorrect language ID, language={parsed.language}'
+
+    discard_transciprions(alph=parsed.language, path=parsed.source_dir, word_count=parsed.min_words)
