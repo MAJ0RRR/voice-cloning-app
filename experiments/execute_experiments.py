@@ -1,4 +1,10 @@
 import json
+import os
+import sys
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_dir = os.path.abspath(os.path.join(script_dir, '..'))
+sys.path.append(project_dir)
+
 from whole_pipeline import run_pipeline
 
 DEFINITIONS_FILE_NAME = "definitions.json"
