@@ -52,7 +52,7 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
         os.makedirs(splits_dir)
     if not os.path.exists(dataset_dir):
         os.makedirs(dataset_dir)
-
+    
     if trim_source_length == 0:
         audio_source = raw_source
     else:
@@ -64,7 +64,7 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
         split_equal(splits_dir, audio_source, length=split_len)
     else:
         split_silence(splits_dir, audio_source, split_silence_threshs, split_min_silence_lens)
-
+    
     if remove_noises:
         remove_noise(splits_dir, dataset_dir)
     else:

@@ -18,7 +18,7 @@ def run_experiments():
     experiments = definitions["Definitions"]
 
     for experiment in experiments:
-        name = experiment["Name"]
+        name = os.path.join(project_dir, "experiments", experiment["Name"])
         raw_source = experiment["RawSource"]
         trim_source = experiment["TrimSourceLengthMs"]
         split_type = experiment["SilenceSplitType"]
