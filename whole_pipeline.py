@@ -74,7 +74,7 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
     dataset_dir = os.path.join(datasets_dir, dataset_name)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_num)
-    ''' 
+
     if not os.path.exists(splits_dir):
         os.makedirs(splits_dir)
     if not os.path.exists(dataset_dir):
@@ -100,7 +100,7 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
 
     if discard_transcripts:
         discard_transcriptions(language, dataset_dir, discard_word_count)
-   '''
+
     train_func = """from train import train\ntrain( "", '{}', '{}', '{}', '{}', '{}')""".format(
         model_path, dataset_name,language, run_name, datasets_dir)
     print(train_func)
