@@ -13,7 +13,6 @@ def create_transcription(dataset_path, language, vram):
         os.mkdir(dataset_path)
 
     wavs_path = os.path.join(dataset_path, 'wavs')
-
     if language == 'en':
         if vram >= 5:
             model_name = 'medium.en'
@@ -33,6 +32,7 @@ def create_transcription(dataset_path, language, vram):
     else:
         print('wrong language')
         return
+    print(model_name)
     model = whisper.load_model(model_name)
 
     paths = glob.glob(os.path.join(wavs_path, '*.wav'))

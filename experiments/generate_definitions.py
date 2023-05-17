@@ -3,7 +3,7 @@ from typing import List
 
 import json
 
-DEFINITIONS_FILE_NAME = "definitions.json"
+DEFINITIONS_FILE_NAME = "experiments/definitions.json"
 
 
 def _set_definition_values(definition: dict, name: str, source: dict, trim_len: int,
@@ -27,7 +27,7 @@ def generate_definitions(name_idx_start: int = 0, sources: List[dict] = None,
                          silence_split_types: List[str] = None, split_lengths: List[int] = None,
                          split_min_silence_lens: List[int] = None, split_silence_threshs: List[int] = None,
                          remove_noises: List[bool] = None, discard_word_counts: List[int] = None,
-                         whisper_vram: int = 10, gpu: int = 2):
+                         whisper_vram: int = 8, gpu: int = 2):
     """
     :param name_idx_start: Start index for experiment names
     :param sources: List of dicts - elements should be given in format
@@ -81,16 +81,16 @@ if __name__ == '__main__':
     sources = [
         {
             "RawSource": "audiofiles/raw",
-            "ModelPath": "",
-            "Language": "en"
+            "ModelPath": "models/default/checkpoint_700000.pth",
+            "Language": "pl"
         }
     ]
-    trim_source_lengths_mins = [0, 10]
-    silence_split_types = ['equal', 'silence']
-    split_lengths = [8, 10]
+    trim_source_lengths_mins = [0]
+    silence_split_types = ['equal']
+    split_lengths = [2, 4, 8, 16]
     split_min_silence_lens = [300]
     split_silence_threshs = [-45]
-    remove_noises = [True, False]
+    remove_noises = [False]
     discard_word_counts = [0]
     generate_definitions(sources=sources, trim_source_lengths_mins=trim_source_lengths_mins,
                          silence_split_types=silence_split_types, split_lengths=split_lengths,

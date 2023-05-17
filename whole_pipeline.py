@@ -63,7 +63,7 @@ def trim_wavs(source, destinantion, desired_len_ms):
 def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, silence_split_type="equal", split_len=8,
                  split_min_silence_lens=None, split_silence_threshs=None, remove_noises=True, dataset_name="dataset",
                  whisper_vram=10, discard_transcripts=True, discard_word_count=3, language="en",
-                 model_path=None, run_name="experiment", timeout_seconds=1200):
+                 model_path=None, run_name="experiment", timeout_seconds=28800):
     if split_silence_threshs is None:
         split_silence_threshs = [-45]
     if split_min_silence_lens is None:
@@ -95,7 +95,7 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
         remove_noise(splits_dir, dataset_dir)
     else:
         copy_tree(splits_dir, dataset_dir)
-
+    
     create_transcription(dataset_dir, language, whisper_vram)
 
     if discard_transcripts:
