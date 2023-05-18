@@ -49,7 +49,7 @@ class ChooseAudioView(BasicView):
 
     def no_gpu_available(self):
         messagebox.showerror("Brak karty Nvidii",
-                             "Nie wykryto karty graficznej Nvidii. Zostaniesz przekierowany do menu głównego.")
+                             "Nie wykryto karty graficznej Nvidii lub sterowników do niej. Zostaniesz przekierowany do menu głównego.")
         super().switch_to_main_view()
 
     def display_widgets_choose_gpu(self):
@@ -181,7 +181,7 @@ class ChooseAudioView(BasicView):
         self.popup = tk.Toplevel(self.root)
         self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT + self.size_grid_y)}+{int(x)}+{int(y)}")
         self.popup.title("Próbki są generowane")
-
+        self.popup.grab_set()
         label = tk.Label(self.popup, text="Aby przerwać generowanie")
         label.pack(padx=10, pady=10)
         label = tk.Label(self.popup, text="próbek kliknij anuluj.")

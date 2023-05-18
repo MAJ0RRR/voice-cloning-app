@@ -116,6 +116,7 @@ class GenerateRecordingsView(BasicView):
         self.popup.geometry(f"{int(self.POPUP_WIDTH)}x{int(self.POPUP_HEIGHT)}+{int(x)}+{int(y)}")
         self.popup.title("Trwa proces")
         self.popup.protocol("WM_DELETE_WINDOW", self.cancel_process)
+        self.popup.grab_set()
         label = tk.Label(self.popup, text="Aby przerwać syntezę kliknij anuluj.")
         label.pack(padx=10, pady=10)
 
