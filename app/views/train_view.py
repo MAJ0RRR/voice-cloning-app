@@ -122,7 +122,7 @@ class TrainView(BasicView):
         for widget in self.popup.winfo_children():
             widget.destroy()
         self.popup.title('Trwa trenowanie głosu')
-        link = tk.Label(self.popup, text="Sprawdź rezultat uczenia", fg="blue")
+        link = tk.Label(self.popup, text="Kliknij,aby sprawdzic rezultat uczenia", fg="blue")
         link.pack(padx=10, pady=10)
 
         link.bind("<Button-1>", lambda e: self.open_url())

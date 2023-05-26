@@ -34,7 +34,7 @@ class SamplesGenerator:
             if self.stop_event.is_set():
                 process.terminate()
                 self.finish_generating(callback)
-        process3 = subprocess.Popen(["python", "discard_transcriptions.py", self.language, root])
+        process3 = subprocess.Popen(["python", "discard_transcriptions.py", "-l",self.language,"-s", root])
         while process3.poll() is None:
             if self.stop_event.is_set():
                 process.terminate()
