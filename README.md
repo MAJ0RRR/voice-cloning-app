@@ -81,10 +81,13 @@ W kolejnym kroku możemy uruchomić uczenie na podstawie jakiegoś modelu lub �
 
 `-g` (gpu) pozwala na określenie numeru karty graficznej, której chcemy użyć **(brak domyślnej wartości)**
 
-### Aby syntezować mowę można użyć komendy tts z następującymi argumentami:
+### Aby syntezować mowę można użyć komendy "tts" z następującymi argumentami:
 `--text` tekst, który będzie syntezowany
+
 `--model_path` ścieżka do modelu
+
 `--config_path` ścieżka do pliku konfiguracyjnego modelu
+
 `--out_path` ścieżka do miejsca, gdzie ma zostać zapisany plik
 
 # Instrukcja obsługi GUI
@@ -104,7 +107,7 @@ Następnie należy wybrać pliki audio do uczenia modelu. Można to zrobić doda
 ![Wybierz audio](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/choose_audio.png)
 Po zainicjalizowaniu treningu po około 2 minutach ukaże się poniższe okienko:
 ![Trenuj](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/train.png)
-Zalecamy, aby trenować model przynajmiej godzinę. Po zakończonym treningu zostaną automatycznie wygenerowane pliki audio. 
+Klikając w link w przeglądarce zostanie otwarty 'Tensoarboard', dzięki któremu możemy śledzić wyniki nauki. Zalecamy, aby trenować model przynajmiej godzinę. Po zakończonym treningu zostaną automatycznie wygenerowane pliki audio. 
 ![Po treningu probki](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/after1.png)
 Proces ten potrwa kilka minut. Następnie ukaże nam się taki widok:
 ![Po treningu](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/after2.png)
@@ -120,7 +123,7 @@ Następnie zostanie wyświetlony ten widok.
 ![generowanie probek](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/generate_audio.png)
 W lewym górnym roku możemy wpisać tekst wybrany tekst. Aby rozpoczać syntezę należy kliknąć przycisk "Generuj audio". Wygenerowane audio będzie znajdowało się w liście po prawej stronie.
 Aby zobaczyć wszystkie nagrania głosu należy kliknąć "Wszystkie nagrania głosu".
-![generowanie probek](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/generate_audio.png)
+![generowanie probek](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/all_recordings.png)
 
 ### Generowanie próbek do uczenia
 Aby wygenerować próbki należy:
