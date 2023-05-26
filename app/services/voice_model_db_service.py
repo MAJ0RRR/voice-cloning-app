@@ -73,13 +73,13 @@ class VoiceModelDbService:
         path_config1 = os.path.join(MODEL_DIR_BASIC, 'PL/FEMALE_1/config.json')
         path_model2 = os.path.join(MODEL_DIR_BASIC, 'PL/FEMALE_2/checkpoint_50000.pth')
         path_config2 = os.path.join(MODEL_DIR_BASIC, 'PL/FEMALE_2/config.json')
-        path_model3 = os.path.join(MODEL_DIR_BASIC, 'EN/MALE_1/checkpoint_40000.pth')
-        path_config3 = os.path.join(MODEL_DIR_BASIC, 'EN/MALE_1/config.json')
+        path_model3 = os.path.join(MODEL_DIR_BASIC, 'PL/MALE_1/checkpoint_700000.pth')
+        path_config3 = os.path.join(MODEL_DIR_BASIC, 'PL/MALE_1/config.json')
         path_model4 = os.path.join(MODEL_DIR_BASIC, 'EN/MALE_2/checkpoint_1012000.pth')
         path_config4 = os.path.join(MODEL_DIR_BASIC, 'EN/MALE_2/config.json')
         self.insert(VoiceModel('woman_pl_basic_1', path_model1, path_config1, 'woman', 'polish'))
         self.insert(VoiceModel('woman_pl_basic_2', path_model2, path_config2, 'woman', 'polish'))
-        self.insert(VoiceModel('man_en_basic_1', path_model3, path_config3, 'man', 'english'))
+        self.insert(VoiceModel('man_en_basic_1', path_model3, path_config3, 'man', 'polish'))
         self.insert(VoiceModel('man_en_basic_2', path_model4, path_config4, 'man', 'english'))
         pass
 

@@ -28,7 +28,7 @@ class ChooseAudioView(BasicView):
         self.model_id = model_id
         self.file_labels = []
         self.dir_labels = []
-        self.gpu_ids = self.get_gpu_ids()
+        self.gpu_ids = [0,1]#self.get_gpu_ids()
         self.choosen_gpu = tk.IntVar()
         self.VRAM = tk.IntVar()
         self.VRAM.set('1')

@@ -73,7 +73,7 @@ class VoiceRecordingDbService:
         return voice_recordings[0]
 
     def initialize(self):
-        path1 = os.path.join(WORKING_DIR, 'basic_audio/EN/MALE_1/basic.wav')
+        path1 = os.path.join(WORKING_DIR, 'basic_audio/PL/MALE_1/basic.wav')
         self.insert(VoiceRecording('basic', path1, 3))
         path2 = os.path.join(WORKING_DIR, 'basic_audio/EN/MALE_2/basic.wav')
         self.insert(VoiceRecording('basic', path2, 4))
