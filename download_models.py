@@ -12,7 +12,7 @@ def _create_subdir(directory, subdir):
 def download_models(project_root):
 	import gdown
 
-	models_dir = "models"
+	models_dir = "older-models"
 	deafult_dir = "default"
 	default_models_file = "default_models.json"
 	models_dir_path = _create_subdir(project_root, models_dir)

@@ -1,8 +1,12 @@
+#cache
+__pycache__/
+#db_file
+db_file.db
 # directory with audio
 /audiofiles
-# copies of models
+# copies of older-models
 /older-models
-# trained models
+# trained older-models
 /output
 # compiled tools
 /tools

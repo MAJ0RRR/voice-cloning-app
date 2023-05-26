@@ -65,7 +65,7 @@ def train(root_dir, model_path, dataset_name, language, run_name, datasets_dir=D
             run_eval=True,
             test_delay_epochs=-1,
             epochs=100000,
-            save_step=10000,
+            save_step=1000,
             save_checkpoints=True,
             save_n_checkpoints=10,
             save_best_after=1000,
@@ -101,9 +101,9 @@ def train(root_dir, model_path, dataset_name, language, run_name, datasets_dir=D
         test_sentences = json.load(json_file)
         config.test_sentences = test_sentences[language]
     except FileNotFoundError:
-        print(f"Error: JSON file {TEST_SENTENCES_FILE} not found.")   
+        print(f"Error: JSON file {TEST_SENTENCES_FILE} not found.")
     except json.JSONDecodeError:
-        print(f"Error: Invalid JSON format in file {TEST_SENTENCES_FILE}.")    
+        print(f"Error: Invalid JSON format in file {TEST_SENTENCES_FILE}.")
     except Exception as e:
         print(f"Error: {e}")
 

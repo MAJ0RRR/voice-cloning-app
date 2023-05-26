@@ -2,9 +2,12 @@
 
 Repozytorium projektu grupowego poświęconego tematowi "Opracowanie aplikacji do klonowania głosu w języku python"
 
-# Depndencje
-Python 3.9 z modułem venv <br>
-`sudo apt-get install make autoconf automake libtool sox ffmpeg espeak-ng`
+# Dependencje
+Python 3.9 z modułem tkinter.
+Instalacja:
+```bash
+sudo apt install python3.9-tk
+```
 
 # Konfiguracja i użycie
 Uruchomienie skryptu konfiguracyjnego:
@@ -77,4 +80,57 @@ W kolejnym kroku możemy uruchomić uczenie na podstawie jakiegoś modelu lub �
 `-d` (dataset) pozwala na określenie nazwy zbioru uczącego w katalogu audiofiles/datasets **(domyślnie dataset)**
 
 `-g` (gpu) pozwala na określenie numeru karty graficznej, której chcemy użyć **(brak domyślnej wartości)**
+
+### Aby syntezować mowę można użyć komendy "tts" z następującymi argumentami:
+`--text` tekst, który będzie syntezowany
+
+`--model_path` ścieżka do modelu
+
+`--config_path` ścieżka do pliku konfiguracyjnego modelu
+
+`--out_path` ścieżka do miejsca, gdzie ma zostać zapisany plik
+
+# Instrukcja obsługi GUI
+### Trening modelu
+
+Aby wytrenować model można również skorzystać z GUI. Program uruchamiamy komendą:
+```bash
+python3 app/main.py
+```
+Z menu głównego wybieramy przycisk `Stwórz nowy model głosu` lub `Dotrenuj model głosu` w zależności od naszych potrzeb.
+![Menu glowne](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/menu.png)
+W kolejnym kroku wybieramy płeć mówcy oraz język, którym się posługuje. Następnie klikamy przycisk `Dalej`.
+![Wybierz język](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/choose_language.png)
+Jeżeli wybraliśmy opcję trenowania modelu, teraz następuje wybranie modelu. Aby ułatwić wybór, istnieje możliwość odsłuchania bazowego pliku audio każdego modelu. Aby przejść dalej klikamy przycisk `Dalej`.
+![Wybierz model](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/choose_model.png)
+Następnie należy wybrać pliki audio do uczenia modelu. Można to zrobić dodając pojedyncze pliki, jak i całe foldery. Na dole ekranu należy również wybrać ilość VRAM. Jeżeli użytkownik posiada więcej niż jedną kartę graficzną, należy wskazać, której algorytm będzie miał użyć. Po wybraniu przycisku ‘Rozpocznij proces’ pliki audio zostaną przygotowane do treningu, a następnie zostanie uruchomiony proces trenowania modelu. 
+![Wybierz audio](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/choose_audio.png)
+Po zainicjalizowaniu treningu po około 2 minutach ukaże się poniższe okienko:
+![Trenuj](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/train.png)
+Klikając w link w przeglądarce zostanie otwarty 'Tensoarboard', dzięki któremu możemy śledzić wyniki nauki. Zalecamy, aby trenować model przynajmiej godzinę. Po zakończonym treningu zostaną automatycznie wygenerowane pliki audio. 
+![Po treningu probki](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/after1.png)
+Proces ten potrwa kilka minut. Następnie ukaże nam się taki widok:
+![Po treningu](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/after2.png)
+Aby zapisać wybrany model należy wybrać przycisk ‘Zapisz wybrany model’, a następnie wpisać nazwę dla modelu. Aby sprawdzić jak brzmią dane głosy można je odsłuchać. Aby sprawdzić, jak model radzi sobie z wybrany tekstem należy wpisać go w pole pod napisem ‘Wpisz tekst’, a następnie kliknąć przycisk ‘Odsłuchaj’ znajdujący się poniżej. Jeżeli żaden z modeli nie spełnia naszych oczekiwań, należy wybrać najlepszy z nich i wybrać opcję ‘Dotrenuj model’. Po wybraniu tej opcji zostanie na nowo uruchomiony proces trenowania. 
+### Synteza głosu
+Aby syntezować głos należy:
+```bash
+1.Wybrać z menu głównego "Syntezuj mowę na podstawie modelu".
+2.Wybrać płeć oraz język z kolejnego widoku.
+3.Wybrać model głosu z listy.
+```
+Następnie zostanie wyświetlony ten widok.
+![generowanie probek](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/generate_audio.png)
+W lewym górnym roku możemy wpisać tekst wybrany tekst. Aby rozpoczać syntezę należy kliknąć przycisk "Generuj audio". Wygenerowane audio będzie znajdowało się w liście po prawej stronie.
+Aby zobaczyć wszystkie nagrania głosu należy kliknąć "Wszystkie nagrania głosu".
+![generowanie probek](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/all_recordings.png)
+
+### Generowanie próbek do uczenia
+Aby wygenerować próbki należy:
+```bash
+1.Wybrać z menu głównego "Wygeneruj próbki do uczenia".
+2.Wybrać język z kolejnego widoku i kliknąć "Dalej".
+3.Wybrać pliki audio i kliknąć rozpocznij proces.
+4.Po zakończonym procesie gotowe próbki znajdują się w folderze 'audiofiles/datasets/dataset_n'
+```
 
