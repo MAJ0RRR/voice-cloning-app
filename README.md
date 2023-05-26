@@ -2,11 +2,13 @@
 
 Repozytorium projektu grupowego poświęconego tematowi "Opracowanie aplikacji do klonowania głosu w języku python"
 
-# Depndencje
-Python 3.9 z modułem venv <br>
-`sudo apt-get install make autoconf automake libtool sox ffmpeg espeak-ng`
+# Dependencje
+Python 3.9 z modułem tkinter.
+Instalacja:
+```bash
+sudo apt install python3.9-tk
+```
 
-<<<<<<< HEAD
 # Konfiguracja i użycie
 Uruchomienie skryptu konfiguracyjnego:
 `$ python3 initialize.py`
@@ -79,3 +81,11 @@ W kolejnym kroku możemy uruchomić uczenie na podstawie jakiegoś modelu lub �
 
 `-g` (gpu) pozwala na określenie numeru karty graficznej, której chcemy użyć **(brak domyślnej wartości)**
 
+# Instrukcja obsługi GUI
+
+Aby wytrenować model można również skorzystać z GUI. Program uruchamiamy komendą:
+```bash
+python3 app/main.py
+```
+Z menu głównego wybieramy przycisk `Stwórz nowy model głosu` lub `Dotrenuj model głosu` w zależności od naszych potrzeb.
+![Menu glowne](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/choose_audio.png)
