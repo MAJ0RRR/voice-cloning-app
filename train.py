@@ -32,10 +32,10 @@ def validate_input(root_dir, args):
     if args.model_path:
         assert args.model_path.endswith('.pth'), f'model_path file type incorrect, model_path={args.model_path}'
 
-        assert os.path.exists(os.path.join(root_dir, OUTPUT_PATH, args.model_path)),\
+        assert os.path.exists(os.path.join(root_dir, args.model_path)),\
             f'model_path file type incorrect, model_path={args.model_path}'
 
-        model_dir_path = os.path.join(root_dir,OUTPUT_PATH,*args.model_path.split('/')[0:-1])
+        model_dir_path = os.path.join(root_dir, *args.model_path.split('/')[0:-1])
         assert CONFIG_FILE_NAME in os.listdir(os.path.join(model_dir_path)),\
             f'model_path directory does not contain {os.path.join(model_dir_path)} file file'
 
@@ -85,7 +85,8 @@ def train(root_dir, model_path, dataset_name, language, run_name, datasets_dir=D
         )
     else:
         model_dir = model_path[:model_path.rfind("/")]
-        config = load_config(os.path.join(root_dir, OUTPUT_PATH, model_dir, CONFIG_FILE_NAME))
+        config_pth = os.path.join(root_dir, model_dir, CONFIG_FILE_NAME)
+        config = load_config(config_pth)
         config.run_name = run_name
         old_root_dir = root_dir
         if root_dir == "":
@@ -133,7 +134,7 @@ def train(root_dir, model_path, dataset_name, language, run_name, datasets_dir=D
 
     model = Vits(config, ap, tokenizer, speaker_manager=None)
     if mode == 'continue':
-        model.load_checkpoint(config, os.path.join(root_dir, OUTPUT_PATH, model_path))
+        model.load_checkpoint(config, os.path.join(root_dir, model_path))
 
     # init the trainer and begin
     trainer = Trainer(

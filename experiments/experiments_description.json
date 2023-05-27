@@ -1,0 +1,28 @@
+{
+  "Mode" : "diff",
+  "DefaultConfig": {
+    "Source":
+      {
+        "RawSource": "audiofiles/raw",
+        "ModelPath": "models/default/checkpoint_700000.pth",
+        "Language": "pl"
+      },
+    "TrimSourceLengthMs": 2700000,
+    "SilenceSplitType": "equal",
+    "RemoveNoise": false,
+    "DiscardWordCount": 0,
+    "SplitSilenceLength": 4,
+    "SplitSilenceMinLength" : 0,
+    "SplitSilenceThresh" : 0
+  },
+  "Source": [],
+  "TrimSourceLengthMins": [0],
+  "SilenceSplitType": ["equal"],
+  "RemoveNoise": [],
+  "DiscardWordCount": [],
+  "SplitSilenceLength": [2, 8, 16],
+  "SplitSilenceMinLength" : [0],
+  "SplitSilenceThresh" : [0],
+  "Gpu": 0,
+  "WhisperVram": 8
+}
