@@ -15,11 +15,8 @@ def _set_definition_values(definition: dict, name: str, source: dict, trim_len: 
     definition["Language"] = source["Language"]
     definition["SilenceSplitType"] = split_type
     definition["RemoveNoise"] = remove_noise
-    if discard == 0:
-        definition["DiscardTranscripts"] = False
-    else:
-        definition["DiscardTranscripts"] = True
-        definition["DiscardWordCount"] = discard
+    definition["DiscardTranscripts"] = True
+    definition["DiscardWordCount"] = discard
 
 
 def generate_definitions(name_idx_start: int = 0, sources: List[dict] = None,
@@ -27,7 +24,7 @@ def generate_definitions(name_idx_start: int = 0, sources: List[dict] = None,
                          silence_split_types: List[str] = None, split_lengths: List[int] = None,
                          split_min_silence_lens: List[int] = None, split_silence_threshs: List[int] = None,
                          remove_noises: List[bool] = None, discard_word_counts: List[int] = None,
-                         whisper_vram: int = 8, gpu: int = 2):
+                         whisper_vram: int = 8, gpu: int = 0):
     """
     :param name_idx_start: Start index for experiment names
     :param sources: List of dicts - elements should be given in format
@@ -85,13 +82,13 @@ if __name__ == '__main__':
             "Language": "pl"
         }
     ]
-    trim_source_lengths_mins = [0]
+    trim_source_lengths_mins = [20]
     silence_split_types = ['equal']
     split_lengths = [2, 4, 8, 16]
     split_min_silence_lens = [300]
     split_silence_threshs = [-45]
     remove_noises = [False]
-    discard_word_counts = [0]
+    discard_word_counts = [1]
     generate_definitions(sources=sources, trim_source_lengths_mins=trim_source_lengths_mins,
                          silence_split_types=silence_split_types, split_lengths=split_lengths,
                          split_min_silence_lens=split_min_silence_lens, split_silence_threshs=split_silence_threshs,

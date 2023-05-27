@@ -1,1 +1,50 @@
-{"Definitions": [{"Name": "experiment_0", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "models/default/checkpoint_700000.pth", "Language": "pl", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 2}, {"Name": "experiment_1", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "models/default/checkpoint_700000.pth", "Language": "pl", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 4}, {"Name": "experiment_2", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "models/default/checkpoint_700000.pth", "Language": "pl", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 8}, {"Name": "experiment_3", "RawSource": "audiofiles/raw", "TrimSourceLengthMs": 0, "ModelPath": "models/default/checkpoint_700000.pth", "Language": "pl", "SilenceSplitType": "equal", "RemoveNoise": false, "DiscardTranscripts": false, "SplitSilenceLength": 16}], "Gpu": 2, "WhisperVram": 8}
+{
+    "Definitions": [
+        {
+            "Name": "experiment_1",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "models/default/checkpoint_700000.pth",
+            "Language": "pl",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 14
+        },
+        {
+            "Name": "experiment_2",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "models/default/checkpoint_700000.pth",
+            "Language": "pl",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 8
+        },
+        {
+            "Name": "experiment_3",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 0,
+            "ModelPath": "models/default/checkpoint_700000.pth",
+            "Language": "pl",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 4
+        },
+        {
+            "Name": "experiment_4",
+            "RawSource": "audiofiles/raw",
+            "TrimSourceLengthMs": 2700000,
+            "ModelPath": "models/default/checkpoint_700000.pth",
+            "Language": "pl",
+            "SilenceSplitType": "equal",
+            "RemoveNoise": false,
+            "DiscardTranscripts": false,
+            "SplitSilenceLength": 4
+        }
+    ],
+    "Gpu": 0,
+    "WhisperVram": 8
+}
