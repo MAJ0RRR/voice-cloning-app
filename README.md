@@ -133,4 +133,38 @@ Aby wygenerować próbki należy:
 3.Wybrać pliki audio i kliknąć rozpocznij proces.
 4.Po zakończonym procesie gotowe próbki znajdują się w folderze 'audiofiles/datasets/dataset_n'
 ```
+# Eksperymenty
+Możliwe jest przeprowadzenie eksperymentów pozwalających na ustalenie optymalnych parametrów procesowania głosu i uczenia modelu. W tym celu należy podjąć następujące kroki :
 
+1) Najpierw należy wypełnić plik `experiments/definitions.json`, co można osiągnąć na dwa sposoby:
+    
+   - wypełnić plik ręcznie zachowując odpowiedni format (opisany w ...)
+   - skorzystać ze skryptu `experiments/generate_definitions.py` (sposób wykorzystania opisany w ...)
+2) Następnie należy uruchomić skrypt `experiments/execute_experiments.py`. Skrypt pobierze wygenerowane wcześniej definicje i zacznie wykonywać eksperymenty. Przeprocesowane próbki podane do każdego z nich znajdować się będą w folderze `experiments/<nazwa_eksperymentu>` a wyniki działania w folderze `output/<nazwa_eksperymentu>`.
+
+## Format pliku definitions.json
+W pliku definicji zawarte są dwie zmienne globalne dla wszystkich eksperymentów - numer GPU na którym wykonywane będą obliczenia oraz ilośc dostępnej pamięci na danym GPU.
+```json
+"Gpu": 0,
+"WhisperVram": 8
+```
+Główną część pliku stanowi sekcja "Definitions" będąca tablicą definicji poszczególnych eksperymentów
+```json
+"Definitions": [
+    { ... },
+    { ... },
+],
+```
+Każda definicja zawiera komplet zmiennych potrzebnych do przeprowadzenia eksperymentu. Zmienne te to:
+ - `Name` - nazwa eksperymentu,
+ - `RawSource` - ścieżka do folderu z wejściowymi plikami audio
+ - `TrimSourceLengthMs` - długość do której próbki audio będą przycięte, w przypadku podania 0 próbki nie będą przycinane
+ - `ModelPath` - ścieżka do modelu bazowego, w przypadku nie podania parametru model będzie tworzony od początku
+ - `Language` - język próbek wejściowych
+ - `SilenceSplitType` - sposób w jaki dzielone będą próbki wejściowe, może przyjmować wartosci `equal` lub `silence`
+ - `RemoveNoise` - zmienna określająca czy próbki wejściowe będą odszumiane
+ - `DiscardTranscripts` - zmienna określająca czy próbki, które zostały niepoprawnie odczytane przez technologię STT
+ - `DiscardWordCount` - minimalna długość zdania podanego do algorytmu (w słowach)
+ - `SplitSilenceLength` - używane w przypadku ustawienia `SilenceSplitType = "equal"` - długość próbek na które będzie podzielone audio wejściowe przed podaniem do algorytmu uczenia
+ - `SplitSilenceMinLength` - używane w przypadku ustawienia `SilenceSplitType = "silence"` - minimalna długość próbek na które będzie podzielone audio wejściowe przed podaniem do algorytmu uczenia
+ - `SplitSilenceThresh` - używane w przypadku ustawienia `SilenceSplitType = "silence"` - poziom ciszy według którego podzielone zostanie audio wejściowe przed podaniem do algorytmu uczenia
