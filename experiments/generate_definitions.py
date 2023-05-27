@@ -1,11 +1,12 @@
 import itertools
+import copy
 from typing import List
 from typing import Optional
 
 import json
 
-DEFINITIONS_FILE_NAME = "experiments/definitions.json"
-DESCRIPTION_FILE_NAME = "experiments/experiments_description.json"
+DEFINITIONS_FILE_NAME = "definitions.json"
+DESCRIPTION_FILE_NAME = "experiments_description.json"
 
 
 class ParametersSet:
@@ -122,36 +123,34 @@ def generate_definitions_diff(default_params: ParametersSet, name_idx_start: int
     name_idx_count = name_idx_start
     name_base = "experiment_"
 
+    param_set = copy.deepcopy(default_params)
+    name_idx_count += 1
+    param_set.name = f'{name_base}{name_idx_count}'
+    params.append(param_set)
+
     for source in sources:
-        param_set = default_params
+        param_set = copy.deepcopy(default_params)
         param_set.source = source
         name_idx_count += 1
         param_set.name = f'{name_base}{name_idx_count}'
         params.append(param_set)
 
     for trim_len in trim_source_lengths_mins:
-        param_set = default_params
+        param_set = copy.deepcopy(default_params)
         param_set.trim_len = trim_len
         name_idx_count += 1
         param_set.name = f'{name_base}{name_idx_count}'
         params.append(param_set)
 
     for noise in remove_noises:
-        param_set = default_params
+        param_set = copy.deepcopy(default_params)
         param_set.remove_noise = noise
         name_idx_count += 1
         param_set.name = f'{name_base}{name_idx_count}'
         params.append(param_set)
 
-    for source in sources:
-        param_set = default_params
-        param_set.source = source
-        name_idx_count += 1
-        param_set.name = f'{name_base}{name_idx_count}'
-        params.append(param_set)
-
     for count in discard_word_counts:
-        param_set = default_params
+        param_set = copy.deepcopy(default_params)
         param_set.discard = count
         name_idx_count += 1
         param_set.name = f'{name_base}{name_idx_count}'
@@ -160,7 +159,7 @@ def generate_definitions_diff(default_params: ParametersSet, name_idx_start: int
     for type in silence_split_types:
         if type == 'equal':
             for length in split_lengths:
-                param_set = default_params
+                param_set = copy.deepcopy(default_params)
                 param_set.split_type = type
                 param_set.split_length = length
                 name_idx_count += 1
@@ -168,14 +167,14 @@ def generate_definitions_diff(default_params: ParametersSet, name_idx_start: int
                 params.append(param_set)
         elif type == 'silence':
             for length in split_min_silence_lens:
-                param_set = default_params
+                param_set = copy.deepcopy(default_params)
                 param_set.split_type = type
                 param_set.split_min_silence_len = length
                 name_idx_count += 1
                 param_set.name = f'{name_base}{name_idx_count}'
                 params.append(param_set)
             for thresh in split_silence_threshs:
-                param_set = default_params
+                param_set = copy.deepcopy(default_params)
                 param_set.split_type = type
                 param_set.split_silence_thresh = thresh
                 name_idx_count += 1
@@ -210,7 +209,7 @@ if __name__ == '__main__':
     vram = description["WhisperVram"]
 
     if description["Mode"] == "diff":
-        default_config_json = description["Mode"]["DefaultConfig"]
+        default_config_json = description["DefaultConfig"]
         default_config = ParametersSet(name="", source=default_config_json["Source"],
                                        trim_len=default_config_json["TrimSourceLengthMs"],
                                        split_type=default_config_json["SilenceSplitType"],

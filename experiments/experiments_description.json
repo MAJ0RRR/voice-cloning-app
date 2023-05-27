@@ -15,15 +15,9 @@
     "SplitSilenceMinLength" : 0,
     "SplitSilenceThresh" : 0
   },
-  "Source": [
-    {
-      "RawSource": "audiofiles/raw",
-      "ModelPath": "models/default/checkpoint_700000.pth",
-      "Language": "pl"
-    }
-  ],
+  "Source": [],
   "TrimSourceLengthMins": [0],
-  "SilenceSplitType": [],
+  "SilenceSplitType": ["equal"],
   "RemoveNoise": [],
   "DiscardWordCount": [],
   "SplitSilenceLength": [2, 8, 16],
