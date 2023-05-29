@@ -1,3 +1,4 @@
+import argparse
 import os
 import subprocess
 import time
@@ -11,6 +12,21 @@ from noise import remove_noise
 from whispertrans import create_transcription
 from discard_transcriptions import discard_transcriptions
 from train import train
+
+DEFAULT_PROCESS_RUNTIME_SECONDS = 32400
+DEFAULT_TRIM_SOURCE_LENGTH = 0
+DEFAULT_SILENCE_SPLIT_TYPE = "equal"
+DEFAULT_SPLIT_LEN = 8
+DEFAULT_SPLIT_MIN_SILENCE_LENS = [300]
+DEFAULT_SPLIT_SILENCE_THRESHS = [-45]
+DEFAULT_REMOVE_NOISES = True
+DEFAULT_DATASET_NAME = "dataset"
+DEFAULT_WHISPER_VRAM = 10
+DEFAULT_DISCARD_TRANSCRIPTS = True
+DEFAULT_DISCARD_WORD_COUNT = 3
+DEFAULT_LANGUAGE = "en"
+DEFAULT_MODEL_PATH = None
+DEFAULT_RUN_NAME = "experiment"
 
 def run_and_kill_after(func, timeout):
     p = subprocess.Popen(["python", "-c", func], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -60,14 +76,14 @@ def trim_wavs(source, destinantion, desired_len_ms):
             break
 
 
-def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, silence_split_type="equal", split_len=8,
-                 split_min_silence_lens=None, split_silence_threshs=None, remove_noises=True, dataset_name="dataset",
-                 whisper_vram=10, discard_transcripts=True, discard_word_count=3, language="en",
-                 model_path=None, run_name="experiment", timeout_seconds=32400):
-    if split_silence_threshs is None:
-        split_silence_threshs = [-45]
-    if split_min_silence_lens is None:
-        split_min_silence_lens = [300]
+def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=DEFAULT_TRIM_SOURCE_LENGTH,
+                 silence_split_type=DEFAULT_SILENCE_SPLIT_TYPE, split_len=DEFAULT_SPLIT_LEN,
+                 split_min_silence_lens=DEFAULT_SPLIT_MIN_SILENCE_LENS,
+                 split_silence_threshs=DEFAULT_SPLIT_SILENCE_THRESHS, remove_noises=DEFAULT_REMOVE_NOISES,
+                 dataset_name=DEFAULT_DATASET_NAME, whisper_vram=DEFAULT_WHISPER_VRAM,
+                 discard_transcripts=DEFAULT_DISCARD_TRANSCRIPTS, discard_word_count=DEFAULT_DISCARD_WORD_COUNT,
+                 language=DEFAULT_LANGUAGE, model_path=DEFAULT_MODEL_PATH, run_name=DEFAULT_RUN_NAME,
+                 timeout_seconds=DEFAULT_PROCESS_RUNTIME_SECONDS):
 
     splits_dir = os.path.join(experiment_dir, 'splits')
     datasets_dir = os.path.join(experiment_dir, 'datasets')
@@ -110,3 +126,43 @@ def run_pipeline(gpu_num, experiment_dir, raw_source, trim_source_length=0, sile
     except TimeoutError as e:
         print(str(e))
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog='whole_pipeline',
+        description='Runs whole pipeline for automated voice cloning'
+        )
+
+    parser.add_argument('--gpu', action='store', dest='gpu', help='GPU number')
+    parser.add_argument('--run_dir', action='store', dest='experiment_dir', help='Directory where processed audio will be stored')
+    parser.add_argument('--raw_source', action='store', dest='raw_source', help='Directory with raw audio samples')
+
+    parser.add_argument('--trim_source_length', action='store', dest='trim_source_length', default=DEFAULT_TRIM_SOURCE_LENGTH, type=int,
+                        help=f'Length to which the input audio will be cut in minutes.  Default {DEFAULT_TRIM_SOURCE_LENGTH}')
+    parser.add_argument('--silence_split_type', action='store', dest='silence_split_type', default=DEFAULT_SILENCE_SPLIT_TYPE, type=str,
+                        help=f'Method using which input samples will be split into chunks, can be "equal" or "silence". Default {DEFAULT_SILENCE_SPLIT_TYPE}')
+    parser.add_argument('--split_len', action='store', dest='split_len', default=DEFAULT_SPLIT_LEN, type=int,
+                        help=f'Length to which the input samples will be cut. Used only if silence_split_type = "equal". Default {DEFAULT_SPLIT_LEN}')
+    parser.add_argument('--split_min_silence_lens', action='store', dest='split_min_silence_lens', default=DEFAULT_SPLIT_MIN_SILENCE_LENS, nargs="*", type=int,
+                        help=f'Lengths of silence in miliseconds on which splitting happens. Used only if silence_split_type = "silence". Default {DEFAULT_SPLIT_MIN_SILENCE_LENS}')
+    parser.add_argument('--split_silence_threshs', action='store', dest='split_silence_threshs', default=DEFAULT_SPLIT_SILENCE_THRESHS, nargs="*", type=int,
+                        help=f'Thresholds below which audio is considered silent. Used only if silence_split_type = "silence". Default {DEFAULT_SPLIT_SILENCE_THRESHS}')
+    parser.add_argument('--remove_noises', action='store', dest='remove_noises', default=DEFAULT_REMOVE_NOISES, type=bool,
+                        help=f'Remove noises when processing audio. Default {DEFAULT_REMOVE_NOISES}')
+    parser.add_argument('--dataset_name', action='store', dest='dataset_name', default=DEFAULT_DATASET_NAME, type=str,
+                        help=f'Name of dataset directory. Default {DEFAULT_DATASET_NAME}')
+    parser.add_argument('--whisper_vram', action='store', dest='whisper_vram', default=DEFAULT_WHISPER_VRAM, type=int,
+                        help=f'VRAM available to Whisper STT. Default {DEFAULT_WHISPER_VRAM}')
+    parser.add_argument('--discard_transcripts', action='store', dest='discard_transcripts', default=DEFAULT_DISCARD_TRANSCRIPTS, type=bool,
+                        help=f'Discard faulty transcripts while processing audio. Default {DEFAULT_DISCARD_TRANSCRIPTS}')
+    parser.add_argument('--discard_word_count', action='store', dest='discard_word_count', default=DEFAULT_DISCARD_WORD_COUNT, type=int,
+                        help=f'Minimum sentence length in words. Used only if discard_transcripts = true. Default {DEFAULT_DISCARD_WORD_COUNT}')
+    parser.add_argument('--language', action='store', dest='language', default=DEFAULT_LANGUAGE, type=str,
+                        help=f'Input language, either "en" or "pl. Default {DEFAULT_LANGUAGE}')
+    parser.add_argument('--model_path', action='store', dest='model_path', default=DEFAULT_MODEL_PATH, type=str,
+                        help=f'Path to base model. If not provided new one will be created. Default {DEFAULT_MODEL_PATH}')
+    parser.add_argument('--run_name', action='store', dest='run_name', default=DEFAULT_RUN_NAME, type=str,
+                        help=f'Run directory name. Default {DEFAULT_RUN_NAME}')
+    parser.add_argument('--timeout_seconds', action='store', dest='timeout_seconds', default=DEFAULT_PROCESS_RUNTIME_SECONDS, type=int,
+                        help=f'Time in seconds after which model training will be finished. Default {DEFAULT_PROCESS_RUNTIME_SECONDS}')
+
+    parsed = parser.parse_args()

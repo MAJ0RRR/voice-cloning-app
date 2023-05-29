@@ -133,6 +133,54 @@ Aby wygenerować próbki należy:
 3.Wybrać pliki audio i kliknąć rozpocznij proces.
 4.Po zakończonym procesie gotowe próbki znajdują się w folderze 'audiofiles/datasets/dataset_n'
 ```
+# Instrukcja obsługi CLI
+Aby wykonać automatyczne klonowanie głosu przy użyciu jednej komendy należy wykonać skrypt `whole_pipeline.py`
+Skrypt przyjmuje następujące wymagane argumenty:
+
+  `--gpu` (gpu) Pozwala na określenie numeru używanej karty graficznej.
+
+  `--run_dir` (run_dir) Folder w którym będą przechowywane przetworzone próbki audio.
+
+  `--raw_source` (raw_source) Folder w którym znajdują się wejściowe próbki audio.
+
+Oraz następujące opcjonalne argumenty pozwalające dostosować parametry procesowania audio i uczenia modelu:
+
+  `--trim_source_length` (trim_source_length) Długość do której będzie przycięte wejściowe audio w minutach. W przypadku podania 0 audio wejściowe nie bedzie przycinane.
+  Domyślnie 0
+  
+  `--silence_split_type` (silence_split_type) Metoda która będzie użyta do podziału wejściowych próbek audio, może przyjmować wartości "equal" lub "silence".
+  **Domyślnie "equal"**
+  
+  `--split_len` (split_len) Długość na jakie kawałki zostaną pocięte próbki wejściowe. Używane tylko wtedy gdy silence_split_type = "equal".
+  **Domyślnie 8**
+  
+  `--split_min_silence_lens` (split_min_silence_lens) Długości ciszy według której zostaną pocięte próbki wejściowe. Używane tylko wtedy gdy silence_split_type = "silence".
+  **Domyślnie [300]**
+  
+  `--split_silence_threshs` (split_silence_threshs) Poziom dźwięku w dBm uznawany za ciszę. Używane tylko wtedy gdy silence_split_type = "silence"
+  **Domyślnie [-45]**
+  
+  `--whisper_vram` (whisper_vram) Ilość VRAM dostępnych dla STT.
+  **Domyślnie 10**
+  
+  `--discard_transcripts` (discard_transcripts)  Parametr określający czy niepoprawnie przeprocesowane przez technologię STT próbki będą odrzucane.
+  **Domyślnie True**
+  
+  `--discard_word_count` (discard_word_count) Minimalna długość słów w próbce. Używane tylko wtedy gdy discard_transcripts = true.
+  **Domyślnie 3**
+  
+  `--language` (language) Język wejściowy, może przyjmować wartości "en" lub "pl.
+  **Domyślnie "en"**
+  
+  `--model_path` (model_path) Ścieżka do modelu bazowego, jeśli nie zostanie podana stworzony zostanie nowy model.
+  **Domyślnie None**
+  
+  `--run_name` (run_name) Nazwa folderu z wynikami działania.
+  **Domyślnie "experiment"**
+  
+  `--timeout_seconds` (timeout_seconds) Czas w sekundach po którym zostanie zakończony proces uczenia.
+  **Domyślnie 32400**
+
 # Eksperymenty
 Możliwe jest przeprowadzenie eksperymentów pozwalających na ustalenie optymalnych parametrów procesowania głosu i uczenia modelu. W tym celu należy podjąć następujące kroki :
 
