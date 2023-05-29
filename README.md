@@ -181,6 +181,7 @@ Oraz następujące opcjonalne argumenty pozwalające dostosować parametry proce
   `--timeout_seconds` (timeout_seconds) Czas w sekundach po którym zostanie zakończony proces uczenia.
   **Domyślnie 32400**
 
+Po zakończeniu procesu przetwarzania audio i uczenia modelu wynikowy model głosu będzie dostępny w folderze `output/<run_name>`
 # Eksperymenty
 Możliwe jest przeprowadzenie eksperymentów pozwalających na ustalenie optymalnych parametrów procesowania głosu i uczenia modelu. W tym celu należy podjąć następujące kroki :
 
@@ -290,7 +291,7 @@ Poniżej przedstawiona została struktura pliku `experiments_description.json` d
 ```
 
 ### Tryb product
-W trybie diff iteracja po parametrach odbywa się w trybie "każdy z każdym". Poniżej przedstawiona została struktura pliku `experiments_description.json` dla trybu `product` pozwalająca wygenerować definicję 4 eksperymentów różniących się między sobą wartościami `TrimSourceLengthMins` i `SplitSilenceLength`:
+W trybie diff iteracja po parametrach odbywa się w trybie "każdy z każdym" (produkt kartezjański). Poniżej przedstawiona została struktura pliku `experiments_description.json` dla trybu `product` pozwalająca wygenerować definicję 4 eksperymentów różniących się między sobą wartościami `TrimSourceLengthMins` i `SplitSilenceLength`:
  - `TrimSourceLengthMins = 0`,  `SplitSilenceLength = 2`
  - `TrimSourceLengthMins = 0`,  `SplitSilenceLength = 4`
  - `TrimSourceLengthMins = 10`,  `SplitSilenceLength = 2`
