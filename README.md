@@ -138,23 +138,24 @@ Możliwe jest przeprowadzenie eksperymentów pozwalających na ustalenie optymal
 
 1) Najpierw należy wypełnić plik `experiments/definitions.json`, co można osiągnąć na dwa sposoby:
     
-   - wypełnić plik ręcznie zachowując odpowiedni format (opisany w ...)
-   - skorzystać ze skryptu `experiments/generate_definitions.py` (sposób wykorzystania opisany w ...)
+   - wypełnić plik ręcznie zachowując odpowiedni format (opisany w [tej sekcji](#format-pliku-definitionsjson))
+   - skorzystać ze skryptu `experiments/generate_definitions.py` (sposób wykorzystania opisany w [tej sekcji](#skrypt-do-automatycznego-generowania-definicji-eksperymentów))
 2) Następnie należy uruchomić skrypt `experiments/execute_experiments.py`. Skrypt pobierze wygenerowane wcześniej definicje i zacznie wykonywać eksperymenty. Przeprocesowane próbki podane do każdego z nich znajdować się będą w folderze `experiments/<nazwa_eksperymentu>` a wyniki działania w folderze `output/<nazwa_eksperymentu>`.
 
 ## Format pliku definitions.json
-W pliku definicji zawarte są dwie zmienne globalne dla wszystkich eksperymentów - numer GPU na którym wykonywane będą obliczenia oraz ilośc dostępnej pamięci na danym GPU.
+Główną część pliku stanowi sekcja "Definitions" będąca tablicą definicji poszczególnych eksperymentów.
+W pliku również definicji zawarte są dwie zmienne globalne dla wszystkich eksperymentów - numer GPU na którym wykonywane będą obliczenia oraz ilośc dostępnej pamięci na danym GPU.
 ```json
-"Gpu": 0,
-"WhisperVram": 8
-```
-Główną część pliku stanowi sekcja "Definitions" będąca tablicą definicji poszczególnych eksperymentów
-```json
-"Definitions": [
+{
+   "Definitions": [
     { ... },
     { ... },
-],
+  ],
+  "Gpu": 0,
+  "WhisperVram": 8
+}
 ```
+### Format definicji jednego eksperymentu
 Każda definicja zawiera komplet zmiennych potrzebnych do przeprowadzenia eksperymentu. Zmienne te to:
  - `Name` - nazwa eksperymentu,
  - `RawSource` - ścieżka do folderu z wejściowymi plikami audio
@@ -164,7 +165,106 @@ Każda definicja zawiera komplet zmiennych potrzebnych do przeprowadzenia eksper
  - `SilenceSplitType` - sposób w jaki dzielone będą próbki wejściowe, może przyjmować wartosci `equal` lub `silence`
  - `RemoveNoise` - zmienna określająca czy próbki wejściowe będą odszumiane
  - `DiscardTranscripts` - zmienna określająca czy próbki, które zostały niepoprawnie odczytane przez technologię STT
- - `DiscardWordCount` - minimalna długość zdania podanego do algorytmu (w słowach)
+ - `DiscardWordCount` - uzywane w przypadku ustawienia `DiscardTranscripts = true` minimalna długość zdania podanego do algorytmu (w słowach)
  - `SplitSilenceLength` - używane w przypadku ustawienia `SilenceSplitType = "equal"` - długość próbek na które będzie podzielone audio wejściowe przed podaniem do algorytmu uczenia
  - `SplitSilenceMinLength` - używane w przypadku ustawienia `SilenceSplitType = "silence"` - minimalna długość próbek na które będzie podzielone audio wejściowe przed podaniem do algorytmu uczenia
  - `SplitSilenceThresh` - używane w przypadku ustawienia `SilenceSplitType = "silence"` - poziom ciszy według którego podzielone zostanie audio wejściowe przed podaniem do algorytmu uczenia
+
+Oto przykładowa definicja eskperymentu
+
+```json
+{
+   "Name": "experiment_1",
+   "RawSource": "audiofiles/raw",
+   "TrimSourceLengthMs": 0,
+   "ModelPath": "models/default/checkpoint_700000.pth",
+   "Language": "pl",
+   "SilenceSplitType": "equal",
+   "RemoveNoise": false,
+   "DiscardTranscripts": false,
+   "SplitSilenceLength": 14
+}
+```
+## Skrypt do automatycznego generowania definicji eksperymentów
+Skrypt `generate_definitions.py` działa na podstawie pliku `experiments_description.json` zawierającego opis eksperymentów do wykonania.
+### Struktura pliku opisu eksperymentów
+ - Dokładny sposób generowania definicji określa pole `Mode`, mogące przyjmować wartości `diff` lub `product`
+ - Pole `DefaultConfig` - używane tylko w trybie `diff` - opisane [poniżej](#tryb-diff)
+ - Dalsza część pliku składa się z pól zgodnych z [opisem definicji eksperymentu](#format-definicji-jednego-eksperymentu) z tym wyjątkiem że parametry `RawSource`, `ModelPath`, `Language` są zgrupowane w jedną strukturę `Source`, a pole `Name` nie występuje.
+   ```json
+   "Source":
+   {
+   "RawSource": "...",
+   "ModelPath": "...",
+   "Language": "..."
+   }
+   ```
+   Pola te to: `Source`, `TrimSourceLengthMins` , `SilenceSplitType`, `RemoveNoise`, ` DiscardWordCount`, `SplitSilenceLength`, `SplitSilenceMinLength`, `SplitSilenceThresh`, `Gpu`, `WhisperVram`, gdzie każde z tych pól (oprócz `Gpu` i `WhisperVram`) przyjmuje wartość w postaci tablicy parametrów które będą uwzględnione w eksperymencie.
+### Tryb diff
+W trybie diff przeprowadzany jest jeden eksperyment o domyślnych parametrach a kolejne eksperymenty zmieniają jeden parametr w stosunku do domyślnego zestawu.
+Parametry zdefiniowane jako domyślne znajdują się w polu `DefaultConfig` i są zgodne  z [opisem definicji eksperymentu](#format-definicji-jednego-eksperymentu) z tym wyjątkiem że parametry `RawSource`, `ModelPath`, `Language` są zgrupowane w jedną strukturę `Source` oraz nie występują pola `Name` (ustawiane automatycznie)  i `DiscardTranscripts` (domyślnie ustawiane na true) .
+
+Poniżej przedstawiona została struktura pliku `experiments_description.json` dla trybu `diff` pozwalająca wygenerować definicję 4 eksperymentów:
+ - domyślnego 
+ - domyślnego z dlugością przyciętych próbek ustawioną na 2 (zamiast 4)
+ - domyślnego z dlugością przyciętych próbek ustawioną na 8 (zamiast 4)
+ - domyślnego z audio wejściowym przyciętym do 10 minut
+
+```json
+{
+  "Mode" : "diff",
+  "DefaultConfig": {
+    "Source":
+      {
+        "RawSource": "audiofiles/raw",
+        "ModelPath": "models/default/checkpoint_700000.pth",
+        "Language": "pl"
+      },
+    "TrimSourceLengthMins": 0,
+    "SilenceSplitType": "equal",
+    "RemoveNoise": false,
+    "DiscardWordCount": 0,
+    "SplitSilenceLength": 4,
+    "SplitSilenceMinLength" : 0,
+    "SplitSilenceThresh" : 0
+  },
+  "Source": [],
+  "TrimSourceLengthMins": [10],
+  "SilenceSplitType": ["equal"],
+  "RemoveNoise": [],
+  "DiscardWordCount": [],
+  "SplitSilenceLength": [2, 8],
+  "SplitSilenceMinLength" : [0],
+  "SplitSilenceThresh" : [0],
+  "Gpu": 0,
+  "WhisperVram": 8
+}
+```
+
+### Tryb product
+W trybie diff iteracja po parametrach odbywa się w trybie "każdy z każdym". Poniżej przedstawiona została struktura pliku `experiments_description.json` dla trybu `product` pozwalająca wygenerować definicję 4 eksperymentów różniących się między sobą wartościami `TrimSourceLengthMins` i `SplitSilenceLength`:
+ - `TrimSourceLengthMins = 0`,  `SplitSilenceLength = 2`
+ - `TrimSourceLengthMins = 0`,  `SplitSilenceLength = 4`
+ - `TrimSourceLengthMins = 10`,  `SplitSilenceLength = 2`
+ - `TrimSourceLengthMins = 10`,  `SplitSilenceLength = 4`
+```json
+{
+  "Mode" : "product",
+  "Source": [
+     {
+        "RawSource": "audiofiles/raw",
+        "ModelPath": "models/default/checkpoint_700000.pth",
+        "Language": "pl"
+     }
+  ],
+  "TrimSourceLengthMins": [0, 10],
+  "SilenceSplitType": ["equal"],
+  "RemoveNoise": [false],
+  "DiscardWordCount": [0],
+  "SplitSilenceLength": [2, 8],
+  "SplitSilenceMinLength" : [0],
+  "SplitSilenceThresh" : [0],
+  "Gpu": 0,
+  "WhisperVram": 8
+}
+```
