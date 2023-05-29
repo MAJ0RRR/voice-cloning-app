@@ -7,7 +7,7 @@
         "ModelPath": "models/default/checkpoint_700000.pth",
         "Language": "pl"
       },
-    "TrimSourceLengthMs": 2700000,
+    "TrimSourceLengthMins": 0,
     "SilenceSplitType": "equal",
     "RemoveNoise": false,
     "DiscardWordCount": 0,
@@ -20,7 +20,7 @@
   "SilenceSplitType": ["equal"],
   "RemoveNoise": [],
   "DiscardWordCount": [],
-  "SplitSilenceLength": [2, 8, 16],
+  "SplitSilenceLength": [2, 8],
   "SplitSilenceMinLength" : [0],
   "SplitSilenceThresh" : [0],
   "Gpu": 0,

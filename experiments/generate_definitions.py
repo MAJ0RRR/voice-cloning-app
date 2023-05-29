@@ -211,7 +211,7 @@ if __name__ == '__main__':
     if description["Mode"] == "diff":
         default_config_json = description["DefaultConfig"]
         default_config = ParametersSet(name="", source=default_config_json["Source"],
-                                       trim_len=default_config_json["TrimSourceLengthMs"],
+                                       trim_len=default_config_json["TrimSourceLengthMins"],
                                        split_type=default_config_json["SilenceSplitType"],
                                        remove_noise=default_config_json["RemoveNoise"],
                                        discard=default_config_json["DiscardWordCount"],
