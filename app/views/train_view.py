@@ -32,6 +32,7 @@ class TrainView(BasicView):
         self.run_name = self.generate_run_name()
         self.popup = None
         self.process = None
+        self.process2 = None
         self.event = threading.Event()
         self.start_train()
         self.dir_with_result = ''
@@ -42,15 +43,13 @@ class TrainView(BasicView):
     def on_closing(self):
         if messagebox.askokcancel("Wyjście",
                                   "Czy na pewno chcesz zamknąć program? Wszystkie efekty treningu zostaną stracone."):
-            self.root.destroy()
             self.event.set()
+            self.root.destroy()
             if self.thread:
                 self.thread.join()
-            if self.speech_synthesizer:
-                self.speech_synthesizer.stop_event.set()
             if self.process:
                 self.process.terminate()
-            if self.process2.terminate():
+            if self.process2:
                 self.process2.terminate()
 
     def generate_run_name(self):
@@ -147,7 +146,7 @@ class TrainView(BasicView):
             widget.destroy()
         after_train_module.AfterTrainView(self.root, self.voice_model_service, self.voice_recordings_service,
                                           self.version_service, self.gender, self.language, self.dir_with_result,
-                                          self.dataset, self.gpu)
+                                          self.dataset, self.gpu, self.model_path)
 
     def start_train(self):
         language = 'pl' if self.language == 'polish' else 'en'
