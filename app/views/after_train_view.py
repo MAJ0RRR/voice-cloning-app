@@ -8,6 +8,7 @@ import tkinter as tk
 from tkinter import messagebox
 import queue
 
+from app.enums import Options
 from app.entities.voice_model import VoiceModel
 from app.entities.voice_recording import VoiceRecording
 from app.settings import MODEL_DIR_GENERATED, OUTPUT_DIR, GENERATED_DIR
@@ -20,7 +21,7 @@ train_module = lazy_module("app.views.train_view")
 class AfterTrainView(BasicView):
 
     def __init__(self, root, voice_model_service, voice_recordings_service, version_service, gender, language,
-                 dir_with_result, dataset, gpu):
+                 dir_with_result, dataset, gpu, model_path):
         super(AfterTrainView, self).__init__(root, voice_model_service, voice_recordings_service, version_service)
         self.X_MODELS = 3.33 * self.size_grid_x
         self.POPUP_WIDTH = 16.666 * self.size_grid_x
@@ -28,6 +29,7 @@ class AfterTrainView(BasicView):
         self.gender = gender
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.gpu = gpu
+        self.model_path = model_path
         self.dataset = dataset
         self.dir_with_result = dir_with_result
         self.language = language
@@ -55,6 +57,7 @@ class AfterTrainView(BasicView):
     def on_closing(self):
         if messagebox.askokcancel("Wyjście",
                                   "Czy na pewno chcesz zamknąc program? Wszystkie niezapisane zmiany zostaną usunięte."):
+            self.rm_all_files_from_output_dir()
             self.root.destroy()
             self.event.set()
             self.thread.join()
@@ -90,6 +93,7 @@ class AfterTrainView(BasicView):
             if self.speech_synthesizer:
                 self.speech_synthesizer.stop_event.set()
             self.thread.join()
+            self.rm_all_files_from_output_dir()
             self.switch_to_main_view()
 
     def cancel_synthesize(self):
@@ -279,7 +283,7 @@ class AfterTrainView(BasicView):
                                       "Po wznowieniu trenowania wszystkie pozostałe niezapisane modele zostaną usunięte. Czy jesteś pewien?")
 
         if confirm:
-            path_to_model = self.choosen_model.get()
+            path_to_model = self.paths_to_generated_voice_models[self.choosen_model.get()]
             shutil.copy(path_to_model, OUTPUT_DIR)
             self.destroy_all_files_in_dir(MODEL_DIR_GENERATED, path_to_model)
             self.destroy_all_files_in_dir(OUTPUT_DIR, path_to_model)
@@ -287,27 +291,47 @@ class AfterTrainView(BasicView):
             self.thread.join()
             self.train_model(path_to_model)
 
-    def rm_all_files_from_output_dir_except_model(self, model_filename):
-        for filename in os.listdir(OUTPUT_DIR):
-            if filename in ["config.json", model_filename]:
-                continue
-            file_path = os.path.join(OUTPUT_DIR, filename)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+    def copy_model_to_output_dir(self):
+        voice_model = self.voice_model_service.select_by_id(self.model_id)
+        path_model, path_config = voice_model['path_model'], voice_model['path_config']
+        if not os.path.exists(os.path.join(OUTPUT_DIR, voice_model['name'])):
+            os.mkdir(os.path.join(OUTPUT_DIR, voice_model['name']))
+        model_name = os.path.basename(path_model)
+        config_name = os.path.basename(path_config)
+        dst_model = os.path.join(OUTPUT_DIR, voice_model['name'], model_name)
+        dst_config = os.path.join(OUTPUT_DIR, voice_model['name'], config_name)
+        shutil.copy(path_model, dst_model)
+        shutil.copy(path_config, dst_config)
+        return f'{voice_model["name"]}/{model_name}', f'{voice_model["name"]}/{config_name}'
+
+    def rm_all_files_from_output_dir_except_model(self):
+        for root, dirs, files in os.walk(OUTPUT_DIR):
+            for file in files:
+                file_path = os.path.join(root, file)
+                if "new" in file_path:
+                    continue
+                os.remove(file_path)
+
+    def rm_all_files_from_output_dir(self):
+        for root, dirs, files in os.walk(OUTPUT_DIR):
+            for file in files:
+                file_path = os.path.join(root, file)
+                os.remove(file_path)
 
     def train_model(self, model_path):
         model_filename = os.path.basename(model_path)
-        dest_dir = os.path.join(OUTPUT_DIR, model_filename)
+        if not os.path.exists(os.path.join(OUTPUT_DIR, "new")):
+            os.mkdir(os.path.join(OUTPUT_DIR, "new"))
+        dest_dir = os.path.join(OUTPUT_DIR,"new", model_filename)
+        dest_dir_config = os.path.join(OUTPUT_DIR,"new", "config.json")
+        config = os.path.join(os.path.dirname(model_path),"config.json")
         shutil.move(model_path, dest_dir)
+        shutil.move(config, dest_dir_config)
+        self.rm_all_files_from_output_dir_except_model()
         for widget in self.root.winfo_children():
             widget.destroy()
         train_module.TrainView(self.root, self.voice_model_service, self.voice_recordings_service, self.version_service,
-                               self.gender, self.language, self.option, self.gpu, self.dataset, model_path)
+                               self.gender, self.language, Options.retrain, self.gpu, self.dataset, dest_dir)
 
     def display_models(self):
         model_labels = []

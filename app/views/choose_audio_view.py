@@ -28,7 +28,7 @@ class ChooseAudioView(BasicView):
         self.model_id = model_id
         self.file_labels = []
         self.dir_labels = []
-        self.gpu_ids = [0,1]#self.get_gpu_ids()
+        self.gpu_ids = self.get_gpu_ids()
         self.choosen_gpu = tk.IntVar()
         self.VRAM = tk.IntVar()
         self.VRAM.set('1')
@@ -161,12 +161,21 @@ class ChooseAudioView(BasicView):
 
     def on_closing(self):
         if messagebox.askokcancel("Wyjście", "Czy na pewno chcesz zamknąć program?"):
+            self.event.set()
+            self.thread.join()
             self.root.destroy()
 
     def warning_no_files(self):
         messagebox.showerror('Brak plików', 'Nie wybrano żadnych plików!')
 
+    def delete_files_from_raw_dir(self):
+        for file_name in os.listdir(RAW_AUDIO_DIR):
+            file_path = os.path.join(RAW_AUDIO_DIR, file_name)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+
     def start_generate_samples(self):
+        self.delete_files_from_raw_dir()
         n_files = self.copy_all_files_to_dir()
         if n_files == 0:
             self.warning_no_files()
@@ -294,6 +303,7 @@ class ChooseAudioView(BasicView):
         if res == 'yes':
             self.stop = True
             self.samples_generator.stop_event.set()
+            self.popup.destroy()
 
     def allowed_extensions(self):
         ret = ""

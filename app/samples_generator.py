@@ -43,11 +43,4 @@ class SamplesGenerator:
         self.finish_generating(version, callback, path)
 
     def finish_generating(self, version, callback, path):
-        self.delete_files_from_raw_dir()
         callback(version, path)
-
-    def delete_files_from_raw_dir(self):
-        for file_name in os.listdir(RAW_AUDIO_DIR):
-            file_path = os.path.join(RAW_AUDIO_DIR, file_name)
-            if os.path.isfile(file_path):
-                os.remove(file_path)

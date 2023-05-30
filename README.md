@@ -3,15 +3,17 @@
 Repozytorium projektu grupowego poświęconego tematowi "Opracowanie aplikacji do klonowania głosu w języku python"
 
 # Dependencje
-Python 3.9 z modułem tkinter.
+Python 3.9 z modułem tkinter oraz venv.
 Instalacja:
 ```bash
-sudo apt install python3.9-tk
+sudo apt install python3.9-tk python3.9-venv
 ```
 
 # Konfiguracja i użycie
 Uruchomienie skryptu konfiguracyjnego:
 `$ python3 initialize.py`
+Aktywacja wirtualnego środowiska:
+`$ source venv/bin/activate`
 <hr>
 Aby przeprowadzić klonowanie głosu potrzebujemy pliku audio. Powinien on zawierać głos jednego mówcy i mieścić się w przedziale od 1 do 2 godzin.
 <hr>
@@ -121,7 +123,7 @@ Aby syntezować głos należy:
 ```
 Następnie zostanie wyświetlony ten widok.
 ![generowanie probek](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/generate_audio.png)
-W lewym górnym roku możemy wpisać tekst wybrany tekst. Aby rozpoczać syntezę należy kliknąć przycisk "Generuj audio". Wygenerowane audio będzie znajdowało się w liście po prawej stronie.
+W lewym górnym rogu możemy wpisać tekst wybrany tekst. Aby rozpocząć syntezę należy kliknąć przycisk "Generuj audio". Wygenerowane audio będzie znajdowało się w liście po prawej stronie.
 Aby zobaczyć wszystkie nagrania głosu należy kliknąć "Wszystkie nagrania głosu".
 ![generowanie probek](https://github.com/MAJ0RRR/ProjektGrupowy22-23/blob/main/gui_images/all_recordings.png)
 
