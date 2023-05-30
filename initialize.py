@@ -29,6 +29,7 @@ def initialize_directories(project_root):
     necessary_directories = ['audiofiles', 'audiofiles/raw', 'audiofiles/splits', 'audiofiles/datasets',
                              'output',
                              'tools',
+                             'audio_generation', 'audio_generation/models', 'audio_generation/out'
                              ]
 
     for nd in necessary_directories:

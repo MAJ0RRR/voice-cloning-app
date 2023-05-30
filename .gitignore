@@ -12,5 +12,8 @@ db_file.db
 /tools
 # venv
 /venv
+# audio_generation
+/audio_generation/models
+/audio_generation/out
 # pycharm dir
 .idea
