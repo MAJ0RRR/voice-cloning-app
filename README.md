@@ -1,4 +1,4 @@
-# ProjektGrupowy22-23
+# Automatyczne klonowanie głosu w języku python
 
 Repozytorium projektu grupowego poświęconego tematowi "Opracowanie aplikacji do klonowania głosu w języku python"
 
